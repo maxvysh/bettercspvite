@@ -2,8 +2,12 @@ import Header from "./components/Header";
 import ScreenSelector from "./components/ScreenSelector";
 import SelectedCourses from "./components/SelectedCourses";
 import SubjectSelector from "./components/SubjectSelector";
+import { useLocation } from "react-router-dom";
 
 const ClassScreen = () => {
+  const location = useLocation();
+  const { campus, semester } = location.state;
+
   return (
     <div>
       <Header />
@@ -14,7 +18,7 @@ const ClassScreen = () => {
         </div>
         <div>
           <div>
-            <SubjectSelector />
+            <SubjectSelector campus={campus} semester={semester} />
           </div>
         </div>
       </body>

@@ -15,31 +15,60 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
+import { useEffect, useState } from "react";
 
-const SubjectSelector = () => {
+// const frameworks = [
+//   {
+//     value: "next.js",
+//     label: "Next.js",
+//   },
+//   {
+//     value: "sveltekit",
+//     label: "SvelteKit",
+//   },
+//   {
+//     value: "nuxt.js",
+//     label: "Nuxt.js",
+//   },
+//   {
+//     value: "remix",
+//     label: "Remix",
+//   },
+//   {
+//     value: "astro",
+//     label: "Astro",
+//   },
+// ];
+
+const SubjectSelector = ({ campus, semester }) => {
+  const [data, setData] = useState(null);
+  const [frameworks, setFrameworks] = useState([]);
+
+  useEffect(() => {
+    console.log("fetching data");
+    console.log(campus, semester);
+    fetch(`/oldsoc/subjects.json?semester=${semester}&campus=${campus}&level=U`)
+      .then((response) => response.text())
+      .then((data) => {
+        setData(JSON.parse(data));
+      })
+      .catch((error) => console.error("Error:", error));
+  }, [campus, semester]);
+
+  useEffect(() => {
+    if (data) {
+      const mappedSubjects = data.map((item) => ({
+        value: `${item.description} ${item.code}`.toLowerCase().replace(/\s+/g, ''),
+        label: `${item.description} ${item.code}`,
+        code: item.code,
+      }));
+
+      setFrameworks([...mappedSubjects]);
+    }
+  }, [data]);
+
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -50,38 +79,41 @@ const SubjectSelector = () => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[450px] justify-between"
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
+            // ? value.toUpperCase()
             : "Select a subject..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[450px] p-0">
         <Command>
           <CommandInput placeholder="Search subject..." />
-          <CommandEmpty>No subject found.</CommandEmpty>
-          <CommandGroup>
-            {frameworks.map((framework) => (
-              <CommandItem
-                key={framework.value}
-                value={framework.value}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {framework.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <ScrollArea className="h-96">
+            <CommandEmpty>No subject found.</CommandEmpty>
+            <CommandGroup>
+              {frameworks.map((framework) => (
+                <CommandItem
+                  key={framework.value}
+                  value={framework.value}
+                  onSelect={(currentValue) => {
+                    setValue(currentValue === value ? "" : currentValue);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === framework.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {framework.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </ScrollArea>
         </Command>
       </PopoverContent>
     </Popover>

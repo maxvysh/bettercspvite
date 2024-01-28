@@ -10,4 +10,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      '/oldsoc': {
+           target: 'https://sis.rutgers.edu/',
+           changeOrigin: true,
+           secure: false,      
+           ws: true,
+       }
+  }
+  },
 });
