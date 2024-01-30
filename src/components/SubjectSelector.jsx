@@ -19,43 +19,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useEffect, useState } from "react";
 
-// const frameworks = [
-//   {
-//     value: "next.js",
-//     label: "Next.js",
-//   },
-//   {
-//     value: "sveltekit",
-//     label: "SvelteKit",
-//   },
-//   {
-//     value: "nuxt.js",
-//     label: "Nuxt.js",
-//   },
-//   {
-//     value: "remix",
-//     label: "Remix",
-//   },
-//   {
-//     value: "astro",
-//     label: "Astro",
-//   },
-// ];
-
-const SubjectSelector = ({ campus, semester }) => {
+const SubjectSelector = ({ campus, semester, level }) => {
   const [data, setData] = useState(null);
   const [frameworks, setFrameworks] = useState([]);
 
   useEffect(() => {
     console.log("fetching data");
-    console.log(campus, semester);
-    fetch(`/oldsoc/subjects.json?semester=${semester}&campus=${campus}&level=U`)
+    console.log(campus, semester, level);
+    fetch(`/oldsoc/subjects.json?semester=${semester}&campus=${campus}&level=${level}`)
       .then((response) => response.text())
       .then((data) => {
         setData(JSON.parse(data));
       })
       .catch((error) => console.error("Error:", error));
-  }, [campus, semester]);
+  }, [campus, semester, level]);
 
   useEffect(() => {
     if (data) {
@@ -74,7 +51,7 @@ const SubjectSelector = ({ campus, semester }) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className="border-2">
         <Button
           variant="outline"
           role="combobox"
@@ -83,7 +60,6 @@ const SubjectSelector = ({ campus, semester }) => {
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
-            // ? value.toUpperCase()
             : "Select a subject..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>

@@ -5,7 +5,7 @@ import SVG from "react-inlinesvg";
 const SelectedCoursesRow = () => {
   return (
     <div>
-      <Card className="flex justify-between align-middle items-center w-full px-3">
+      <Card className="flex justify-between align-middle items-center w-full px-3 border-2">
         <button>
           <SVG
             src={xCircle}

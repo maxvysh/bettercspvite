@@ -8,7 +8,7 @@ const SelectedCourses = () => {
             <p>Selected Courses</p>
             <p>Credits: 16</p>
         </div>
-        <Card className="p-2">
+        <Card className="p-2 border-2">
             <SelectedCoursesRow />
         </Card>
     </div>

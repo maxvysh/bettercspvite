@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Card,
   CardContent,
@@ -16,11 +15,8 @@ import {
   //   CardHeader,
   //   CardTitle,
 } from "@/components/ui/card";
-
 import { Button } from "@/components/ui/button";
-
 import { useNavigate } from "react-router-dom";
-
 import { useState } from "react";
 
 function Home() {
