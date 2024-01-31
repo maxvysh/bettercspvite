@@ -19,7 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useEffect, useState } from "react";
 
-const SubjectSelector = ({ campus, semester, level }) => {
+const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
   const [data, setData] = useState(null);
   const [frameworks, setFrameworks] = useState([]);
 
@@ -77,6 +77,7 @@ const SubjectSelector = ({ campus, semester, level }) => {
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
+                    onValueChange(framework.code);
                   }}
                 >
                   <Check

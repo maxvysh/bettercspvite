@@ -18,22 +18,33 @@ const ClassScreen = () => {
   const location = useLocation();
   const { campus, semester } = location.state;
   const [level, setLevel] = useState("U");
+  const [subject, setSubject] = useState(null);
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
   };
 
+  const handleSubjectChange = (newValue) => {
+    console.log(newValue);
+    setSubject(newValue);
+  };
+
   return (
     <div>
       <Header />
-      <body className="p-3 flex">
+      <div className="p-3 flex">
         <div className="w-96">
           <ScreenSelector />
           <SelectedCourses />
         </div>
         <div>
           <div className="flex justify-between w-[640px] ml-2">
-            <SubjectSelector campus={campus} semester={semester} level={level}/>
+            <SubjectSelector
+              campus={campus}
+              semester={semester}
+              level={level}
+              onValueChange={handleSubjectChange}
+            />
             <Select onValueChange={handleLevelSelectorChange}>
               <SelectTrigger className="w-[180px] border-2">
                 <SelectValue defaultValue="U" placeholder="Undergraduate" />
@@ -44,9 +55,14 @@ const ClassScreen = () => {
               </SelectContent>
             </Select>
           </div>
+          <ClassRow
+            campus={campus}
+            semester={semester}
+            level={level}
+            subject={subject}
+          />
         </div>
-        <ClassRow />
-      </body>
+      </div>
     </div>
   );
 };
