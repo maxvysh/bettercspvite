@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./css/ClassScreen.css";
 import ClassRow from "./components/ClassRow";
 
@@ -19,6 +19,8 @@ const ClassScreen = () => {
   const { campus, semester } = location.state;
   const [level, setLevel] = useState("U");
   const [subject, setSubject] = useState(null);
+  const [subjectData, setSubjectData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
@@ -28,6 +30,21 @@ const ClassScreen = () => {
     console.log(newValue);
     setSubject(newValue);
   };
+
+  useEffect(() => {
+    console.log("fetching subject data");
+    console.log(campus, semester, level, subject);
+    setIsLoading(true);
+    fetch(
+      `/oldsoc/courses.json?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
+    )
+      .then((response) => response.text())
+      .then((data) => {
+        setSubjectData(JSON.parse(data));
+      })
+      .then(() => setIsLoading(false))
+      .catch((error) => console.error("Error:", error));
+  }, [campus, semester, level, subject]);
 
   return (
     <div>
@@ -55,12 +72,22 @@ const ClassScreen = () => {
               </SelectContent>
             </Select>
           </div>
-          <ClassRow
-            campus={campus}
-            semester={semester}
-            level={level}
-            subject={subject}
-          />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            subjectData
+              .filter((subject) =>
+                subject.sections.some((section) => section.printed === "Y")
+              )
+              .map((subjectData) => (
+                <ClassRow
+                  key={subjectData.courseNumber + subjectData.campusCode}
+                  offeringUnitCode={subjectData.offeringUnitCode}
+                  subject={subjectData.subject}
+                  courseNumber={subjectData.courseNumber}
+                />
+              ))
+          )}
         </div>
       </div>
     </div>
