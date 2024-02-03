@@ -21,6 +21,7 @@ const ClassScreen = () => {
   const [subject, setSubject] = useState(null);
   const [subjectData, setSubjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [subjectName, setSubjectName] = useState("");
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
@@ -54,8 +55,8 @@ const ClassScreen = () => {
           <ScreenSelector />
           <SelectedCourses />
         </div>
-        <div>
-          <div className="flex justify-between w-[640px] ml-2">
+        <div className="w-full ml-4">
+          <div className="flex justify-between w-[640px]">
             <SubjectSelector
               campus={campus}
               semester={semester}
@@ -85,6 +86,11 @@ const ClassScreen = () => {
                   offeringUnitCode={subjectData.offeringUnitCode}
                   subject={subjectData.subject}
                   courseNumber={subjectData.courseNumber}
+                  expandedTitle={subjectData.expandedTitle}
+                  title={subjectData.title}
+                  credits={subjectData.credits}
+                  openSections={subjectData.openSections}
+                  totalSections={subjectData.sections.length}
                 />
               ))
           )}
