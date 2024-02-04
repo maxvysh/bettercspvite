@@ -16,43 +16,66 @@ const ClassRow = ({
   credits,
   openSections,
   totalSections,
+  preReqNotes,
 }) => {
+  const sanitizedPreReqNotes = preReqNotes
+    ? preReqNotes.replace(/<\/?em>/g, "")
+    : "None listed!";
+
   return (
     <div>
-      <Card className="border-2 mt-1">
-        <div className="flex justify-between p-2 items-center text-center">
-          <div className="flex justify-start gap-6">
-            <div className="flex items-center">
-              <ChevronDown className="h-7 w-7 shrink-0 transition-transform duration-200" />
-            </div>
-            <p className="flex items-center">
+      <Card className="border-2 mt-1 p-1 min-w-[1000px] w-full">
+        <div className="flex text-nowrap justify-between w-full">
+          <div className="flex items-center w-full">
+            <ChevronDown className="mx-1" />
+            <p className="mx-1 w-24 text-center">
               {offeringUnitCode}:{subject}:{courseNumber}
             </p>
-            {expandedTitle && expandedTitle.trim() !== "" ? (
-              <p className="font-semibold text-[20px]">{expandedTitle}</p>
-            ) : (
-              <p className="font-semibold text-[20px]">{title}</p>
-            )}
-            <p className="flex items-center">
+            <div className="flex-grow w-[200px] border-2 border-red-500">
+              {expandedTitle && expandedTitle.trim() !== "" ? (
+                <p className="font-semibold truncate text-[18px]">{expandedTitle}</p>
+              ) : (
+                <p className="font-semibold truncate text-[18px]">{title}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center">
+            <p>
               {credits ? (
                 <p>{credits} credits</p>
               ) : (
-                <p>Credits by arrangment</p>
+                <HoverCard>
+                  <HoverCardTrigger className="underline">
+                    Credits by...
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-full">
+                    Credits by arrangement
+                  </HoverCardContent>
+                </HoverCard>
               )}
             </p>
-            <p className="flex items-center">
-              Sections: {openSections} | {totalSections - openSections}
-            </p>
             <div className="flex items-center">
-              <HoverCard>
-                <HoverCardTrigger>Prerequisites</HoverCardTrigger>
-                <HoverCardContent>
-                  The React Framework – created and maintained by @vercel.
-                </HoverCardContent>
-              </HoverCard>
+              <p>Sections:</p>
+              <div className="flex -mt-[1px]">
+                <p className="text-[20px] w-[25px] flex justify-end text-green-500">
+                  {openSections}
+                </p>
+                <p className="text-[20px] w-[10px] flex justify-center">|</p>
+                <p className="text-[20px] w-[25px] flex justify-start text-red-500">
+                  {totalSections - openSections}
+                </p>
+              </div>
             </div>
+            <HoverCard>
+              <HoverCardTrigger className="underline">
+                Prerequisites
+              </HoverCardTrigger>
+              <HoverCardContent className="text-wrap text-center w-full max-w-[300px]">
+                {sanitizedPreReqNotes}
+              </HoverCardContent>
+            </HoverCard>
+            <Button>Add Class</Button>
           </div>
-          <Button className="ml-5">Add Class</Button>
         </div>
       </Card>
     </div>

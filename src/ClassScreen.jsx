@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
-import "./css/ClassScreen.css";
 import ClassRow from "./components/ClassRow";
 
 const ClassScreen = () => {
@@ -51,11 +50,11 @@ const ClassScreen = () => {
     <div>
       <Header />
       <div className="p-3 flex">
-        <div className="w-96">
+        <div className="w-[330px] min-w-[330px]">
           <ScreenSelector />
           <SelectedCourses />
         </div>
-        <div className="w-full ml-4">
+        <div className="ml-4 w-full">
           <div className="flex justify-between w-[640px]">
             <SubjectSelector
               campus={campus}
@@ -73,6 +72,7 @@ const ClassScreen = () => {
               </SelectContent>
             </Select>
           </div>
+          <div>
           {isLoading ? (
             <p>Loading...</p>
           ) : (
@@ -91,9 +91,11 @@ const ClassScreen = () => {
                   credits={subjectData.credits}
                   openSections={subjectData.openSections}
                   totalSections={subjectData.sections.length}
+                  preReqNotes={subjectData.preReqNotes}
                 />
               ))
           )}
+          </div>
         </div>
       </div>
     </div>
