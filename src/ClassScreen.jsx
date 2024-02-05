@@ -20,7 +20,7 @@ const ClassScreen = () => {
   const [subject, setSubject] = useState(null);
   const [subjectData, setSubjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [subjectName, setSubjectName] = useState("");
+  const [selectedCourses, setSelectedCourses] = useState([]);
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
@@ -73,28 +73,28 @@ const ClassScreen = () => {
             </Select>
           </div>
           <div>
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : (
-            subjectData
-              .filter((subject) =>
-                subject.sections.some((section) => section.printed === "Y")
-              )
-              .map((subjectData) => (
-                <ClassRow
-                  key={subjectData.courseNumber + subjectData.campusCode}
-                  offeringUnitCode={subjectData.offeringUnitCode}
-                  subject={subjectData.subject}
-                  courseNumber={subjectData.courseNumber}
-                  expandedTitle={subjectData.expandedTitle}
-                  title={subjectData.title}
-                  credits={subjectData.credits}
-                  openSections={subjectData.openSections}
-                  totalSections={subjectData.sections.length}
-                  preReqNotes={subjectData.preReqNotes}
-                />
-              ))
-          )}
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : (
+              subjectData
+                .filter((subject) =>
+                  subject.sections.some((section) => section.printed === "Y")
+                )
+                .map((subjectData) => (
+                  <ClassRow
+                    key={subjectData.courseNumber + subjectData.campusCode}
+                    offeringUnitCode={subjectData.offeringUnitCode}
+                    subject={subjectData.subject}
+                    courseNumber={subjectData.courseNumber}
+                    expandedTitle={subjectData.expandedTitle}
+                    title={subjectData.title}
+                    credits={subjectData.credits}
+                    openSections={subjectData.openSections}
+                    totalSections={subjectData.sections.length}
+                    preReqNotes={subjectData.preReqNotes}
+                  />
+                ))
+            )}
           </div>
         </div>
       </div>
