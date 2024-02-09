@@ -1,4 +1,5 @@
-Working on a better course schedule planner for Rutgers because the current one kinda sucks
+Working on a better course schedule planner for Rutgers because the current one kinda sucks.
+
 Some improvements already implemented include: 
 - Better UI
 
