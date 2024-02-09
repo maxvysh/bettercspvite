@@ -2,19 +2,46 @@ import { Card } from "@/components/ui/card";
 import xCircle from "../assets/x-circle.svg";
 import SVG from "react-inlinesvg";
 
-const SelectedCoursesRow = () => {
+const SelectedCoursesRow = ({
+  key,
+  offeringUnitCode,
+  subject,
+  courseNumber,
+  useTitle,
+  credits,
+  selectedCourses,
+  setSelectedCourses,
+  buttonDisabler,
+  setButtonDisabler,
+  totalCredits,
+  setTotalCredits,
+}) => {
+  const handleClick = () => {
+    const indexToRemove = selectedCourses.findIndex(
+      (course) => course.key === key
+    );
+    if (indexToRemove !== -1) {
+      selectedCourses.splice(indexToRemove, 1);
+      setSelectedCourses([...selectedCourses]);
+    }
+    setButtonDisabler(true);
+    setTotalCredits(totalCredits - credits);
+  };
+
   return (
     <div>
       <Card className="flex justify-between align-middle items-center w-full px-3 border-2">
-        <button>
+        <button onClick={handleClick}>
           <SVG
             src={xCircle}
             alt="X"
             className="w-5 h-5 black hover:text-red-500"
           />
         </button>
-        <p>01:198:300</p>
-        <p className="font-semibold w-36">Introduction to Computer System</p>
+        <p>
+          {offeringUnitCode}:{subject}:{courseNumber}
+        </p>
+        <p className="font-semibold w-36">{useTitle}</p>
       </Card>
     </div>
   );

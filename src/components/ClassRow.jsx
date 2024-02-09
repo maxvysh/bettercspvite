@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
@@ -6,7 +7,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import xCircle from "../assets/x-circle-black.svg";
 import SVG from "react-inlinesvg";
 
@@ -20,10 +21,17 @@ const ClassRow = ({
   openSections,
   totalSections,
   preReqNotes,
+  selectedCourses,
+  setSelectedCourses,
+  totalCredits,
+  setTotalCredits,
+  buttonDisabler,
+  setButtonDisabler,
 }) => {
   const [buttonContent, setButtonContent] = useState("Added!");
   const [buttonHover, setButtonHover] = useState(false);
   const [color, setColor] = useState("rgb(34 197 94)");
+  const [useTitle, setUseTitle] = useState("");
 
   const sanitizedPreReqNotes = preReqNotes
     ? preReqNotes.replace(/<\/?em>/g, "")
@@ -31,11 +39,50 @@ const ClassRow = ({
 
   const handleAddClass = () => {
     setButtonHover(true);
+    setSelectedCourses([
+      ...selectedCourses,
+      {
+        offeringUnitCode,
+        subject,
+        courseNumber,
+        useTitle,
+        credits,
+      },
+    ]);
+    setTotalCredits(totalCredits + credits);
   };
 
   const handleRemoveClass = () => {
     setButtonHover(false);
+    console.log(selectedCourses);
+    const indexToRemove = selectedCourses.findIndex(
+      (course) =>
+        course.offeringUnitCode === offeringUnitCode &&
+        course.subject === subject &&
+        course.courseNumber === courseNumber
+    );
+    if (indexToRemove !== -1) {
+      selectedCourses.splice(indexToRemove, 1);
+      setSelectedCourses([...selectedCourses]);
+    }
+    setTotalCredits(totalCredits - credits);
   };
+
+  useEffect(() => {
+  console.log("ran");
+  if (expandedTitle && expandedTitle.trim() !== "") {
+    setUseTitle(expandedTitle);
+  } else {
+    setUseTitle(title);
+  }
+}, [expandedTitle, title]);
+
+  useEffect(() => {
+    if (buttonDisabler) {
+      setButtonHover(false);
+      setButtonDisabler(false);
+    }
+  }, [buttonDisabler, setButtonDisabler]);
 
   return (
     <div>
@@ -47,13 +94,7 @@ const ClassRow = ({
               {offeringUnitCode}:{subject}:{courseNumber}
             </p>
             <div className="flex-grow w-[200px]">
-              {expandedTitle && expandedTitle.trim() !== "" ? (
-                <p className="font-semibold truncate text-[18px]">
-                  {expandedTitle}
-                </p>
-              ) : (
-                <p className="font-semibold truncate text-[18px]">{title}</p>
-              )}
+              <p className="font-semibold truncate text-[18px]">{useTitle}</p>
             </div>
           </div>
           <div className="flex items-center">
@@ -98,14 +139,12 @@ const ClassRow = ({
                 style={{ backgroundColor: color }}
                 onClick={handleRemoveClass}
                 onMouseEnter={() => {
-                  setButtonContent(
-                    <SVG src={xCircle} alt="X" />
-                  );
-                  setColor('rgb(239 68 68)');
+                  setButtonContent(<SVG src={xCircle} alt="X" />);
+                  setColor("rgb(239 68 68)");
                 }}
                 onMouseLeave={() => {
                   setButtonContent("Added!");
-                  setColor('rgb(34 197 94)');
+                  setColor("rgb(34 197 94)");
                 }}
               >
                 {buttonContent}
