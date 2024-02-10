@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import xCircle from "../assets/x-circle-black.svg";
 import SVG from "react-inlinesvg";
+import DropdownSection from "./DropdownSection";
 
 const ClassRow = ({
   offeringUnitCode,
@@ -18,6 +19,7 @@ const ClassRow = ({
   expandedTitle,
   title,
   credits,
+  sections,
   openSections,
   totalSections,
   preReqNotes,
@@ -32,6 +34,7 @@ const ClassRow = ({
   const [buttonHover, setButtonHover] = useState(false);
   const [color, setColor] = useState("rgb(34 197 94)");
   const [useTitle, setUseTitle] = useState("");
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const sanitizedPreReqNotes = preReqNotes
     ? preReqNotes.replace(/<\/?em>/g, "")
@@ -68,14 +71,17 @@ const ClassRow = ({
     setTotalCredits(totalCredits - credits);
   };
 
+  const handleSectionDropdown = () => {
+    setIsDropdownVisible(!isDropdownVisible);
+  };
+
   useEffect(() => {
-  console.log("ran");
-  if (expandedTitle && expandedTitle.trim() !== "") {
-    setUseTitle(expandedTitle);
-  } else {
-    setUseTitle(title);
-  }
-}, [expandedTitle, title]);
+    if (expandedTitle && expandedTitle.trim() !== "") {
+      setUseTitle(expandedTitle);
+    } else {
+      setUseTitle(title);
+    }
+  }, [expandedTitle, title]);
 
   useEffect(() => {
     if (buttonDisabler) {
@@ -84,12 +90,29 @@ const ClassRow = ({
     }
   }, [buttonDisabler, setButtonDisabler]);
 
+  useEffect(() => {
+    console.log("ran run");
+    console.log(sections);
+    if (
+      selectedCourses.some(
+        (course) =>
+          course.offeringUnitCode === offeringUnitCode &&
+          course.subject === subject &&
+          course.courseNumber === courseNumber
+      )
+    ) {
+      setButtonHover(true);
+    }
+  }, []);
+
   return (
     <div>
       <Card className="border-2 mt-1 p-1 min-w-[1200px] w-full">
         <div className="flex text-nowrap justify-between w-full">
           <div className="flex items-center w-full">
-            <ChevronDown className="ml-2 -mr-1" />
+            <button onClick={handleSectionDropdown}>
+              <ChevronDown className="ml-2 -mr-1" />
+            </button>
             <p className="mx-1 w-24 text-center">
               {offeringUnitCode}:{subject}:{courseNumber}
             </p>
@@ -160,6 +183,20 @@ const ClassRow = ({
             )}
           </div>
         </div>
+        {isDropdownVisible ? (
+          <div>
+            {
+              sections
+                .filter((section) => section.printed === "Y")
+                .map((section, index) => (
+                  console.log("hereherehere"),
+                  console.log(section.openStatus),
+                  console.log(index),
+                  <DropdownSection key={index} section={index} openStatus={section.openStatus} index={section.index} meetingTimes={section.meetingTimes} />
+                ))
+            }
+          </div>
+        ) : null}
       </Card>
     </div>
   );

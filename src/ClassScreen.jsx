@@ -98,6 +98,7 @@ const ClassScreen = () => {
                     expandedTitle={subjectData.expandedTitle}
                     title={subjectData.title}
                     credits={subjectData.credits}
+                    sections={subjectData.sections}
                     openSections={subjectData.openSections}
                     totalSections={subjectData.sections.length}
                     preReqNotes={subjectData.preReqNotes}
