@@ -21,6 +21,8 @@ const ClassScreen = () => {
   const [subjectData, setSubjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [totalCredits, setTotalCredits] = useState(0);
+  const [buttonDisabler, setButtonDisabler] = useState(false);
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
@@ -52,7 +54,14 @@ const ClassScreen = () => {
       <div className="p-3 flex">
         <div className="w-[330px] min-w-[330px]">
           <ScreenSelector />
-          <SelectedCourses />
+          <SelectedCourses
+            selectedCourses={selectedCourses}
+            setSelectedCourses={setSelectedCourses}
+            totalCredits={totalCredits}
+            setTotalCredits={setTotalCredits}
+            buttonDisabler={buttonDisabler}
+            setButtonDisabler={setButtonDisabler}
+          />
         </div>
         <div className="ml-4 w-full">
           <div className="flex justify-between w-[640px]">
@@ -89,9 +98,16 @@ const ClassScreen = () => {
                     expandedTitle={subjectData.expandedTitle}
                     title={subjectData.title}
                     credits={subjectData.credits}
+                    sections={subjectData.sections}
                     openSections={subjectData.openSections}
                     totalSections={subjectData.sections.length}
                     preReqNotes={subjectData.preReqNotes}
+                    selectedCourses={selectedCourses}
+                    setSelectedCourses={setSelectedCourses}
+                    totalCredits={totalCredits}
+                    setTotalCredits={setTotalCredits}
+                    buttonDisabler={buttonDisabler}
+                    setButtonDisabler={setButtonDisabler}
                   />
                 ))
             )}
