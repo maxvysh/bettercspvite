@@ -57,7 +57,6 @@ const ClassRow = ({
 
   const handleRemoveClass = () => {
     setButtonHover(false);
-    console.log(selectedCourses);
     const indexToRemove = selectedCourses.findIndex(
       (course) =>
         course.offeringUnitCode === offeringUnitCode &&
@@ -91,8 +90,6 @@ const ClassRow = ({
   }, [buttonDisabler, setButtonDisabler]);
 
   useEffect(() => {
-    console.log("ran run");
-    console.log(sections);
     if (
       selectedCourses.some(
         (course) =>
@@ -107,8 +104,8 @@ const ClassRow = ({
 
   return (
     <div>
-      <Card className="border-2 mt-1 p-1 min-w-[1200px] w-full">
-        <div className="flex text-nowrap justify-between w-full">
+      <Card className="border-2 mt-1 min-w-[1200px] w-full">
+        <div className="flex text-nowrap justify-between w-full p-1">
           <div className="flex items-center w-full">
             <button onClick={handleSectionDropdown}>
               <ChevronDown className="ml-2 -mr-1" />
@@ -185,16 +182,29 @@ const ClassRow = ({
         </div>
         {isDropdownVisible ? (
           <div>
-            {
-              sections
-                .filter((section) => section.printed === "Y")
-                .map((section, index) => (
-                  console.log("hereherehere"),
-                  console.log(section.openStatus),
-                  console.log(index),
-                  <DropdownSection key={index} section={index} openStatus={section.openStatus} index={section.index} meetingTimes={section.meetingTimes} />
-                ))
-            }
+            <div className="border-t-2">
+              <div className="flex justify-between mx-2">
+                <p className="w-[56px]">section</p>
+                <p>status</p>
+                <p>index</p>
+                <p>meeting times/locations</p>
+                <p>exam code</p>
+                <p>instructors</p>
+              </div>
+            </div>
+            {sections
+              .filter((section) => section.printed === "Y")
+              .map((section, index) => (
+                <DropdownSection
+                  key={index}
+                  section={index}
+                  openStatus={section.openStatus}
+                  index={section.index}
+                  meetingTimes={section.meetingTimes}
+                  examCode={section.examCode}
+                  instructors={section.instructors}
+                />
+              ))}
           </div>
         ) : null}
       </Card>
