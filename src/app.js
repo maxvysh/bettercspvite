@@ -1,49 +1,56 @@
 import express from "express";
-import authRouter from "./routes/oauth.js";
-import requestRouter from "./routes/request.js";
 import session from "express-session";
-import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+import "./routes/oauth.js";
+import passport from "passport";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+function isLoggedIn(req, res, next) {
+  req.user ? next() : res.sendStatus(401);
+}
 
 const app = express();
-const port = 3000;
+app.use(session({ secret: "cats" }));
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.get("/", (req, res) => {
+  res.send('<a href="/auth/google">Authenticate with Google</a>');
 });
 
-app.use(express.static(path.join(__dirname, "../dist")));
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
+);
 
-app.use(
-  session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }, // set to true if your app is on https
+app.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/protected",
+    failureRedirect: "/auth/failure",
   })
 );
 
-const isAuthenticated = (req, res, next) => {
-  if (req.session.isAuthenticated) {
-    console.log("Authenticated");
-    next();
-  } else {
-    console.log("Not authenticated");
-    res.redirect(303, "http://localhost:3000/");
-  }
-};
-
-app.use("/oauth", authRouter);
-app.use("/request", requestRouter);
-
-app.get("/selectcs", isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname + "../dist/index.html"));  
+app.get("/auth/failure", (req, res) => {
+  res.send("Failed to authenticate");
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "../dist/index.html"));
+app.get("/protected", isLoggedIn, (req, res) => {
+  res.send(`Hello! ${req.user.displayName}`);
+});
+
+app.get("/logout", (req, res, next) => {
+  if (req.user) {
+    req.logout();
+    req.session.destroy((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.send("Goodbye");
+    });
+  } else {
+    res.send("No user session to logout");
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });

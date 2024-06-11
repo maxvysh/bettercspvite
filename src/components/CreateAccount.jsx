@@ -28,8 +28,6 @@ import { useNavigate } from "react-router-dom";
 
 
 const CreateAccount = () => {
-  const navigate = useNavigate();
-
   const handleLogin = async () => {
     try {
       const response = await fetch("http://127.0.0.1:3000/request", {
