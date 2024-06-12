@@ -8,3 +8,4 @@ Improvements planned in the future:
 - An easier way to see which classes are necessary for your major (not sure how ill implement that but ill make it work)
 - Built in course sniper
 - Sort by core codes
+- Rate my prof ratings
