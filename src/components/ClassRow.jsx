@@ -103,7 +103,7 @@ const ClassRow = ({
   }, []);
 
   return (
-    <div>
+    <div className="flex justify-center">
       <Card className="border-2 mt-1 min-w-[1200px] w-full">
         <div className="flex text-nowrap justify-between w-full p-1">
           <div className="flex items-center w-full">
@@ -183,13 +183,13 @@ const ClassRow = ({
         {isDropdownVisible ? (
           <div>
             <div className="border-t-2">
-              <div className="flex justify-between mx-2">
-                <p className="w-[56px]">section</p>
-                <p>status</p>
-                <p>index</p>
-                <p>meeting times/locations</p>
-                <p>exam code</p>
-                <p>instructors</p>
+              <div className="grid grid-cols-7 mx-2">
+                <p className="col-span-1 text-center">section</p>
+                <p className="col-span-1 text-center">status</p>
+                <p className="col-span-1 text-center">index</p>
+                <p className="col-span-2 text-center">meeting times/locations</p>
+                <p className="col-span-1 text-center">exam code</p>
+                <p className="col-span-1 text-center">instructors</p>
               </div>
             </div>
             {sections

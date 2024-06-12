@@ -1,8 +1,8 @@
 
 const MeetingTimes = ({ meetingDay, startTime, endTime, campusName }) => {
   return (
-    <div className="flex">
-      <p>
+    <div className="grid grid-cols-12">
+      <p className="col-span-7 text-center">
         {meetingDay && (
             <span>
                 {meetingDay === "M" && "Mon"}
@@ -42,7 +42,7 @@ const MeetingTimes = ({ meetingDay, startTime, endTime, campusName }) => {
             <span></span>
         )}
       </p>
-      <p>{campusName}</p>
+      <p className="col-span-5 text-center overflow-x-auto">{campusName}</p>
     </div>
   );
 };

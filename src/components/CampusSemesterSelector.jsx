@@ -1,42 +1,25 @@
 import {
-    Select,
-    SelectContent,
-    // SelectGroup,
-    SelectItem,
-    // SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
-  import {
-    Card,
-    CardContent,
-    //   CardDescription,
-    CardFooter,
-    //   CardHeader,
-    //   CardTitle,
-  } from "@/components/ui/card";
+  Select,
+  SelectContent,
+  // SelectGroup,
+  SelectItem,
+  // SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  //   CardDescription,
+  CardFooter,
+  //   CardHeader,
+  //   CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-  import {
-    Select,
-    SelectContent,
-    // SelectGroup,
-    SelectItem,
-    // SelectLabel,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
-  import {
-    Card,
-    CardContent,
-    //   CardDescription,
-    CardFooter,
-    //   CardHeader,
-    //   CardTitle,
-  } from "@/components/ui/card";
-  import { Button } from "@/components/ui/button";
-  import { useNavigate } from "react-router-dom";
-  import { useState } from "react";
-
+const CampusSemesterSelector = () => {
   const navigate = useNavigate();
 
   const [selectedCampus, setSelectedCampus] = useState(null);
@@ -71,10 +54,9 @@ import {
     }
   };
 
-const CampusSemesterSelector = () => {
   return (
     <div>
-      <Card className="p-8 mt-96 flex items-center justify-center flex-col">
+      <Card className="p-8 mt-72 flex items-center justify-center flex-col">
         <CardContent className="p-0 pb-6">
           <Select required onValueChange={handleCampusChange}>
             <SelectTrigger className="w-80">

@@ -10,29 +10,34 @@ const DropdownSection = ({
 }) => {
   return (
     <div className="border-t-2">
-      <div className="flex justify-between mx-2">
-        <p className="w-[56px] flex items-center justify-center">
+      <div className="mx-2 grid grid-cols-7 min-h-12">
+        <p className="flex items-center justify-center col-span-1">
           {section + 1 < 10 ? (
             <span>0{section + 1}</span>
           ) : (
             <span>{section + 1}</span>
           )}
         </p>
-        <p>{openStatus ? <span>OPEN</span> : <span>CLOSED</span>}</p>
-        <p>{index}</p>
-        <div>
-          {meetingTimes.map((time, index) => (
-            <MeetingTimes
-              key={index}
-              meetingDay={time.meetingDay}
-              startTime={time.startTime}
-              endTime={time.endTime}
-              campusName={time.campusName}
-            />
-          ))}
+        <p className="flex items-center justify-center col-span-1">
+          {openStatus ? <span>OPEN</span> : <span>CLOSED</span>}
+        </p>
+        <p className="flex items-center justify-center col-span-1">{index}</p>
+        <div className="flex items-center justify-center col-span-2">
+          <div className="flex flex-col items-center justify-center">
+            {meetingTimes.map((time, index) => (
+              <div className="w-72" key={index}>
+                <MeetingTimes
+                  meetingDay={time.meetingDay}
+                  startTime={time.startTime}
+                  endTime={time.endTime}
+                  campusName={time.campusName}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        <p>{examCode}</p>
-        <div>
+        <p className="flex items-center justify-center col-span-1">{examCode}</p>
+        <div className="flex items-center justify-center col-span-1">
           {instructors.map((instructor, index) => (
             <p key={index}>{instructor.name}</p>
           ))}

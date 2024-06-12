@@ -12,33 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 
-// function navigate(url) {
-//   window.location.href = url;
-// }
-
-// async function auth() {
-//   const response = await fetch("http://127.0.0.1:3000/request", {
-//     method: "POST",
-//   });
-//   const data = await response.json();
-//   navigate(data.url);
-// }
-
-
-
-
 const CreateAccount = () => {
   const handleLogin = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:3000/request", {
-        method: "POST",
-      });
-      const data = await response.json();
-      console.log(data);
-      window.location.href = data.url;
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    window.location.href = "http://localhost:3000/auth/google";
   };
 
   return (
