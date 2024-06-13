@@ -19,7 +19,7 @@ const DropdownSection = ({
           )}
         </p>
         <p className="flex items-center justify-center col-span-1">
-          {openStatus ? <span>OPEN</span> : <span>CLOSED</span>}
+          {openStatus ? <span className="text-green-500">OPEN</span> : <span className="text-red-500">CLOSED</span>}
         </p>
         <p className="flex items-center justify-center col-span-1">{index}</p>
         <div className="flex items-center justify-center col-span-2">

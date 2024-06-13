@@ -75,7 +75,7 @@ const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(currentValue);
                     setOpen(false);
                     onValueChange(framework.code);
                   }}

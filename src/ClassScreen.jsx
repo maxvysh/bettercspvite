@@ -29,7 +29,6 @@ const ClassScreen = () => {
   };
 
   const handleSubjectChange = (newValue) => {
-    console.log(newValue);
     setSubject(newValue);
   };
 
