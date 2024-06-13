@@ -30,7 +30,7 @@ const DropdownSection = ({
                   meetingDay={time.meetingDay}
                   startTime={time.startTime}
                   endTime={time.endTime}
-                  campusName={time.campusName}
+                  campusName={time.campusName ? time.campusName.replace("DOUGLAS/COOK", "COOK/DOUG").replace("COLLEGE AVENUE", "COLLEGE AVE") : ''}
                 />
               </div>
             ))}
