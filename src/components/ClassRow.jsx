@@ -40,7 +40,7 @@ const ClassRow = ({
     ? preReqNotes.replace(/<\/?em>/g, "")
     : "None listed!";
 
-  const handleAddClass = () => {
+  const handleAddClass = async () => {
     setButtonHover(true);
     setSelectedCourses([
       ...selectedCourses,
@@ -52,10 +52,10 @@ const ClassRow = ({
         credits,
       },
     ]);
-    setTotalCredits(totalCredits + credits);
+    await setTotalCredits(totalCredits + credits);
   };
 
-  const handleRemoveClass = () => {
+  const handleRemoveClass = async () => {
     setButtonHover(false);
     const indexToRemove = selectedCourses.findIndex(
       (course) =>
@@ -67,7 +67,7 @@ const ClassRow = ({
       selectedCourses.splice(indexToRemove, 1);
       setSelectedCourses([...selectedCourses]);
     }
-    setTotalCredits(totalCredits - credits);
+    await setTotalCredits(totalCredits - credits);
   };
 
   const handleSectionDropdown = () => {

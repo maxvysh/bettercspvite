@@ -37,7 +37,9 @@ const ClassScreen = () => {
     console.log(campus, semester, level, subject);
     setIsLoading(true);
     fetch(
-      `/oldsoc/courses.json?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
+      `${
+        import.meta.env.VITE_BACKEND_URL
+      }/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
     )
       .then((response) => response.text())
       .then((data) => {
@@ -46,6 +48,27 @@ const ClassScreen = () => {
       .then(() => setIsLoading(false))
       .catch((error) => console.error("Error:", error));
   }, [campus, semester, level, subject]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/user/courses`
+      );
+      const data = await response.json();
+      setSelectedCourses(data.coursesArray);
+    }
+    // fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log(JSON.stringify(selectedCourses));
+    if (selectedCourses.length > 0) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
+        method: "POST",
+        body: JSON.stringify(selectedCourses),
+      });
+    }
+  }, [selectedCourses]);
 
   return (
     <div>

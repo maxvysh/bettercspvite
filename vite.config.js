@@ -12,12 +12,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/oldsoc': {
-           target: 'https://sis.rutgers.edu/',
-           changeOrigin: true,
-           secure: false,      
-           ws: true,
-       }
+      // '/oldsoc': {
+      //      target: 'https://sis.rutgers.edu/',
+      //      changeOrigin: true,
+      //      secure: false,      
+      //      ws: true,
+      //  }
   }
   },
 });

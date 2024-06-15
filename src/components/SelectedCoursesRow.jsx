@@ -16,7 +16,7 @@ const SelectedCoursesRow = ({
   totalCredits,
   setTotalCredits,
 }) => {
-  const handleClick = () => {
+  const handleClick = async () => {
     const indexToRemove = selectedCourses.findIndex(
       (course) => course.key === key
     );
@@ -25,7 +25,7 @@ const SelectedCoursesRow = ({
       setSelectedCourses([...selectedCourses]);
     }
     setButtonDisabler(true);
-    setTotalCredits(totalCredits - credits);
+    await setTotalCredits(totalCredits - credits);
   };
 
   return (

@@ -26,7 +26,11 @@ const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
   useEffect(() => {
     console.log("fetching data");
     console.log(campus, semester, level);
-    fetch(`/oldsoc/subjects.json?semester=${semester}&campus=${campus}&level=${level}`)
+    fetch(
+      `${
+        import.meta.env.VITE_BACKEND_URL
+      }/subjects?semester=${semester}&campus=${campus}&level=${level}`
+    )
       .then((response) => response.text())
       .then((data) => {
         setData(JSON.parse(data));
@@ -37,7 +41,9 @@ const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
   useEffect(() => {
     if (data) {
       const mappedSubjects = data.map((item) => ({
-        value: `${item.description} ${item.code}`.toLowerCase().replace(/\s+/g, ''),
+        value: `${item.description} ${item.code}`
+          .toLowerCase()
+          .replace(/\s+/g, ""),
         label: `${item.description} ${item.code}`,
         code: item.code,
       }));
