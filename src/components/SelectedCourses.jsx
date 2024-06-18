@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import SelectedCoursesRow from "./SelectedCoursesRow";
 
 const SelectedCourses = ( { selectedCourses, setSelectedCourses, totalCredits, setTotalCredits, buttonDisabler, setButtonDisabler }) => {
+  console.log("hi", selectedCourses);
   return (
     <div>
         <div className="flex justify-between px-3">

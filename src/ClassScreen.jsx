@@ -23,6 +23,7 @@ const ClassScreen = () => {
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [totalCredits, setTotalCredits] = useState(0);
   const [buttonDisabler, setButtonDisabler] = useState(false);
+  const [isDataFetched, setIsDataFetched] = useState(false);
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
@@ -55,19 +56,28 @@ const ClassScreen = () => {
         `${import.meta.env.VITE_BACKEND_URL}/user/courses`
       );
       const data = await response.json();
-      setSelectedCourses(data.coursesArray);
+      console.log('data array', data);
+      if (data) {
+        setSelectedCourses(data);
+        console.log('Data is fetched!');
+        setIsDataFetched(true);
+      }
+      console.log('what is data');
     }
-    // fetchData();
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    console.log(JSON.stringify(selectedCourses));
-    if (selectedCourses.length > 0) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
-        method: "POST",
-        body: JSON.stringify(selectedCourses),
-      });
-    }
+    if (!isDataFetched) return;
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(selectedCourses),
+    });
   }, [selectedCourses]);
 
   return (
