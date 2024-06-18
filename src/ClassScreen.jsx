@@ -50,17 +50,18 @@ const ClassScreen = () => {
   }, [campus, semester, level, subject]);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchCourses() {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/user/courses`
       );
       const data = await response.json();
       if (data) {
-        setSelectedCourses(data);
+        setSelectedCourses(data.coursesArray);
+        setTotalCredits(data.totalCredits);
         setIsDataFetched(true);
       }
     }
-    fetchData();
+    fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
