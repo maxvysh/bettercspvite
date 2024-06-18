@@ -34,7 +34,6 @@ const ClassScreen = () => {
   };
 
   useEffect(() => {
-    console.log("fetching subject data");
     console.log(campus, semester, level, subject);
     setIsLoading(true);
     fetch(
@@ -56,13 +55,10 @@ const ClassScreen = () => {
         `${import.meta.env.VITE_BACKEND_URL}/user/courses`
       );
       const data = await response.json();
-      console.log('data array', data);
       if (data) {
         setSelectedCourses(data);
-        console.log('Data is fetched!');
         setIsDataFetched(true);
       }
-      console.log('what is data');
     }
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,6 +66,7 @@ const ClassScreen = () => {
 
   useEffect(() => {
     if (!isDataFetched) return;
+    console.log('selected courses', selectedCourses);
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
       method: "POST",

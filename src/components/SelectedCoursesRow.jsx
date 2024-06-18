@@ -3,7 +3,6 @@ import xCircle from "../assets/x-circle.svg";
 import SVG from "react-inlinesvg";
 
 const SelectedCoursesRow = ({
-  key,
   offeringUnitCode,
   subject,
   courseNumber,
@@ -16,16 +15,19 @@ const SelectedCoursesRow = ({
   totalCredits,
   setTotalCredits,
 }) => {
-  const handleClick = async () => {
+  const handleClick = () => {
     const indexToRemove = selectedCourses.findIndex(
-      (course) => course.key === key
+      (course) =>
+        course.offeringUnitCode === offeringUnitCode &&
+        course.subject === subject &&
+        course.courseNumber === courseNumber
     );
     if (indexToRemove !== -1) {
       selectedCourses.splice(indexToRemove, 1);
       setSelectedCourses([...selectedCourses]);
     }
     setButtonDisabler(true);
-    await setTotalCredits(totalCredits - credits);
+    setTotalCredits(totalCredits - credits);
   };
 
   return (
