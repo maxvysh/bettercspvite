@@ -103,7 +103,7 @@ const ClassRow = ({
   }, []);
 
   return (
-    <div className="flex justify-center">
+    <div>
       <Card className="border-2 mt-1 min-w-[1200px] w-full">
         <div className="flex text-nowrap justify-between w-full p-1">
           <div className="flex items-center w-full">

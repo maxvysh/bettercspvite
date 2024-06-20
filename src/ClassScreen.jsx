@@ -67,7 +67,7 @@ const ClassScreen = () => {
 
   useEffect(() => {
     if (!isDataFetched) return;
-    console.log('selected courses', selectedCourses);
+    console.log("selected courses", selectedCourses);
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
       method: "POST",
@@ -80,18 +80,22 @@ const ClassScreen = () => {
 
   return (
     <div>
-      <Header />
+      <div className="min-w-[1570px]">
+        <Header />
+      </div>
       <div className="p-3 flex">
         <div className="w-[330px] min-w-[330px]">
           <ScreenSelector />
-          <SelectedCourses
-            selectedCourses={selectedCourses}
-            setSelectedCourses={setSelectedCourses}
-            totalCredits={totalCredits}
-            setTotalCredits={setTotalCredits}
-            buttonDisabler={buttonDisabler}
-            setButtonDisabler={setButtonDisabler}
-          />
+          <div className="mt-4">
+            <SelectedCourses
+              selectedCourses={selectedCourses}
+              setSelectedCourses={setSelectedCourses}
+              totalCredits={totalCredits}
+              setTotalCredits={setTotalCredits}
+              buttonDisabler={buttonDisabler}
+              setButtonDisabler={setButtonDisabler}
+            />
+          </div>
         </div>
         <div className="ml-4 w-full">
           <div className="flex justify-between w-[640px]">
