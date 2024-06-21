@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import ClassRow from "./components/ClassRow";
+import AppContext from "./AppContext";
 
 const ClassScreen = () => {
   const location = useLocation();
@@ -20,10 +21,11 @@ const ClassScreen = () => {
   const [subject, setSubject] = useState(null);
   const [subjectData, setSubjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCourses, setSelectedCourses] = useState([]);
-  const [totalCredits, setTotalCredits] = useState(0);
-  const [buttonDisabler, setButtonDisabler] = useState(false);
+  // const [selectedCourses, setSelectedCourses] = useState([]);
+  // const [totalCredits, setTotalCredits] = useState(0);
   const [isDataFetched, setIsDataFetched] = useState(false);
+
+  const { selectedCourses, setSelectedCourses, totalCredits, setTotalCredits } = useContext(AppContext);
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
@@ -92,8 +94,6 @@ const ClassScreen = () => {
               setSelectedCourses={setSelectedCourses}
               totalCredits={totalCredits}
               setTotalCredits={setTotalCredits}
-              buttonDisabler={buttonDisabler}
-              setButtonDisabler={setButtonDisabler}
             />
           </div>
         </div>
@@ -140,8 +140,6 @@ const ClassScreen = () => {
                     setSelectedCourses={setSelectedCourses}
                     totalCredits={totalCredits}
                     setTotalCredits={setTotalCredits}
-                    buttonDisabler={buttonDisabler}
-                    setButtonDisabler={setButtonDisabler}
                   />
                 ))
             )}

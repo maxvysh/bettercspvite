@@ -10,8 +10,6 @@ const SelectedCoursesRow = ({
   credits,
   selectedCourses,
   setSelectedCourses,
-  buttonDisabler,
-  setButtonDisabler,
   totalCredits,
   setTotalCredits,
 }) => {
@@ -26,7 +24,6 @@ const SelectedCoursesRow = ({
       selectedCourses.splice(indexToRemove, 1);
       setSelectedCourses([...selectedCourses]);
     }
-    setButtonDisabler(true);
     setTotalCredits(totalCredits - credits);
   };
 

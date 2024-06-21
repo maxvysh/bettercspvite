@@ -26,9 +26,7 @@ const ClassRow = ({
   selectedCourses,
   setSelectedCourses,
   totalCredits,
-  setTotalCredits,
-  buttonDisabler,
-  setButtonDisabler,
+  setTotalCredits
 }) => {
   const [buttonContent, setButtonContent] = useState("Added!");
   const [buttonHover, setButtonHover] = useState(false);
@@ -83,11 +81,20 @@ const ClassRow = ({
   }, [expandedTitle, title]);
 
   useEffect(() => {
-    if (buttonDisabler) {
-      setButtonHover(false);
-      setButtonDisabler(false);
+    if (
+      selectedCourses.some(
+        (course) =>
+          course.offeringUnitCode === offeringUnitCode &&
+          course.subject === subject &&
+          course.courseNumber === courseNumber
+      )
+    ) {
+      setButtonHover(true);
     }
-  }, [buttonDisabler, setButtonDisabler]);
+    else {
+      setButtonHover(false);
+    }
+  }, [selectedCourses]);
 
   useEffect(() => {
     if (
