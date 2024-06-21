@@ -4,13 +4,44 @@ import ClassScreen from "./ClassScreen";
 import SelectCS from "./SelectCS";
 import SectionScreen from "./SectionScreen";
 import AppContext from './AppContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const App = () => {
   const [selectedCampus, setSelectedCampus] = useState(null);
   const [selectedSemester, setSelectedSemester] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [totalCredits, setTotalCredits] = useState(0);
+  const [isDataFetched, setIsDataFetched] = useState(false);
+
+  
+  useEffect(() => {
+    async function fetchCourses() {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/user/courses`
+      );
+      const data = await response.json();
+      if (data) {
+        setSelectedCourses(data.coursesArray);
+        setTotalCredits(data.totalCredits);
+        setIsDataFetched(true);
+      }
+    }
+    fetchCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!isDataFetched) return;
+    console.log("selected courses", selectedCourses);
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(selectedCourses),
+    });
+  }, [selectedCourses]);
 
   return (
     <AppContext.Provider value={{

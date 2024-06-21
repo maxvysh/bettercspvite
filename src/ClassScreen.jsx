@@ -23,9 +23,16 @@ const ClassScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   // const [selectedCourses, setSelectedCourses] = useState([]);
   // const [totalCredits, setTotalCredits] = useState(0);
-  const [isDataFetched, setIsDataFetched] = useState(false);
+  // const [isDataFetched, setIsDataFetched] = useState(false);
 
-  const { selectedCourses, setSelectedCourses, totalCredits, setTotalCredits } = useContext(AppContext);
+  const {
+    selectedCourses,
+    setSelectedCourses,
+    totalCredits,
+    setTotalCredits,
+    isDataFetched,
+    setIsDataFetched,
+  } = useContext(AppContext);
 
   const handleLevelSelectorChange = (value) => {
     setLevel(value);
@@ -51,34 +58,34 @@ const ClassScreen = () => {
       .catch((error) => console.error("Error:", error));
   }, [campus, semester, level, subject]);
 
-  useEffect(() => {
-    async function fetchCourses() {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/user/courses`
-      );
-      const data = await response.json();
-      if (data) {
-        setSelectedCourses(data.coursesArray);
-        setTotalCredits(data.totalCredits);
-        setIsDataFetched(true);
-      }
-    }
-    fetchCourses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   async function fetchCourses() {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BACKEND_URL}/user/courses`
+  //     );
+  //     const data = await response.json();
+  //     if (data) {
+  //       setSelectedCourses(data.coursesArray);
+  //       setTotalCredits(data.totalCredits);
+  //       setIsDataFetched(true);
+  //     }
+  //   }
+  //   fetchCourses();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
-  useEffect(() => {
-    if (!isDataFetched) return;
-    console.log("selected courses", selectedCourses);
+  // useEffect(() => {
+  //   if (!isDataFetched) return;
+  //   console.log("selected courses", selectedCourses);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(selectedCourses),
-    });
-  }, [selectedCourses]);
+  //   fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(selectedCourses),
+  //   });
+  // }, [selectedCourses]);
 
   return (
     <div>
@@ -134,7 +141,11 @@ const ClassScreen = () => {
                     credits={subjectData.credits}
                     sections={subjectData.sections}
                     openSections={subjectData.openSections}
-                    totalSections={subjectData.sections.filter(section => section.printed === 'Y').length}
+                    totalSections={
+                      subjectData.sections.filter(
+                        (section) => section.printed === "Y"
+                      ).length
+                    }
                     preReqNotes={subjectData.preReqNotes}
                     selectedCourses={selectedCourses}
                     setSelectedCourses={setSelectedCourses}
