@@ -12,11 +12,12 @@ const DropdownSection = ({
     <div className="border-t-2">
       <div className="mx-2 grid grid-cols-7 min-h-12">
         <p className="flex items-center justify-center col-span-1">
-          {section + 1 < 10 ? (
+          {/* {section + 1 < 10 ? (
             <span>0{section + 1}</span>
           ) : (
             <span>{section + 1}</span>
-          )}
+          )} */}
+          {section}
         </p>
         <p className="flex items-center justify-center col-span-1">
           {openStatus ? <span className="text-green-500">OPEN</span> : <span className="text-red-500">CLOSED</span>}

@@ -134,7 +134,7 @@ const ClassScreen = () => {
                     credits={subjectData.credits}
                     sections={subjectData.sections}
                     openSections={subjectData.openSections}
-                    totalSections={subjectData.sections.length}
+                    totalSections={subjectData.sections.filter(section => section.printed === 'Y').length}
                     preReqNotes={subjectData.preReqNotes}
                     selectedCourses={selectedCourses}
                     setSelectedCourses={setSelectedCourses}

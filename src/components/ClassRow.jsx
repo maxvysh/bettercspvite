@@ -204,7 +204,7 @@ const ClassRow = ({
               .map((section, index) => (
                 <DropdownSection
                   key={index}
-                  section={index}
+                  section={section.number}
                   openStatus={section.openStatus}
                   index={section.index}
                   meetingTimes={section.meetingTimes}
