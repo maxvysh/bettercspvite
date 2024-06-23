@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
 import xCircle from "../assets/x-circle.svg";
 import SVG from "react-inlinesvg";
+import { useContext } from "react";
+import AppContext from "../AppContext";
 
 const SelectedCoursesRow = ({
   offeringUnitCode,

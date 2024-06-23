@@ -7,12 +7,12 @@ import AppContext from './AppContext';
 import { useState, useEffect } from 'react';
 
 const App = () => {
-  const [selectedCampus, setSelectedCampus] = useState(null);
-  const [selectedSemester, setSelectedSemester] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [totalCredits, setTotalCredits] = useState(0);
   const [isDataFetched, setIsDataFetched] = useState(false);
-
+  const [campus, setCampus] = useState(null);
+  const [semester, setSemester] = useState(null);
+  const [level, setLevel] = useState("U");
   
   useEffect(() => {
     async function fetchCourses() {
@@ -45,14 +45,16 @@ const App = () => {
 
   return (
     <AppContext.Provider value={{
-      selectedCampus,
-      setSelectedCampus,
-      selectedSemester,
-      setSelectedSemester,
       selectedCourses,
       setSelectedCourses,
       totalCredits,
-      setTotalCredits
+      setTotalCredits,
+      campus,
+      setCampus,
+      semester,
+      setSemester,
+      level,
+      setLevel
     }}>
       <Router>
         <Routes>

@@ -2,7 +2,7 @@ import Header from "./components/Header";
 import ScreenSelector from "./components/ScreenSelector";
 import SelectedCourses from "./components/SelectedCourses";
 import SubjectSelector from "./components/SubjectSelector";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -15,9 +15,9 @@ import ClassRow from "./components/ClassRow";
 import AppContext from "./AppContext";
 
 const ClassScreen = () => {
-  const location = useLocation();
-  const { campus, semester } = location.state;
-  const [level, setLevel] = useState("U");
+  // const location = useLocation();
+  // const { campus, semester } = location.state;
+  // const [level, setLevel] = useState("U");
   const [subject, setSubject] = useState(null);
   const [subjectData, setSubjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +30,10 @@ const ClassScreen = () => {
     setSelectedCourses,
     totalCredits,
     setTotalCredits,
-    isDataFetched,
-    setIsDataFetched,
+    campus,
+    semester,
+    level,
+    setLevel,
   } = useContext(AppContext);
 
   const handleLevelSelectorChange = (value) => {
@@ -133,6 +135,7 @@ const ClassScreen = () => {
                 .map((subjectData) => (
                   <ClassRow
                     key={subjectData.courseNumber + subjectData.campusCode}
+                    courseFD={subjectData}
                     offeringUnitCode={subjectData.offeringUnitCode}
                     subject={subjectData.subject}
                     courseNumber={subjectData.courseNumber}

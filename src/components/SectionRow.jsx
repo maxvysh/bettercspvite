@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import xCircle from "../assets/x-circle-black.svg";
 import SVG from "react-inlinesvg";
 import DropdownSection from "./DropdownSection";
+import { use } from "passport";
 import { useContext } from "react";
 import AppContext from "../AppContext";
 
@@ -29,47 +30,34 @@ const ClassRow = ({
   setSelectedCourses,
   totalCredits,
   setTotalCredits,
-  courseFD,
 }) => {
-  const [buttonContent, setButtonContent] = useState("Added!");
-  const [buttonHover, setButtonHover] = useState(false);
-  const [color, setColor] = useState("rgb(34 197 94)");
   const [useTitle, setUseTitle] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const { campus, semester, level, selectedCourses, setSelectedCourses } =
+    useContext(AppContext);
+  const [subjectData, setSubjectData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const sanitizedPreReqNotes = preReqNotes
     ? preReqNotes.replace(/<\/?em>/g, "")
     : "None listed!";
 
-  const handleAddClass = async () => {
-    setButtonHover(true);
-    setSelectedCourses([
-      ...selectedCourses,
-      {
-        offeringUnitCode,
-        subject,
-        courseNumber,
-        useTitle,
-        credits,
-      },
-    ]);
-    await setTotalCredits(totalCredits + credits);
-  };
-
-  const handleRemoveClass = async () => {
-    setButtonHover(false);
-    const indexToRemove = selectedCourses.findIndex(
-      (course) =>
-        course.offeringUnitCode === offeringUnitCode &&
-        course.subject === subject &&
-        course.courseNumber === courseNumber
-    );
-    if (indexToRemove !== -1) {
-      selectedCourses.splice(indexToRemove, 1);
-      setSelectedCourses([...selectedCourses]);
-    }
-    await setTotalCredits(totalCredits - credits);
-  };
+  useEffect(() => {
+    selectedCourses.forEach((course) => {
+      // Find the full data for each course by fetching the offeringUnitCode
+      fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
+          course.subject
+        }&semester=${semester}&campus=${campus}&level=${level}`
+      )
+        .then((response) => response.text())
+        .then((data) => {
+          setSubjectData(JSON.parse(data));
+        })
+        .catch((error) => console.error("Error:", error));
+    });
+    console.log(subjectData);
+  }, [selectedCourses]);
 
   const handleSectionDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
@@ -83,34 +71,34 @@ const ClassRow = ({
     }
   }, [expandedTitle, title]);
 
-  useEffect(() => {
-    if (
-      selectedCourses.some(
-        (course) =>
-          course.offeringUnitCode === offeringUnitCode &&
-          course.subject === subject &&
-          course.courseNumber === courseNumber
-      )
-    ) {
-      setButtonHover(true);
-    }
-    else {
-      setButtonHover(false);
-    }
-  }, [selectedCourses]);
+  // useEffect(() => {
+  //   if (
+  //     selectedCourses.some(
+  //       (course) =>
+  //         course.offeringUnitCode === offeringUnitCode &&
+  //         course.subject === subject &&
+  //         course.courseNumber === courseNumber
+  //     )
+  //   ) {
+  //     setButtonHover(true);
+  //   }
+  //   else {
+  //     setButtonHover(false);
+  //   }
+  // }, [selectedCourses]);
 
-  useEffect(() => {
-    if (
-      selectedCourses.some(
-        (course) =>
-          course.offeringUnitCode === offeringUnitCode &&
-          course.subject === subject &&
-          course.courseNumber === courseNumber
-      )
-    ) {
-      setButtonHover(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     selectedCourses.some(
+  //       (course) =>
+  //         course.offeringUnitCode === offeringUnitCode &&
+  //         course.subject === subject &&
+  //         course.courseNumber === courseNumber
+  //     )
+  //   ) {
+  //     setButtonHover(true);
+  //   }
+  // }, []);
 
   return (
     <div>
@@ -162,32 +150,6 @@ const ClassRow = ({
                 {sanitizedPreReqNotes}
               </HoverCardContent>
             </HoverCard>
-            {buttonHover ? (
-              <Button
-                id="removeButton"
-                className="ml-8 w-[100px]"
-                style={{ backgroundColor: color }}
-                onClick={handleRemoveClass}
-                onMouseEnter={() => {
-                  setButtonContent(<SVG src={xCircle} alt="X" />);
-                  setColor("rgb(239 68 68)");
-                }}
-                onMouseLeave={() => {
-                  setButtonContent("Added!");
-                  setColor("rgb(34 197 94)");
-                }}
-              >
-                {buttonContent}
-              </Button>
-            ) : (
-              <Button
-                id="addButton"
-                className="ml-8 w-[100px]"
-                onClick={handleAddClass}
-              >
-                Add Class
-              </Button>
-            )}
           </div>
         </div>
         {isDropdownVisible ? (
@@ -197,7 +159,9 @@ const ClassRow = ({
                 <p className="col-span-1 text-center">section</p>
                 <p className="col-span-1 text-center">status</p>
                 <p className="col-span-1 text-center">index</p>
-                <p className="col-span-2 text-center">meeting times/locations</p>
+                <p className="col-span-2 text-center">
+                  meeting times/locations
+                </p>
                 <p className="col-span-1 text-center">exam code</p>
                 <p className="col-span-1 text-center">instructors</p>
               </div>

@@ -17,25 +17,33 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import AppContext from "../AppContext";
 
 const CampusSemesterSelector = () => {
   const navigate = useNavigate();
 
-  const [selectedCampus, setSelectedCampus] = useState(null);
-  const [selectedSemester, setSelectedSemester] = useState(null);
+  // const [selectedCampus, setSelectedCampus] = useState(null);
+  // const [selectedSemester, setSelectedSemester] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+  const {
+    campus,
+    setCampus,
+    semester,
+    setSemester,
+  } = useContext(AppContext);
+
   const handleCampusChange = (value) => {
-    setSelectedCampus(value);
+    setCampus(value);
     console.log(value);
-    checkButtonDisabled(value, selectedSemester);
+    checkButtonDisabled(value, semester);
   };
 
   const handleSemesterChange = (value) => {
-    setSelectedSemester(value);
+    setSemester(value);
     console.log(value);
-    checkButtonDisabled(selectedCampus, value);
+    checkButtonDisabled(campus, value);
   };
 
   const checkButtonDisabled = (campus, semester) => {
@@ -45,9 +53,7 @@ const CampusSemesterSelector = () => {
   const handleButtonClick = () => {
     if (!isButtonDisabled) {
       // Navigate to /classes
-      navigate("/classes", {
-        state: { campus: selectedCampus, semester: selectedSemester },
-      });
+      navigate("/classes");
     } else {
       // Prompt that options are required
       alert("Please select campus and semester options.");
