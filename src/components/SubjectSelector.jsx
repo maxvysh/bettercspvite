@@ -24,6 +24,8 @@ const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
   const [frameworks, setFrameworks] = useState([]);
 
   useEffect(() => {
+    if (!campus || !semester || !level) return;
+
     fetch(
       `${
         import.meta.env.VITE_BACKEND_URL

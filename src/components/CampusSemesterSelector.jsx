@@ -53,6 +53,14 @@ const CampusSemesterSelector = () => {
   const handleButtonClick = () => {
     if (!isButtonDisabled) {
       // Navigate to /classes
+      // Save the campus and semester to mongoDB
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ campus, semester }),
+      });
       navigate("/classes");
     } else {
       // Prompt that options are required

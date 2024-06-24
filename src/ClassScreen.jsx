@@ -31,7 +31,9 @@ const ClassScreen = () => {
     totalCredits,
     setTotalCredits,
     campus,
+    setCampus,
     semester,
+    setSemester,
     level,
     setLevel,
   } = useContext(AppContext);
@@ -44,20 +46,35 @@ const ClassScreen = () => {
     setSubject(newValue);
   };
 
-  useEffect(() => {
-    console.log(campus, semester, level, subject);
-    setIsLoading(true);
-    fetch(
-      `${
-        import.meta.env.VITE_BACKEND_URL
-      }/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
-    )
-      .then((response) => response.text())
+  // Make a useEffect that runs before the component renders
+  // Fetch the campussemester from the backend if it is not already in the context
+  function fetchCampusSemester() {
+    console.log("fetching campus semester");
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
+      .then((response) => response.json())
       .then((data) => {
-        setSubjectData(JSON.parse(data));
-      })
-      .then(() => setIsLoading(false))
-      .catch((error) => console.error("Error:", error));
+        setCampus(data.campus);
+        setSemester(data.semester);
+      });
+  }
+
+  useEffect(() => {
+    if (!campus || !semester) {
+      fetchCampusSemester();
+    } else {
+      setIsLoading(true);
+      fetch(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
+      )
+        .then((response) => response.text())
+        .then((data) => {
+          setSubjectData(JSON.parse(data));
+        })
+        .then(() => setIsLoading(false))
+        .catch((error) => console.error("Error:", error));
+    }
   }, [campus, semester, level, subject]);
 
   // useEffect(() => {

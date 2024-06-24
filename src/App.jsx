@@ -26,6 +26,7 @@ const App = () => {
         setIsDataFetched(true);
       }
     }
+
     fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
