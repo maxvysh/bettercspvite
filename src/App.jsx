@@ -3,8 +3,8 @@ import Home from "./Home";
 import ClassScreen from "./ClassScreen";
 import SelectCS from "./SelectCS";
 import SectionScreen from "./SectionScreen";
-import AppContext from './AppContext';
-import { useState, useEffect } from 'react';
+import AppContext from "./AppContext";
+import { useState, useEffect } from "react";
 
 const App = () => {
   const [selectedCourses, setSelectedCourses] = useState([]);
@@ -23,7 +23,7 @@ const App = () => {
         setSemester(data.semester);
       });
   }
-  
+
   useEffect(() => {
     async function fetchCourses() {
       const response = await fetch(
@@ -42,46 +42,52 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!isDataFetched) return;
-    if (isFirstFetch) {
-      setIsFirstFetch(false);
-      return;
-    }
-    console.log("posting selected courses", selectedCourses);
+    const debounce = setTimeout(() => {
+      if (!isDataFetched) return;
+      if (isFirstFetch) {
+        setIsFirstFetch(false);
+        return;
+      }
+      console.log("posting selected courses", selectedCourses);
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(selectedCourses),
-    });
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedCourses),
+      });
+    }, 2000); // 2 seconds debounce
+
+    return () => clearTimeout(debounce); // Cleanup on effect re-run or component unmount
   }, [selectedCourses]);
 
   return (
-    <AppContext.Provider value={{
-      selectedCourses,
-      setSelectedCourses,
-      totalCredits,
-      setTotalCredits,
-      campus,
-      setCampus,
-      semester,
-      setSemester,
-      level,
-      setLevel,
-      fetchCampusSemester
-    }}>
+    <AppContext.Provider
+      value={{
+        selectedCourses,
+        setSelectedCourses,
+        totalCredits,
+        setTotalCredits,
+        campus,
+        setCampus,
+        semester,
+        setSemester,
+        level,
+        setLevel,
+        fetchCampusSemester,
+      }}
+    >
       <Router>
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route exact path ="/selectcs" element={<SelectCS />} />
+          <Route exact path="/selectcs" element={<SelectCS />} />
           <Route path="/classes" element={<ClassScreen />} />
           <Route path="/sections" element={<SectionScreen />} />
         </Routes>
       </Router>
     </AppContext.Provider>
-  )
-}
+  );
+};
 
 export default App;
