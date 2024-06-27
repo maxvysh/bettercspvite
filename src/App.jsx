@@ -10,9 +10,19 @@ const App = () => {
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [totalCredits, setTotalCredits] = useState(0);
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const [isFirstFetch, setIsFirstFetch] = useState(true);
   const [campus, setCampus] = useState(null);
   const [semester, setSemester] = useState(null);
   const [level, setLevel] = useState("U");
+
+  function fetchCampusSemester() {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
+      .then((response) => response.json())
+      .then((data) => {
+        setCampus(data.campus);
+        setSemester(data.semester);
+      });
+  }
   
   useEffect(() => {
     async function fetchCourses() {
@@ -33,7 +43,11 @@ const App = () => {
 
   useEffect(() => {
     if (!isDataFetched) return;
-    console.log("selected courses", selectedCourses);
+    if (isFirstFetch) {
+      setIsFirstFetch(false);
+      return;
+    }
+    console.log("posting selected courses", selectedCourses);
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
       method: "POST",
@@ -55,7 +69,8 @@ const App = () => {
       semester,
       setSemester,
       level,
-      setLevel
+      setLevel,
+      fetchCampusSemester
     }}>
       <Router>
         <Routes>

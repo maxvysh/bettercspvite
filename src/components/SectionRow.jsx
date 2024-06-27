@@ -42,26 +42,26 @@ const ClassRow = ({
     ? preReqNotes.replace(/<\/?em>/g, "")
     : "None listed!";
 
-  useEffect(() => {
-    selectedCourses.forEach((course) => {
-      // Find the full data for each course by fetching the offeringUnitCode
-      fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
-          course.subject
-        }&semester=${semester}&campus=${campus}&level=${level}`
-      )
-        .then((response) => response.text())
-        .then((data) => {
-          setSubjectData(JSON.parse(data));
-        })
-        .catch((error) => console.error("Error:", error));
-    });
-    console.log(subjectData);
-  }, [selectedCourses]);
+  // useEffect(() => {
+  //   selectedCourses.forEach((course) => {
+  //     // Find the full data for each course by fetching the offeringUnitCode
+  //     fetch(
+  //       `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
+  //         course.subject
+  //       }&semester=${semester}&campus=${campus}&level=${level}`
+  //     )
+  //       .then((response) => response.text())
+  //       .then((data) => {
+  //         setSubjectData(JSON.parse(data));
+  //       })
+  //       .catch((error) => console.error("Error:", error));
+  //   });
+  //   console.log(subjectData);
+  // }, [selectedCourses]);
 
-  const handleSectionDropdown = () => {
-    setIsDropdownVisible(!isDropdownVisible);
-  };
+  // const handleSectionDropdown = () => {
+  //   setIsDropdownVisible(!isDropdownVisible);
+  // };
 
   useEffect(() => {
     if (expandedTitle && expandedTitle.trim() !== "") {

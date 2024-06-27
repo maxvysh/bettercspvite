@@ -36,6 +36,7 @@ const ClassScreen = () => {
     setSemester,
     level,
     setLevel,
+    fetchCampusSemester
   } = useContext(AppContext);
 
   const handleLevelSelectorChange = (value) => {
@@ -48,15 +49,15 @@ const ClassScreen = () => {
 
   // Make a useEffect that runs before the component renders
   // Fetch the campussemester from the backend if it is not already in the context
-  function fetchCampusSemester() {
-    console.log("fetching campus semester");
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCampus(data.campus);
-        setSemester(data.semester);
-      });
-  }
+  // function fetchCampusSemester() {
+  //   console.log("fetching campus semester");
+  //   fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setCampus(data.campus);
+  //       setSemester(data.semester);
+  //     });
+  // }
 
   useEffect(() => {
     if (!campus || !semester) {
