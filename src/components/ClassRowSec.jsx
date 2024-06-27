@@ -7,6 +7,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import xCircle from "../assets/x-circle-black.svg";
 import SVG from "react-inlinesvg";
@@ -32,6 +33,12 @@ const ClassRowSec = ({
 }) => {
   const [useTitle, setUseTitle] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = () => {
+    console.log("Checkbox changed!");
+    setIsChecked(!isChecked);
+  };
 
   const sanitizedPreReqNotes = preReqNotes
     ? preReqNotes.replace(/<\/?em>/g, "")
@@ -106,15 +113,20 @@ const ClassRowSec = ({
         {isDropdownVisible ? (
           <div>
             <div className="border-t-2">
-              <div className="grid grid-cols-7 mx-2">
-                <p className="col-span-1 text-center">section</p>
-                <p className="col-span-1 text-center">status</p>
-                <p className="col-span-1 text-center">index</p>
-                <p className="col-span-2 text-center">
-                  meeting times/locations
-                </p>
-                <p className="col-span-1 text-center">exam code</p>
-                <p className="col-span-1 text-center">instructors</p>
+              <div className="flex relative">
+                <div className="absolute left-8 top-1 flex items-center justify-center">
+                  <Checkbox />
+                </div>
+                <div className="grid grid-cols-7 mx-2 w-full">
+                  <p className="col-span-1 text-center">section</p>
+                  <p className="col-span-1 text-center">status</p>
+                  <p className="col-span-1 text-center">index</p>
+                  <p className="col-span-2 text-center">
+                    meeting times/locations
+                  </p>
+                  <p className="col-span-1 text-center">exam code</p>
+                  <p className="col-span-1 text-center">instructors</p>
+                </div>
               </div>
             </div>
             {sections
