@@ -14,7 +14,7 @@ import DropdownSection from "./DropdownSection";
 import { useContext } from "react";
 import AppContext from "../AppContext";
 
-const ClassRow = ({
+const ClassRowSec = ({
   offeringUnitCode,
   subject,
   courseNumber,
@@ -30,45 +30,12 @@ const ClassRow = ({
   totalCredits,
   setTotalCredits,
 }) => {
-  const [buttonContent, setButtonContent] = useState("Added!");
-  const [buttonHover, setButtonHover] = useState(false);
-  const [color, setColor] = useState("rgb(34 197 94)");
   const [useTitle, setUseTitle] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const sanitizedPreReqNotes = preReqNotes
     ? preReqNotes.replace(/<\/?em>/g, "")
     : "None listed!";
-
-  const handleAddClass = async () => {
-    setButtonHover(true);
-    setSelectedCourses([
-      ...selectedCourses,
-      {
-        offeringUnitCode,
-        subject,
-        courseNumber,
-        useTitle,
-        credits,
-      },
-    ]);
-    await setTotalCredits(totalCredits + credits);
-  };
-
-  const handleRemoveClass = async () => {
-    setButtonHover(false);
-    const indexToRemove = selectedCourses.findIndex(
-      (course) =>
-        course.offeringUnitCode === offeringUnitCode &&
-        course.subject === subject &&
-        course.courseNumber === courseNumber
-    );
-    if (indexToRemove !== -1) {
-      selectedCourses.splice(indexToRemove, 1);
-      setSelectedCourses([...selectedCourses]);
-    }
-    await setTotalCredits(totalCredits - credits);
-  };
 
   const handleSectionDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
@@ -82,39 +49,10 @@ const ClassRow = ({
     }
   }, [expandedTitle, title]);
 
-  useEffect(() => {
-    if (
-      selectedCourses.some(
-        (course) =>
-          course.offeringUnitCode === offeringUnitCode &&
-          course.subject === subject &&
-          course.courseNumber === courseNumber
-      )
-    ) {
-      setButtonHover(true);
-    }
-    else {
-      setButtonHover(false);
-    }
-  }, [selectedCourses]);
-
-  useEffect(() => {
-    if (
-      selectedCourses.some(
-        (course) =>
-          course.offeringUnitCode === offeringUnitCode &&
-          course.subject === subject &&
-          course.courseNumber === courseNumber
-      )
-    ) {
-      setButtonHover(true);
-    }
-  }, []);
-
   return (
     <div>
       <Card className="border-2 mt-1 min-w-[1200px] w-full">
-        <div className="flex text-nowrap justify-between w-full p-1">
+        <div className="flex text-nowrap justify-between w-full p-1 h-12">
           <div className="flex items-center w-full">
             <button onClick={handleSectionDropdown}>
               <ChevronDown className="ml-2 -mr-1" />
@@ -153,40 +91,16 @@ const ClassRow = ({
                 </p>
               </div>
             </div>
-            <HoverCard>
-              <HoverCardTrigger className="underline ml-3.5">
-                Prerequisites
-              </HoverCardTrigger>
-              <HoverCardContent className="text-wrap text-center w-full max-w-[300px]">
-                {sanitizedPreReqNotes}
-              </HoverCardContent>
-            </HoverCard>
-            {buttonHover ? (
-              <Button
-                id="removeButton"
-                className="ml-8 w-[100px]"
-                style={{ backgroundColor: color }}
-                onClick={handleRemoveClass}
-                onMouseEnter={() => {
-                  setButtonContent(<SVG src={xCircle} alt="X" />);
-                  setColor("rgb(239 68 68)");
-                }}
-                onMouseLeave={() => {
-                  setButtonContent("Added!");
-                  setColor("rgb(34 197 94)");
-                }}
-              >
-                {buttonContent}
-              </Button>
-            ) : (
-              <Button
-                id="addButton"
-                className="ml-8 w-[100px]"
-                onClick={handleAddClass}
-              >
-                Add Class
-              </Button>
-            )}
+            <div className="mr-2">
+              <HoverCard>
+                <HoverCardTrigger className="underline ml-3.5">
+                  Prerequisites
+                </HoverCardTrigger>
+                <HoverCardContent className="text-wrap text-center w-full max-w-[300px]">
+                  {sanitizedPreReqNotes}
+                </HoverCardContent>
+              </HoverCard>
+            </div>
           </div>
         </div>
         {isDropdownVisible ? (
@@ -196,7 +110,9 @@ const ClassRow = ({
                 <p className="col-span-1 text-center">section</p>
                 <p className="col-span-1 text-center">status</p>
                 <p className="col-span-1 text-center">index</p>
-                <p className="col-span-2 text-center">meeting times/locations</p>
+                <p className="col-span-2 text-center">
+                  meeting times/locations
+                </p>
                 <p className="col-span-1 text-center">exam code</p>
                 <p className="col-span-1 text-center">instructors</p>
               </div>
@@ -221,4 +137,4 @@ const ClassRow = ({
   );
 };
 
-export default ClassRow;
+export default ClassRowSec;

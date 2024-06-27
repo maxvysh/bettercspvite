@@ -3,7 +3,7 @@ import ScreenSelector from "./components/ScreenSelector";
 import SelectedCourses from "./components/SelectedCourses";
 import { useContext, useEffect, useState } from "react";
 import AppContext from "./AppContext";
-import ClassRow from "./components/ClassRow";
+import ClassRowSec from "./components/ClassRowSec";
 
 const SectionScreen = () => {
   const {
@@ -119,7 +119,7 @@ const SectionScreen = () => {
                   subject.sections.some((section) => section.printed === "Y")
                 )
                 .map((subjectData) => (
-                  <ClassRow
+                  <ClassRowSec
                     key={subjectData.courseNumber + subjectData.campusCode}
                     offeringUnitCode={subjectData.offeringUnitCode}
                     subject={subjectData.subject}
