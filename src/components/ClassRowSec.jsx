@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import xCircle from "../assets/x-circle-black.svg";
 import SVG from "react-inlinesvg";
-import DropdownSection from "./DropdownSection";
+import DropdownSectionSec from "./DropdownSectionSec";
 import { useContext } from "react";
 import AppContext from "../AppContext";
 
@@ -132,7 +132,7 @@ const ClassRowSec = ({
             {sections
               .filter((section) => section.printed === "Y")
               .map((section, index) => (
-                <DropdownSection
+                <DropdownSectionSec
                   key={index}
                   section={section.number}
                   openStatus={section.openStatus}
