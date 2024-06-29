@@ -33,10 +33,9 @@ const ClassRowSec = ({
 }) => {
   const [useTitle, setUseTitle] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
 
   const handleCheckboxChange = () => {
-    console.log("Checkbox changed!");
     setIsChecked(!isChecked);
   };
 
@@ -115,7 +114,7 @@ const ClassRowSec = ({
             <div className="border-t-2">
               <div className="flex relative">
                 <div className="absolute left-8 top-1 flex items-center justify-center">
-                  <Checkbox />
+                  <Checkbox onCheckedChange={handleCheckboxChange} defaultChecked />
                 </div>
                 <div className="grid grid-cols-7 mx-2 w-full">
                   <p className="col-span-1 text-center">section</p>
@@ -140,6 +139,7 @@ const ClassRowSec = ({
                   meetingTimes={section.meetingTimes}
                   examCode={section.examCode}
                   instructors={section.instructors}
+                  check={isChecked}
                 />
               ))}
           </div>
