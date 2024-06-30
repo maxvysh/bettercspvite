@@ -1,6 +1,8 @@
 import MeetingTimes from "./MeetingTimes";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
+import { useContext } from "react";
+import AppContext from "../AppContext";
 
 const DropdownSectionSec = ({
   section,
@@ -11,13 +13,35 @@ const DropdownSectionSec = ({
   instructors,
   check,
 }) => {
+  const { selectedIndexes, setSelectedIndexes } = useContext(AppContext);
   const [isChecked, setIsChecked] = useState(check);
 
   useEffect(() => {
     setIsChecked(check);
   }, [check]);
 
+  useEffect(() => {
+    // Add every selected index to the selectedIndexes array if its not already there
+    if (isChecked) {
+      if (!selectedIndexes.includes(index)) {
+        setSelectedIndexes((prev) => [...prev, index]);
+      }
+    }
+  }, []);
+
+//   useEffect(() => {
+//     console.log(selectedIndexes);
+//   }, [selectedIndexes]);
+
   const handleCheckboxChange = () => {
+    // If the checkbox is checked, add the index to the selectedIndexes array
+    // Otherwise remove it
+    if (!isChecked) {
+      setSelectedIndexes((prev) => [...prev, index]);
+    } else {
+      setSelectedIndexes((prev) => prev.filter((i) => i !== index));
+    }
+
     setIsChecked(!isChecked);
   };
 
@@ -25,7 +49,11 @@ const DropdownSectionSec = ({
     <div className="border-t-2">
       <div className="flex relative">
         <div className="absolute left-8 top-4 flex items-center justify-center">
-          <Checkbox defaultChecked checked={isChecked} onCheckedChange={handleCheckboxChange} />
+          <Checkbox
+            defaultChecked
+            checked={isChecked}
+            onCheckedChange={handleCheckboxChange}
+          />
         </div>
         <div className="mx-2 grid grid-cols-7 min-h-12 w-full">
           <p className="flex items-center justify-center col-span-1">

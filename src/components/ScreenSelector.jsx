@@ -40,10 +40,10 @@ const ScreenSelector = () => {
         </Button>
       )}
 
-      {currentPage === "/build-schedule" ? (
+      {currentPage === "/build" ? (
         <Button className="text-base">Build Schedule</Button>
       ) : (
-        <Button variant="outline" className="border-2 text-base text-gray-500">
+        <Button variant="outline" className="border-2 text-base text-gray-500" onClick={handleClick('build')}>
           Build Schedule
         </Button>
       )}

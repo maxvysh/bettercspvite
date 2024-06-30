@@ -15,6 +15,8 @@ const SectionScreen = () => {
     campus,
     level,
     fetchCampusSemester,
+    indexTimes,
+    setIndexTimes,
   } = useContext(AppContext);
 
   const [subjectData, setSubjectData] = useState([]);
@@ -88,9 +90,32 @@ const SectionScreen = () => {
         const validCourses = courses.filter((course) => course !== null);
         setSubjectData(validCourses); // Update state with all found courses
         setIsLoading(false); // Stop loading after all fetches are complete
+
+        // Create a hash map where the key is the course index and the value is the course code and meeting times
+        // The course code is offeringUnitCode:subject:courseNumber (remove the : from the course code)
+        // Store the hash map in the indexTimes state
+        const indexTimesMap = validCourses.reduce((acc, course) => {
+          const courseCode = `${course.offeringUnitCode}${course.subject}${course.courseNumber}`;
+          course.sections
+            .filter((section) => section.printed === "Y")
+            .forEach((section) => {
+              // Assuming section.meetingTimes is the array of meeting times for the section
+              acc[section.index] = {
+                courseCode: courseCode,
+                meetingTimes: section.meetingTimes, // Make sure this matches the actual structure of your data
+              };
+            });
+          return acc;
+        }, {});
+
+        setIndexTimes(indexTimesMap);
       });
     }
   }, [selectedCourses, semester, campus, level]); // Add dependencies as needed
+
+  useEffect(() => {
+    console.log(indexTimes);
+  }, [indexTimes]);
 
   return (
     <div>

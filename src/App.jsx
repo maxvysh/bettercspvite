@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Home";
 import ClassScreen from "./ClassScreen";
 import SelectCS from "./SelectCS";
+import BuildScreen from "./BuildScreen";
 import SectionScreen from "./SectionScreen";
 import AppContext from "./AppContext";
 import { useState, useEffect } from "react";
@@ -14,6 +15,8 @@ const App = () => {
   const [campus, setCampus] = useState(null);
   const [semester, setSemester] = useState(null);
   const [level, setLevel] = useState("U");
+  const [selectedIndexes, setSelectedIndexes] = useState([]);
+  const [indexTimes, setIndexTimes] = useState();
 
   function fetchCampusSemester() {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
@@ -76,6 +79,10 @@ const App = () => {
         level,
         setLevel,
         fetchCampusSemester,
+        selectedIndexes,
+        setSelectedIndexes,
+        indexTimes,
+        setIndexTimes,
       }}
     >
       <Router>
@@ -84,6 +91,7 @@ const App = () => {
           <Route exact path="/selectcs" element={<SelectCS />} />
           <Route path="/classes" element={<ClassScreen />} />
           <Route path="/sections" element={<SectionScreen />} />
+          <Route path="/build" element={<BuildScreen />} />
         </Routes>
       </Router>
     </AppContext.Provider>
