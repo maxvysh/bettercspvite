@@ -161,7 +161,9 @@ const ClassScreen = () => {
                     title={subjectData.title}
                     credits={subjectData.credits}
                     sections={subjectData.sections}
-                    openSections={subjectData.openSections}
+                    openSections={subjectData.sections.filter(
+                      (section) => section.printed === "Y" && section.openStatus === true
+                    ).length}
                     totalSections={
                       subjectData.sections.filter(
                         (section) => section.printed === "Y"
