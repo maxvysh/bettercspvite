@@ -17,6 +17,7 @@ const App = () => {
   const [level, setLevel] = useState("U");
   const [selectedIndexes, setSelectedIndexes] = useState([]);
   const [indexTimes, setIndexTimes] = useState();
+  const [subjectData, setSubjectData] = useState([]);
 
   function fetchCampusSemester() {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
@@ -65,6 +66,89 @@ const App = () => {
     return () => clearTimeout(debounce); // Cleanup on effect re-run or component unmount
   }, [selectedCourses]);
 
+  useEffect(() => {
+    // Check for null campus, semester, and level
+    if (!campus || !semester) {
+      fetchCampusSemester();
+    } else {
+      // setIsLoading(true); // Start loading before fetching data
+
+      const fetchPromises = selectedCourses.map((course) =>
+        fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
+            course.subject
+          }&semester=${semester}&campus=${campus}&level=${level}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            // Assuming data is an array of courses
+            const foundCourse = data.find(
+              (c) => c.courseNumber === course.courseNumber
+            );
+            if (foundCourse) {
+              return foundCourse; // Return found course for further processing
+            } else {
+              return null; // Return null if no course found
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching course data:", error);
+            return null; // Return null in case of error
+          })
+      );
+
+      Promise.all(fetchPromises).then((courses) => {
+        // Filter out null values (not found or error cases)
+        const validCourses = courses.filter((course) => course !== null);
+        setSubjectData(validCourses); // Update state with all found courses
+        // setIsLoading(false); // Stop loading after all fetches are complete
+
+        // Create a hash map where the key is the course index and the value is the course code and meeting times
+        // The course code is offeringUnitCode:subject:courseNumber (remove the : from the course code)
+        // Store the hash map in the indexTimes state
+        const indexTimesMap = validCourses.reduce((acc, course) => {
+          const courseCode = `${course.offeringUnitCode}${course.subject}${course.courseNumber}`;
+          course.sections
+            .filter((section) => section.printed === "Y")
+            .forEach((section) => {
+              // Assuming section.meetingTimes is the array of meeting times for the section
+              acc[section.index] = {
+                courseCode: courseCode,
+                meetingTimes: section.meetingTimes, // Make sure this matches the actual structure of your data
+              };
+            });
+          return acc;
+        }, {});
+
+        setIndexTimes(indexTimesMap);
+      });
+    }
+  }, [selectedCourses, semester, campus, level]); // Add dependencies as needed
+
+  useEffect(() => {
+    console.log(indexTimes);
+  }, [indexTimes]);
+
+  // Build schedules if selectedIndexes and indexTimes are set
+  // useEffect(() => {
+  //   if (selectedIndexes.length > 0 && indexTimes) {
+  //     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/buildschedules`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         selectedIndexes,
+  //         indexTimes,
+  //       }),
+  //     })
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         console.log("Schedules:", data);
+  //       });
+  //   }
+  // }, [selectedIndexes, indexTimes]);
+
   return (
     <AppContext.Provider
       value={{
@@ -83,6 +167,7 @@ const App = () => {
         setSelectedIndexes,
         indexTimes,
         setIndexTimes,
+        subjectData,
       }}
     >
       <Router>
