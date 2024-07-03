@@ -16,7 +16,7 @@ const App = () => {
   const [semester, setSemester] = useState(null);
   const [level, setLevel] = useState("U");
   const [selectedIndexes, setSelectedIndexes] = useState([]);
-  const [indexTimes, setIndexTimes] = useState();
+  const [indexTimes, setIndexTimes] = useState([]);
   const [subjectData, setSubjectData] = useState([]);
 
   function fetchCampusSemester() {
@@ -27,6 +27,20 @@ const App = () => {
         setSemester(data.semester);
       });
   }
+
+  // function initIndexes() {
+  //   selectedCourses.forEach(course => {
+  //     course.sections.forEach(section => {
+  //       if (section.printed === "Y") {
+  //         setSelectedIndexes(prevIndexes => [...prevIndexes, section.index]);
+  //       }
+  //     });
+  //   });
+  // }
+
+  useEffect(() => {
+    console.log('selectedIndexes', selectedIndexes);
+  }, [selectedIndexes]);
 
   useEffect(() => {
     async function fetchCourses() {
@@ -42,8 +56,13 @@ const App = () => {
     }
 
     fetchCourses();
+    // initIndexes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    console.log('selected courses', selectedCourses);
+  }, [selectedCourses]);
 
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -111,6 +130,8 @@ const App = () => {
           course.sections
             .filter((section) => section.printed === "Y")
             .forEach((section) => {
+              // Add section index to selectedIndexes
+              setSelectedIndexes((prevIndexes) => [...prevIndexes, section.index]);
               // Assuming section.meetingTimes is the array of meeting times for the section
               acc[section.index] = {
                 courseCode: courseCode,

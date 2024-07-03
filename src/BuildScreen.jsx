@@ -15,22 +15,27 @@ const BuildScreen = () => {
     fetchCampusSemester,
     indexTimes,
     setIndexTimes,
+    selectedIndexes,
   } = useContext(AppContext);
 
   useEffect(() => {
-    console.log("posting selected courses", selectedCourses);
+    console.log("posting selected Indexes", selectedIndexes);
     console.log("posting indexTimes", indexTimes);
+    if (selectedIndexes.length === 0 || indexTimes.length === 0) {
+      return;
+    }
+    console.log('running fetch');
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/buildschedules`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        selectedCourses,
+        selectedIndexes,
         indexTimes,
       }),
     })
-  }, [selectedCourses, indexTimes]);
+  }, []);
 
   return (
     <div>

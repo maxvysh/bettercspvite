@@ -36,13 +36,11 @@ const CampusSemesterSelector = () => {
 
   const handleCampusChange = (value) => {
     setCampus(value);
-    console.log(value);
     checkButtonDisabled(value, semester);
   };
 
   const handleSemesterChange = (value) => {
     setSemester(value);
-    console.log(value);
     checkButtonDisabled(campus, value);
   };
 
