@@ -116,7 +116,7 @@ const ClassRowSec = ({
             <div className="border-t-2">
               <div className="flex relative">
                 <div className="absolute left-8 top-1 flex items-center justify-center">
-                  <Checkbox onCheckedChange={handleCheckboxChange} defaultChecked />
+                  <Checkbox onCheckedChange={handleCheckboxChange} checked={isChecked} />
                 </div>
                 <div className="grid grid-cols-7 mx-2 w-full">
                   <p className="col-span-1 text-center">section</p>

@@ -17,32 +17,31 @@ const DropdownSectionSec = ({
   const [isChecked, setIsChecked] = useState(check);
 
   useEffect(() => {
+    console.log("check", check);
     setIsChecked(check);
-
-    if (check) {
-      setSelectedIndexes((prev) => {
-        if (!prev.includes(index)) {
-          return [...prev, index];
-        }
-        return prev;
-      });
-    } else {
-      setSelectedIndexes((prev) => prev.filter((i) => i !== index));
-    }
+  
+    setSelectedIndexes((prev) => {
+      const newIndexes = new Set(prev);
+      if (check) {
+        newIndexes.add(index);
+      } else {
+        newIndexes.delete(index);
+      }
+      return newIndexes;
+    });
   }, [check]);
-
+  
   const handleCheckboxChange = () => {
-    if (!isChecked) {
-      setSelectedIndexes((prev) => {
-        if (!prev.includes(index)) {
-          return [...prev, index];
-        }
-        return prev;
-      });
-    } else {
-      setSelectedIndexes((prev) => prev.filter((i) => i !== index));
-    }
-
+    setSelectedIndexes((prev) => {
+      const newIndexes = new Set(prev);
+      if (!isChecked) {
+        newIndexes.add(index);
+      } else {
+        newIndexes.delete(index);
+      }
+      return newIndexes;
+    });
+  
     setIsChecked(!isChecked);
   };
 
@@ -51,7 +50,7 @@ const DropdownSectionSec = ({
       <div className="flex relative">
         <div className="absolute left-8 top-4 flex items-center justify-center">
           <Checkbox
-            defaultChecked
+            // defaultChecked
             checked={isChecked}
             onCheckedChange={handleCheckboxChange}
           />

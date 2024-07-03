@@ -120,11 +120,11 @@ const App = () => {
             .filter((section) => section.printed === "Y")
             .forEach((section) => {
               // Add section index to selectedIndexes
-              setSelectedIndexes((prevIndexes) =>
-                prevIndexes.includes(section.index)
-                  ? prevIndexes
-                  : [...prevIndexes, section.index]
-              ); 
+              setSelectedIndexes((prevIndexes) => {
+                const newIndexes = new Set(prevIndexes);
+                newIndexes.add(section.index); // This will be a no-op if the index already exists
+                return newIndexes;
+              });
               acc[section.index] = {
                 courseCode: courseCode,
                 meetingTimes: section.meetingTimes, // Make sure this matches the actual structure of your data
