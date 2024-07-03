@@ -9,3 +9,7 @@ Improvements planned in the future:
 - Built in course sniper
 - Sort by core codes
 - Rate my prof ratings
+
+
+FIX:
+-section checkmarks
