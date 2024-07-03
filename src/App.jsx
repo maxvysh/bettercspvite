@@ -28,18 +28,8 @@ const App = () => {
       });
   }
 
-  // function initIndexes() {
-  //   selectedCourses.forEach(course => {
-  //     course.sections.forEach(section => {
-  //       if (section.printed === "Y") {
-  //         setSelectedIndexes(prevIndexes => [...prevIndexes, section.index]);
-  //       }
-  //     });
-  //   });
-  // }
-
   useEffect(() => {
-    console.log('selectedIndexes', selectedIndexes);
+    console.log("selectedIndexes", selectedIndexes);
   }, [selectedIndexes]);
 
   useEffect(() => {
@@ -56,12 +46,11 @@ const App = () => {
     }
 
     fetchCourses();
-    // initIndexes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    console.log('selected courses', selectedCourses);
+    console.log("selected courses", selectedCourses);
   }, [selectedCourses]);
 
   useEffect(() => {
@@ -131,8 +120,11 @@ const App = () => {
             .filter((section) => section.printed === "Y")
             .forEach((section) => {
               // Add section index to selectedIndexes
-              setSelectedIndexes((prevIndexes) => [...prevIndexes, section.index]);
-              // Assuming section.meetingTimes is the array of meeting times for the section
+              setSelectedIndexes((prevIndexes) =>
+                prevIndexes.includes(section.index)
+                  ? prevIndexes
+                  : [...prevIndexes, section.index]
+              ); 
               acc[section.index] = {
                 courseCode: courseCode,
                 meetingTimes: section.meetingTimes, // Make sure this matches the actual structure of your data

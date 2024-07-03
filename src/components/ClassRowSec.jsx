@@ -39,9 +39,6 @@ const ClassRowSec = ({
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
-
-    // If the checkbox is unchecked, remove the index from the selectedIndexes array
-    // Otherwise add it
   };
 
   const sanitizedPreReqNotes = preReqNotes

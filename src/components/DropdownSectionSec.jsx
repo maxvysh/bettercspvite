@@ -13,32 +13,32 @@ const DropdownSectionSec = ({
   instructors,
   check,
 }) => {
-  const { selectedIndexes, setSelectedIndexes } = useContext(AppContext);
+  const { setSelectedIndexes } = useContext(AppContext);
   const [isChecked, setIsChecked] = useState(check);
 
   useEffect(() => {
     setIsChecked(check);
+
+    if (check) {
+      setSelectedIndexes((prev) => {
+        if (!prev.includes(index)) {
+          return [...prev, index];
+        }
+        return prev;
+      });
+    } else {
+      setSelectedIndexes((prev) => prev.filter((i) => i !== index));
+    }
   }, [check]);
 
-  // useEffect(() => {
-  //   // Add every selected index to the selectedIndexes array if its not already there
-  //   if (isChecked) {
-  //     if (!selectedIndexes.includes(index)) {
-  //       setSelectedIndexes((prev) => [...prev, index]);
-  //     }
-  //   }
-  // }, []);
-
-//   useEffect(() => {
-//     console.log(selectedIndexes);
-//   }, [selectedIndexes]);
-
   const handleCheckboxChange = () => {
-    // If the checkbox is checked, add the index to the selectedIndexes array
-    // Otherwise remove it
-    console.log("checkbox change");
     if (!isChecked) {
-      setSelectedIndexes((prev) => [...prev, index]);
+      setSelectedIndexes((prev) => {
+        if (!prev.includes(index)) {
+          return [...prev, index];
+        }
+        return prev;
+      });
     } else {
       setSelectedIndexes((prev) => prev.filter((i) => i !== index));
     }
