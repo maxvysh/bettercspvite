@@ -111,9 +111,7 @@ const App = () => {
         setSubjectData(validCourses); // Update state with all found courses
         // setIsLoading(false); // Stop loading after all fetches are complete
 
-        // Create a hash map where the key is the course index and the value is the course code and meeting times
-        // The course code is offeringUnitCode:subject:courseNumber (remove the : from the course code)
-        // Store the hash map in the indexTimes state
+        // Create a map where the key is the course index and the value is the course code and meeting times
         const indexTimesMap = validCourses.reduce((acc, course) => {
           const courseCode = `${course.offeringUnitCode}${course.subject}${course.courseNumber}`;
           course.sections
@@ -125,13 +123,14 @@ const App = () => {
                 newIndexes.add(section.index); // This will be a no-op if the index already exists
                 return newIndexes;
               });
-              acc[section.index] = {
+              // Use the set method to add to the Map
+              acc.set(section.index, {
                 courseCode: courseCode,
-                meetingTimes: section.meetingTimes, // Make sure this matches the actual structure of your data
-              };
+                meetingTimes: section.meetingTimes,
+              });
             });
           return acc;
-        }, {});
+        }, new Map());
 
         setIndexTimes(indexTimesMap);
       });

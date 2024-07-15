@@ -59,7 +59,7 @@ const ClassRowSec = ({
 
   return (
     <div>
-      <Card className="border-2 mt-1 min-w-[1200px] w-full">
+      <Card className="border-2 mb-1 min-w-[1200px] w-full">
         <div className="flex text-nowrap justify-between w-full p-1 h-12">
           <div className="flex items-center w-full">
             <button onClick={handleSectionDropdown}>

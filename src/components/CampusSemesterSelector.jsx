@@ -85,7 +85,7 @@ const CampusSemesterSelector = () => {
               <SelectValue placeholder="Select semester" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="12024">Spring</SelectItem>
+              <SelectItem value="92024">Fall</SelectItem>
               <SelectItem value="72024">Summer</SelectItem>
             </SelectContent>
           </Select>
