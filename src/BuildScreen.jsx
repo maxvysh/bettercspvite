@@ -4,6 +4,8 @@ import { useContext, useEffect, useState } from "react";
 import AppContext from "./AppContext";
 import ListViewRow from "./components/ListViewRow";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import BuildSelector from "./components/BuildSelector";
 
 const BuildScreen = () => {
   const {
@@ -25,6 +27,8 @@ const BuildScreen = () => {
   const [buildIndexes, setBuildIndexes] = useState([]);
   const [currentIndexes, setCurrentIndexes] = useState([]);
   const [indexData, setIndexData] = useState([]);
+  const [displayList, setDisplayList] = useState(true);
+  const [currentBuild, setCurrentBuild] = useState(0);
 
   const serializeIndexTimes = (indexTimes) => {
     const indexTimesObject = {};
@@ -86,6 +90,10 @@ const BuildScreen = () => {
   }, [buildIndexes]);
 
   useEffect(() => {
+    setCurrentIndexes(buildIndexes[currentBuild]);
+  }, [currentBuild]);
+
+  useEffect(() => {
     // console.log("posting selected Indexes", selectedIndexes);
     // console.log("posting indexTimes", indexTimes);
     // console.log("posting subjectData", subjectData);
@@ -113,6 +121,18 @@ const BuildScreen = () => {
     });
   }, [selectedIndexes, indexTimes]);
 
+  const handleNext = () => {
+    if (currentBuild < buildIndexes.length - 1) {
+      setCurrentBuild(currentBuild + 1);
+    }
+  }
+
+  const handlePrev = () => {
+    if (currentBuild > 0) {
+      setCurrentBuild(currentBuild - 1);
+    }
+  }
+
   return (
     <div>
       <div className="min-w-[1570px]">
@@ -121,6 +141,19 @@ const BuildScreen = () => {
       <div className="p-3 flex">
         <div className="w-[330px] min-w-[330px]">
           <ScreenSelector />
+          <BuildSelector
+            displayList={displayList}
+            setDisplayList={setDisplayList}
+          />
+          <Card className="flex justify-evenly">
+            <Button onClick={() => handlePrev()}>Prev</Button>
+            <div className="flex flex-col justify-center">
+              <p className="h-fit">
+                {currentBuild + 1} of {buildIndexes.length}
+              </p>
+            </div>
+            <Button onClick={() => handleNext()}>Next</Button>
+          </Card>
         </div>
         <div className="ml-4 w-full">
           {isLoading ? (
@@ -129,17 +162,17 @@ const BuildScreen = () => {
             // For each index in buildIndexes, run the dataByIndex function to get the section data
             // Then pass the section data to the ListViewRow component
             <Card className="border-2 min-w-[1200px] w-full">
-                <div className="grid grid-cols-8 w-full mx-2">
-                  <p className="col-span-1 text-center">title</p>
-                  <p className="col-span-1 text-center">section</p>
-                  <p className="col-span-1 text-center">status</p>
-                  <p className="col-span-1 text-center">index</p>
-                  <p className="col-span-2 text-center">
-                    meeting times/locations
-                  </p>
-                  <p className="col-span-1 text-center">exam code</p>
-                  <p className="col-span-1 text-center">instructors</p>
-                </div>
+              <div className="grid grid-cols-8 w-full mx-2">
+                <p className="col-span-1 text-center">title</p>
+                <p className="col-span-1 text-center">section</p>
+                <p className="col-span-1 text-center">status</p>
+                <p className="col-span-1 text-center">index</p>
+                <p className="col-span-2 text-center">
+                  meeting times/locations
+                </p>
+                <p className="col-span-1 text-center">exam code</p>
+                <p className="col-span-1 text-center">instructors</p>
+              </div>
               {indexData.map((sectionData) => {
                 return (
                   <div key={sectionData.index}>
