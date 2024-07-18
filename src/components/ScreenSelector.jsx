@@ -23,7 +23,7 @@ const ScreenSelector = () => {
   };
 
   return (
-    <Card className="flex flex-col justify-evenly h-52 p-2 border-2">
+    <Card className="flex flex-col justify-evenly p-2 border-2 gap-1">
       {currentPage === "/classes" ? (
         <Button className="text-base">Select Schedule</Button>
       ) : (
