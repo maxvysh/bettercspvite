@@ -6,6 +6,8 @@ import ListViewRow from "./components/ListViewRow";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import BuildSelector from "./components/BuildSelector";
+import Timetable from "react-timetable-events";
+import { parseISO } from "date-fns";
 
 const BuildScreen = () => {
   const {
@@ -29,6 +31,7 @@ const BuildScreen = () => {
   const [indexData, setIndexData] = useState([]);
   const [displayList, setDisplayList] = useState(true);
   const [currentBuild, setCurrentBuild] = useState(0);
+  const [eventsByDay, setEventsByDay] = useState({});
 
   const serializeIndexTimes = (indexTimes) => {
     const indexTimesObject = {};
@@ -58,17 +61,11 @@ const BuildScreen = () => {
         return matchingSection; // Return the matching section data
       }
     }
-    console.log("settinmg is loading to false");
-    // Set the component to rerender
 
     return null; // Return null if no matching section is found
   };
 
   useEffect(() => {
-    console.log(
-      "AAAAAAJHDBASJBDJHABSJDBAJHSDBJHASBDJHBASDJBJDHAS",
-      currentIndexes
-    );
     setIndexData([]); // Clear the indexData array before fetching new data
     if (Array.isArray(currentIndexes)) {
       // Ensure currentIndexes is an array
@@ -84,9 +81,7 @@ const BuildScreen = () => {
   }, [currentIndexes]);
 
   useEffect(() => {
-    console.log("buildIndexes", buildIndexes);
     setCurrentIndexes(buildIndexes[0]);
-    console.log("currentIndexes", currentIndexes);
   }, [buildIndexes]);
 
   useEffect(() => {
@@ -100,7 +95,6 @@ const BuildScreen = () => {
     if (selectedIndexes.length === 0 || indexTimes.length === 0) {
       return;
     }
-    console.log("running fetch");
     const selectedIndexesArray = Array.from(selectedIndexes);
 
     // Convert HashMap to Object
@@ -125,13 +119,84 @@ const BuildScreen = () => {
     if (currentBuild < buildIndexes.length - 1) {
       setCurrentBuild(currentBuild + 1);
     }
-  }
+  };
 
   const handlePrev = () => {
     if (currentBuild > 0) {
       setCurrentBuild(currentBuild - 1);
     }
-  }
+  };
+
+  const getFullDayName = (dayLetter) => {
+    const dayMap = {
+      M: "monday",
+      T: "tuesday",
+      W: "wednesday",
+      TH: "thursday",
+      F: "friday",
+      S: "saturday",
+      SU: "sunday",
+    };
+    return dayMap[dayLetter] || "Unknown"; // Returns "Unknown" if the dayLetter is not found in the map
+  };
+
+  const convertTimeTo24HourFormat = (time, amPmCode) => {
+    // Parse the time into hours and minutes
+    let hours = parseInt(time.slice(0, 2), 10);
+    const minutes = time.slice(2);
+
+    // Convert hours based on the AM/PM code
+    if (amPmCode === "P" && hours < 12) {
+      hours += 12; // Convert PM hours to 24-hour format
+    } else if (amPmCode === "A" && hours === 12) {
+      hours = 0; // Convert 12AM to 00 hours
+    }
+
+    // Format the hours and minutes to ensure two digits
+    const formattedHours = hours.toString().padStart(2, "0");
+    const formattedMinutes = minutes.padStart(2, "0");
+
+    const ISOtime = parseISO(
+      `2024-02-23T${formattedHours}:${formattedMinutes}:00`
+    ); // Assuming parseISO function exists
+    // Return the time in 24-hour format
+    console.log(ISOtime);
+    return ISOtime;
+  };
+
+  useEffect(() => {
+    const events = indexData.reduce((acc, sectionData) => {
+      sectionData.meetingTimes.forEach((meetingTime) => {
+        const day = getFullDayName(meetingTime.meetingDay);
+        const startTime = convertTimeTo24HourFormat(
+          meetingTime.startTime,
+          meetingTime.pmCode
+        ); // Assuming convertTimeTo24HourFormat function exists and pmCode is the AM/PM indicator
+        const endTime = convertTimeTo24HourFormat(
+          meetingTime.endTime,
+          meetingTime.pmCode
+        ); // Same assumption as above
+        const name = sectionData.useTitle;
+        const type = "custom";
+        acc[day] = [
+          ...(acc[day] || []),
+          {
+            id: sectionData.index,
+            name,
+            type,
+            startTime,
+            endTime,
+          },
+        ];
+      });
+      return acc;
+    }, {});
+    setEventsByDay(events);
+  }, [indexData]);
+
+  useEffect(() => {
+    console.log("dataawawd", eventsByDay);
+  }, [eventsByDay]);
 
   return (
     <div>
@@ -155,42 +220,54 @@ const BuildScreen = () => {
             <Button onClick={() => handleNext()}>Next</Button>
           </Card>
         </div>
-        <div className="ml-4 w-full">
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : (
-            // For each index in buildIndexes, run the dataByIndex function to get the section data
-            // Then pass the section data to the ListViewRow component
-            <Card className="border-2 min-w-[1200px] w-full">
-              <div className="grid grid-cols-8 w-full mx-2">
-                <p className="col-span-1 text-center">title</p>
-                <p className="col-span-1 text-center">section</p>
-                <p className="col-span-1 text-center">status</p>
-                <p className="col-span-1 text-center">index</p>
-                <p className="col-span-2 text-center">
-                  meeting times/locations
-                </p>
-                <p className="col-span-1 text-center">exam code</p>
-                <p className="col-span-1 text-center">instructors</p>
-              </div>
-              {indexData.map((sectionData) => {
-                return (
-                  <div key={sectionData.index}>
-                    <ListViewRow
-                      index={sectionData.index}
-                      status={sectionData.openStatus}
-                      useTitle={sectionData.useTitle}
-                      section={sectionData.number}
-                      meetingTimes={sectionData.meetingTimes}
-                      examCode={sectionData.examCode}
-                      instructors={sectionData.instructors}
-                    />
-                  </div>
-                );
-              })}
-            </Card>
-          )}
-        </div>
+        {displayList ? (
+          <div className="ml-4 w-full">
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : (
+              // For each index in buildIndexes, run the dataByIndex function to get the section data
+              // Then pass the section data to the ListViewRow component
+              <Card className="border-2 min-w-[1200px] w-full">
+                <div className="grid grid-cols-8 w-full mx-2">
+                  <p className="col-span-1 text-center">title</p>
+                  <p className="col-span-1 text-center">section</p>
+                  <p className="col-span-1 text-center">status</p>
+                  <p className="col-span-1 text-center">index</p>
+                  <p className="col-span-2 text-center">
+                    meeting times/locations
+                  </p>
+                  <p className="col-span-1 text-center">exam code</p>
+                  <p className="col-span-1 text-center">instructors</p>
+                </div>
+                {indexData.map((sectionData) => {
+                  return (
+                    <div key={sectionData.index}>
+                      <ListViewRow
+                        index={sectionData.index}
+                        status={sectionData.openStatus}
+                        useTitle={sectionData.useTitle}
+                        section={sectionData.number}
+                        meetingTimes={sectionData.meetingTimes}
+                        examCode={sectionData.examCode}
+                        instructors={sectionData.instructors}
+                      />
+                    </div>
+                  );
+                })}
+              </Card>
+            )}
+          </div>
+        ) : (
+          <div className="ml-4 w-full">
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : (
+              <Card className="w-full">
+                <Timetable events={eventsByDay} style={{ height: "500px" }} />
+              </Card>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
