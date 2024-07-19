@@ -52,7 +52,7 @@ const BuildScreen = () => {
   const dataByIndex = (index) => {
     // Assuming subjectData is accessible in this scope
     for (const course of subjectData) {
-      let useTitle = course.expandedTitle;
+      let useTitle = course.expandedTitle || course.title;
       const matchingSection = course.sections.find(
         (section) => section.index === index
       );
@@ -89,9 +89,6 @@ const BuildScreen = () => {
   }, [currentBuild]);
 
   useEffect(() => {
-    // console.log("posting selected Indexes", selectedIndexes);
-    // console.log("posting indexTimes", indexTimes);
-    // console.log("posting subjectData", subjectData);
     if (selectedIndexes.length === 0 || indexTimes.length === 0) {
       return;
     }
@@ -145,7 +142,6 @@ const BuildScreen = () => {
   // };
 
   const convertTimeTo24HourFormat = (time, amPmCode) => {
-    console.log("time", time);
     // Parse the time into hours and minutes
     let hours = parseInt(time.slice(0, 2), 10);
     const minutes = time.slice(2);
@@ -200,6 +196,7 @@ const BuildScreen = () => {
 
   useEffect(() => {
     console.log("dataawawd", indexData);
+    console.log('sub addata', subjectData);
   }, [indexData]);
 
   return (
