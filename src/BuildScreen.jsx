@@ -31,7 +31,13 @@ const BuildScreen = () => {
   const [indexData, setIndexData] = useState([]);
   const [displayList, setDisplayList] = useState(true);
   const [currentBuild, setCurrentBuild] = useState(0);
-  const [eventsByDay, setEventsByDay] = useState({});
+  const [eventsByDay, setEventsByDay] = useState({
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+  });
 
   const serializeIndexTimes = (indexTimes) => {
     const indexTimesObject = {};
@@ -137,9 +143,22 @@ const BuildScreen = () => {
     return dayMap[dayLetter] || "Unknown"; // Returns "Unknown" if the dayLetter is not found in the map
   };
 
-  // const getBackgroundColor = (campus) => {
+  const getBackgroundColor = (campus) => {
+    console.log("campus", campus);
+    const campusColorMap = {
+      'ONLINE': '#ffcb99',
+      'BUSCH': '#cdeeff',
+      'COLLEGE AVENUE': '#ffffcb',
+      'COOK DOUGLASS': '#ddffdd',
+      'LIVINGSTON': '#ffcb98',
+      'DOWNTOWN': '#ffd7ee',
+      'CAMDEN': '#e3bfff',
+      'NEWARK': '#edeedc',
 
-  // };
+    };
+
+    return campusColorMap[campus] || '#dddddd';
+  };
 
   const convertTimeTo24HourFormat = (time, amPmCode) => {
     // Parse the time into hours and minutes
@@ -166,32 +185,39 @@ const BuildScreen = () => {
 
   useEffect(() => {
     let id = 0;
+    // Step 1: Initialize a template object with the days of the week in order
+    const eventsTemplate = {
+      monday: [],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+    };
+  
+    // Step 2: Populate the template with events data
     const events = indexData.reduce((acc, sectionData) => {
       sectionData.meetingTimes.forEach((meetingTime) => {
         const day = getFullDayName(meetingTime.meetingDay);
-        const startTime = convertTimeTo24HourFormat(
-          meetingTime.startTime,
-          meetingTime.pmCode
-        ); // Assuming convertTimeTo24HourFormat function exists and pmCode is the AM/PM indicator
-        const endTime = convertTimeTo24HourFormat(
-          meetingTime.endTime,
-          meetingTime.pmCode
-        ); // Same assumption as above
+        const startTime = convertTimeTo24HourFormat(meetingTime.startTime, meetingTime.pmCode);
+        const endTime = convertTimeTo24HourFormat(meetingTime.endTime, meetingTime.pmCode);
         const name = sectionData.useTitle;
         const type = "custom";
-        acc[day] = [
-          ...(acc[day] || []),
-          {
+        const backgroundColor = getBackgroundColor(meetingTime.campusName);
+        if (acc[day]) { // Ensure the day exists in the template before adding the event
+          acc[day].push({
             id: id++,
             name,
             type,
             startTime,
             endTime,
-          },
-        ];
+            backgroundColor,
+          });
+        }
       });
       return acc;
-    }, {});
+    }, eventsTemplate); // Use the template as the initial value for the accumulator
+  
+    // Step 5: Update the state
     setEventsByDay(events);
   }, [indexData]);
 
