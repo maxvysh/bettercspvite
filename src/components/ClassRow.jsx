@@ -75,7 +75,7 @@ const ClassRow = ({
   };
 
   useEffect(() => {
-    if (expandedTitle) {
+    if (expandedTitle && expandedTitle.trim() !== "") {
       setUseTitle(expandedTitle);
     } else {
       setUseTitle(title);

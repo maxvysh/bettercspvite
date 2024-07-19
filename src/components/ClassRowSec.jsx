@@ -50,7 +50,7 @@ const ClassRowSec = ({
   };
 
   useEffect(() => {
-    if (expandedTitle) {
+    if (expandedTitle && expandedTitle.trim() !== "") {
       setUseTitle(expandedTitle);
     } else {
       setUseTitle(title);
