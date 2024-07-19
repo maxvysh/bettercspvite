@@ -165,6 +165,7 @@ const BuildScreen = () => {
   };
 
   useEffect(() => {
+    let id = 0;
     const events = indexData.reduce((acc, sectionData) => {
       sectionData.meetingTimes.forEach((meetingTime) => {
         const day = getFullDayName(meetingTime.meetingDay);
@@ -181,7 +182,7 @@ const BuildScreen = () => {
         acc[day] = [
           ...(acc[day] || []),
           {
-            id: sectionData.index,
+            id: id++,
             name,
             type,
             startTime,
