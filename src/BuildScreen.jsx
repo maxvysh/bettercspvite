@@ -6,7 +6,7 @@ import ListViewRow from "./components/ListViewRow";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import BuildSelector from "./components/BuildSelector";
-import Timetable from "react-timetable-events";
+import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
 
 const BuildScreen = () => {
@@ -140,7 +140,12 @@ const BuildScreen = () => {
     return dayMap[dayLetter] || "Unknown"; // Returns "Unknown" if the dayLetter is not found in the map
   };
 
+  // const getBackgroundColor = (campus) => {
+
+  // };
+
   const convertTimeTo24HourFormat = (time, amPmCode) => {
+    console.log("time", time);
     // Parse the time into hours and minutes
     let hours = parseInt(time.slice(0, 2), 10);
     const minutes = time.slice(2);
@@ -160,7 +165,6 @@ const BuildScreen = () => {
       `2024-02-23T${formattedHours}:${formattedMinutes}:00`
     ); // Assuming parseISO function exists
     // Return the time in 24-hour format
-    console.log(ISOtime);
     return ISOtime;
   };
 
@@ -195,8 +199,8 @@ const BuildScreen = () => {
   }, [indexData]);
 
   useEffect(() => {
-    console.log("dataawawd", eventsByDay);
-  }, [eventsByDay]);
+    console.log("dataawawd", indexData);
+  }, [indexData]);
 
   return (
     <div>
@@ -204,20 +208,20 @@ const BuildScreen = () => {
         <Header />
       </div>
       <div className="p-3 flex">
-        <div className="w-[330px] min-w-[330px]">
+        <div className="w-[330px] min-w-[330px] flex flex-col gap-4">
           <ScreenSelector />
           <BuildSelector
             displayList={displayList}
             setDisplayList={setDisplayList}
           />
-          <Card className="flex justify-evenly">
-            <Button onClick={() => handlePrev()}>Prev</Button>
+          <Card className="flex justify-between border-2">
+            <Button className="w-24 m-1" onClick={() => handlePrev()}>Prev</Button>
             <div className="flex flex-col justify-center">
               <p className="h-fit">
                 {currentBuild + 1} of {buildIndexes.length}
               </p>
             </div>
-            <Button onClick={() => handleNext()}>Next</Button>
+            <Button className="w-24 m-1" onClick={() => handleNext()}>Next</Button>
           </Card>
         </div>
         {displayList ? (
@@ -262,9 +266,7 @@ const BuildScreen = () => {
             {isLoading ? (
               <p>Loading...</p>
             ) : (
-              <Card className="w-full">
-                <Timetable events={eventsByDay} style={{ height: "500px" }} />
-              </Card>
+              <Timetable events={eventsByDay} style={{ height: "500px" }} />
             )}
           </div>
         )}
