@@ -203,6 +203,7 @@ const BuildScreen = () => {
         const name = sectionData.useTitle;
         const type = "custom";
         const backgroundColor = getBackgroundColor(meetingTime.campusName);
+        const closed = !sectionData.openStatus;
         if (acc[day]) { // Ensure the day exists in the template before adding the event
           acc[day].push({
             id: id++,
@@ -211,6 +212,7 @@ const BuildScreen = () => {
             startTime,
             endTime,
             backgroundColor,
+            closed,
           });
         }
       });
