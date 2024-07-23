@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import BuildSelector from "./components/BuildSelector";
 import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
+import Calendar from "./components/Calendar";
 
 const BuildScreen = () => {
   const {
@@ -292,7 +293,7 @@ const BuildScreen = () => {
             {isLoading ? (
               <p>Loading...</p>
             ) : (
-              <Timetable events={eventsByDay} style={{ height: "500px" }} />
+              <Calendar eventsByDay={eventsByDay} />
             )}
           </div>
         )}
