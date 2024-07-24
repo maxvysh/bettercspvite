@@ -59,8 +59,15 @@ const SavedScreen = () => {
 
   const dataByIndex = (index) => {
     // Assuming subjectData is accessible in this scope
+    let useTitle;
     for (const course of subjectData) {
-      let useTitle = course.expandedTitle || course.title;
+      if (course.expandedTitle && course.expandedTitle.trim() !== "") {
+        useTitle = course.expandedTitle;
+      } else {
+        useTitle = course.title;
+      }
+      console.log("useTitle", useTitle);
+
       const matchingSection = course.sections.find(
         (section) => section.index === index
       );
@@ -232,8 +239,8 @@ const SavedScreen = () => {
   }, [indexData]);
 
   useEffect(() => {
-    console.log("dataawawd", indexData);
-    console.log("sub addata", subjectData);
+    console.log("dataawawd", indexTimes);
+    // console.log("sub addata", subjectData);
   }, [indexData]);
 
   return (

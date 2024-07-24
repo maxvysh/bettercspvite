@@ -59,8 +59,14 @@ const BuildScreen = () => {
 
   const dataByIndex = (index) => {
     // Assuming subjectData is accessible in this scope
+    let useTitle;
     for (const course of subjectData) {
-      let useTitle = course.expandedTitle || course.title;
+      if (course.expandedTitle && course.expandedTitle.trim() !== "") {
+        useTitle = course.expandedTitle;
+      } else {
+        useTitle = course.title;
+      }
+
       const matchingSection = course.sections.find(
         (section) => section.index === index
       );
@@ -251,7 +257,11 @@ const BuildScreen = () => {
           <Card className="border-2 flex flex-col gap-1">
             <div className="m-1 flex gap-1 h-12">
               {/* <Textarea className="h-12" /> */}
-              <input type="text" placeholder="Enter name" className="border-2 border-[#090E1B] rounded-lg w-full p-2" />
+              <input
+                type="text"
+                placeholder="Enter name"
+                className="border-2 border-[#090E1B] rounded-lg w-full p-2"
+              />
               <Button className="w-12 h-full">Save</Button>
             </div>
             <div className="flex justify-between">
