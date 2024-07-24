@@ -9,6 +9,7 @@ import BuildSelector from "./components/BuildSelector";
 import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
+import { Textarea } from "@/components/ui/textarea";
 
 const BuildScreen = () => {
   const {
@@ -147,18 +148,17 @@ const BuildScreen = () => {
   const getBackgroundColor = (campus) => {
     console.log("campus", campus);
     const campusColorMap = {
-      'ONLINE': '#ff8081',
-      'BUSCH': '#cdeeff',
-      'COLLEGE AVENUE': '#ffffcb',
-      'COOK DOUGLASS': '#ddffdd',
-      'LIVINGSTON': '#ffcb98',
-      'DOWNTOWN': '#ffd7ee',
-      'CAMDEN': '#e3bfff',
-      'NEWARK': '#edeedc',
-
+      ONLINE: "#ff8081",
+      BUSCH: "#cdeeff",
+      "COLLEGE AVENUE": "#ffffcb",
+      "COOK DOUGLASS": "#ddffdd",
+      LIVINGSTON: "#ffcb98",
+      DOWNTOWN: "#ffd7ee",
+      CAMDEN: "#e3bfff",
+      NEWARK: "#edeedc",
     };
 
-    return campusColorMap[campus] || '#dddddd';
+    return campusColorMap[campus] || "#dddddd";
   };
 
   const convertTimeTo24HourFormat = (time, amPmCode) => {
@@ -194,18 +194,25 @@ const BuildScreen = () => {
       thursday: [],
       friday: [],
     };
-  
+
     // Step 2: Populate the template with events data
     const events = indexData.reduce((acc, sectionData) => {
       sectionData.meetingTimes.forEach((meetingTime) => {
         const day = getFullDayName(meetingTime.meetingDay);
-        const startTime = convertTimeTo24HourFormat(meetingTime.startTime, meetingTime.pmCode);
-        const endTime = convertTimeTo24HourFormat(meetingTime.endTime, meetingTime.pmCode);
+        const startTime = convertTimeTo24HourFormat(
+          meetingTime.startTime,
+          meetingTime.pmCode
+        );
+        const endTime = convertTimeTo24HourFormat(
+          meetingTime.endTime,
+          meetingTime.pmCode
+        );
         const name = sectionData.useTitle;
         const type = "custom";
         const backgroundColor = getBackgroundColor(meetingTime.campusName);
         const closed = !sectionData.openStatus;
-        if (acc[day]) { // Ensure the day exists in the template before adding the event
+        if (acc[day]) {
+          // Ensure the day exists in the template before adding the event
           acc[day].push({
             id: id++,
             name,
@@ -219,14 +226,14 @@ const BuildScreen = () => {
       });
       return acc;
     }, eventsTemplate); // Use the template as the initial value for the accumulator
-  
+
     // Step 5: Update the state
     setEventsByDay(events);
   }, [indexData]);
 
   useEffect(() => {
     console.log("dataawawd", indexData);
-    console.log('sub addata', subjectData);
+    console.log("sub addata", subjectData);
   }, [indexData]);
 
   return (
@@ -241,14 +248,25 @@ const BuildScreen = () => {
             displayList={displayList}
             setDisplayList={setDisplayList}
           />
-          <Card className="flex justify-between border-2">
-            <Button className="w-24 m-1" onClick={() => handlePrev()}>Prev</Button>
-            <div className="flex flex-col justify-center">
-              <p className="h-fit">
-                {currentBuild + 1} of {buildIndexes.length}
-              </p>
+          <Card className="border-2 flex flex-col gap-1">
+            <div className="m-1 flex gap-1 h-12">
+              {/* <Textarea className="h-12" /> */}
+              <input type="text" placeholder="Enter name" className="border-2 border-[#090E1B] rounded-lg w-full p-2" />
+              <Button className="w-12 h-full">Save</Button>
             </div>
-            <Button className="w-24 m-1" onClick={() => handleNext()}>Next</Button>
+            <div className="flex justify-between">
+              <Button className="w-24 m-1" onClick={() => handlePrev()}>
+                Prev
+              </Button>
+              <div className="flex flex-col justify-center">
+                <p className="h-fit">
+                  {currentBuild + 1} of {buildIndexes.length}
+                </p>
+              </div>
+              <Button className="w-24 m-1" onClick={() => handleNext()}>
+                Next
+              </Button>
+            </div>
           </Card>
         </div>
         {displayList ? (
