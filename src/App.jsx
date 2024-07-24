@@ -4,6 +4,7 @@ import ClassScreen from "./ClassScreen";
 import SelectCS from "./SelectCS";
 import BuildScreen from "./BuildScreen";
 import SectionScreen from "./SectionScreen";
+import SavedScreen from "./SavedScreen";
 import AppContext from "./AppContext";
 import { useState, useEffect } from "react";
 
@@ -189,6 +190,7 @@ const App = () => {
           <Route path="/classes" element={<ClassScreen />} />
           <Route path="/sections" element={<SectionScreen />} />
           <Route path="/build" element={<BuildScreen />} />
+          <Route path="/saved" element={<SavedScreen />} />
         </Routes>
       </Router>
     </AppContext.Provider>

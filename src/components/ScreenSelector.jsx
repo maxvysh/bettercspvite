@@ -48,10 +48,10 @@ const ScreenSelector = () => {
         </Button>
       )}
 
-      {currentPage === "/saved-schedules" ? (
+      {currentPage === "/saved" ? (
         <Button className="text-base">Saved Schedules</Button>
       ) : (
-        <Button variant="outline" className="border-2 text-base text-gray-500">
+        <Button variant="outline" className="border-2 text-base text-gray-500" onClick={handleClick('saved')}>
           Saved Schedules
         </Button>
       )}
