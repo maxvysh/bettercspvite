@@ -147,7 +147,7 @@ const BuildScreen = () => {
   const getBackgroundColor = (campus) => {
     console.log("campus", campus);
     const campusColorMap = {
-      'ONLINE': '#ffcb99',
+      'ONLINE': '#ff8081',
       'BUSCH': '#cdeeff',
       'COLLEGE AVENUE': '#ffffcb',
       'COOK DOUGLASS': '#ddffdd',
