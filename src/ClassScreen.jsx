@@ -78,6 +78,10 @@ const ClassScreen = () => {
     }
   }, [campus, semester, level, subject]);
 
+  useEffect(() => {
+    console.log("subjectData", subjectData);
+  }, [subjectData]);
+
   // useEffect(() => {
   //   async function fetchCourses() {
   //     const response = await fetch(

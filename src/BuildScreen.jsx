@@ -40,6 +40,8 @@ const BuildScreen = () => {
     thursday: [],
     friday: [],
   });
+  const [inputName, setInputName] = useState("");
+  const [savedButton, setSavedButton] = useState(false);
 
   const serializeIndexTimes = (indexTimes) => {
     const indexTimesObject = {};
@@ -258,6 +260,29 @@ const BuildScreen = () => {
     // console.log("sub addata", subjectData);
   }, [indexData]);
 
+  const handleSave = (name, selectedIndexes) => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/saveschedule`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        schedule: selectedIndexes,
+      }),
+    })
+      .then(() => {
+        console.log("Saved!");
+        setSavedButton(true);
+        setTimeout(() => {
+          setSavedButton(false);
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <div>
       <div className="min-w-[1570px]">
@@ -277,8 +302,19 @@ const BuildScreen = () => {
                 type="text"
                 placeholder="Enter name"
                 className="border-2 border-[#090E1B] rounded-lg w-full p-2"
+                value={inputName}
+                onChange={(e) => setInputName(e.target.value)}
               />
-              <Button className="w-12 h-full">Save</Button>
+              {savedButton ? (
+                <Button className="w-12 h-full bg-green-500 hover:bg-green-500 cursor-default">Saved!</Button>
+              ) : (
+                <Button
+                  className="w-12 h-full"
+                  onClick={() => handleSave(inputName, currentIndexes)}
+                >
+                  Save
+                </Button>
+              )}
             </div>
             <div className="flex justify-between">
               <Button className="w-24 m-1" onClick={() => handlePrev()}>
