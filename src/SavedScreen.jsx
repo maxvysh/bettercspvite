@@ -10,15 +10,14 @@ import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
 import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const SavedScreen = () => {
-  const {
-    subjectData,
-  } = useContext(AppContext);
+  const { subjectData } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndexes, setCurrentIndexes] = useState([]);
-  const [currentName, setCurrentName] = useState(""); 
+  const [currentName, setCurrentName] = useState("");
   const [indexData, setIndexData] = useState([]);
   const [displayList, setDisplayList] = useState(true);
   const [currentBuild, setCurrentBuild] = useState(0);
@@ -30,12 +29,14 @@ const SavedScreen = () => {
     friday: [],
   });
   const [buildIndexes, setBuildIndexes] = useState([]);
+  const [savedSchedules, setSavedSchedules] = useState([]);
 
   useEffect(() => {
-    console.log('fetching saved schedules');  
+    console.log("fetching saved schedules");
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`)
       .then((response) => response.json())
       .then((data) => {
+        setSavedSchedules(data);
         if (data.length > 0) {
           setBuildIndexes(data.map((schedule) => schedule.schedule));
           setCurrentIndexes(data[currentBuild].schedule);
@@ -46,23 +47,6 @@ const SavedScreen = () => {
         console.error("Error fetching saved schedules:", error);
       });
   }, []);
-
-  // Setters
-  // useEffect(() => {
-  //   setBuildIndexes(savedSchedules.map((schedule) => schedule.schedule));
-  //   setCurrentIndexes(savedSchedules[currentBuild].schedule);
-  //   setCurrentName(savedSchedules[currentBuild].name);
-  // }, [savedSchedules]);
-
-  //   name
-  // :
-  // "aaa"
-  // schedule
-  // :
-  // (3) ['06715', '06671', '06735']
-  // _id
-  // :
-  // "66a2eb7b75a182fc46c9aab1"
 
   const dataByIndex = (index) => {
     // Assuming subjectData is accessible in this scope
@@ -107,6 +91,9 @@ const SavedScreen = () => {
 
   useEffect(() => {
     setCurrentIndexes(buildIndexes[currentBuild]);
+    if (savedSchedules.length > 0) {
+      setCurrentName(savedSchedules[currentBuild].name);
+    }
   }, [currentBuild, buildIndexes]);
 
   const handleNext = () => {
@@ -224,11 +211,6 @@ const SavedScreen = () => {
     setEventsByDay(events);
   }, [indexData]);
 
-  useEffect(() => {
-    // console.log("dataawawd", indexData);
-    // console.log("sub addata", subjectData);
-  }, [indexData]);
-
   return (
     <div>
       <div className="min-w-[1570px]">
@@ -254,6 +236,27 @@ const SavedScreen = () => {
               <Button className="w-24 m-1" onClick={() => handleNext()}>
                 Next
               </Button>
+            </div>
+            <div>
+              <p>{currentName}</p>
+            </div>
+            <div>
+              <ScrollArea className="h-[200px]">
+                <ScrollBar />
+                  <div className="flex flex-col gap-1 pr-2.5">
+                    {savedSchedules.map((schedule, index) => (
+                      <Button
+                        key={index}
+                        className="w-full"
+                        onClick={() => {
+                          setCurrentBuild(index);
+                        }}
+                      >
+                        {schedule.name}
+                      </Button>
+                    ))}
+                  </div>
+              </ScrollArea>
             </div>
           </Card>
         </div>
