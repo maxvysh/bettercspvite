@@ -9,28 +9,18 @@ import BuildSelector from "./components/BuildSelector";
 import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
-import { Textarea } from "@/components/ui/textarea";
 
 const BuildScreen = () => {
   const {
-    selectedCourses,
-    setSelectedCourses,
-    totalCredits,
-    setTotalCredits,
-    semester,
-    campus,
-    level,
-    fetchCampusSemester,
     indexTimes,
-    setIndexTimes,
     selectedIndexes,
     subjectData,
   } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [buildIndexes, setBuildIndexes] = useState([]);
-  const [currentIndexes, setCurrentIndexes] = useState([]);
-  const [indexData, setIndexData] = useState([]);
+  const [buildIndexes, setBuildIndexes] = useState([]); // Every possible combination of indexes
+  const [currentIndexes, setCurrentIndexes] = useState([]); // Current indexes that are displayed
+  const [indexData, setIndexData] = useState([]); // The data for the displayed indexes
   const [displayList, setDisplayList] = useState(true);
   const [currentBuild, setCurrentBuild] = useState(0);
   const [eventsByDay, setEventsByDay] = useState({
@@ -42,6 +32,12 @@ const BuildScreen = () => {
   });
   const [inputName, setInputName] = useState("");
   const [savedButton, setSavedButton] = useState(false);
+
+  useEffect(() => {
+    console.log("buildIndexes", buildIndexes);
+    console.log("currentIndexes", currentIndexes);
+    console.log("indexData", indexData);
+  }, [buildIndexes, currentIndexes, indexData]);
 
   const serializeIndexTimes = (indexTimes) => {
     const indexTimesObject = {};
@@ -102,7 +98,7 @@ const BuildScreen = () => {
 
   useEffect(() => {
     setCurrentIndexes(buildIndexes[currentBuild]);
-  }, [currentBuild]);
+  }, [currentBuild, buildIndexes]);
 
   useEffect(() => {
     if (selectedIndexes.length === 0 || indexTimes.length === 0) {

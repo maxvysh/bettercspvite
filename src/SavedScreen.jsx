@@ -13,23 +13,12 @@ import { Textarea } from "@/components/ui/textarea";
 
 const SavedScreen = () => {
   const {
-    selectedCourses,
-    setSelectedCourses,
-    totalCredits,
-    setTotalCredits,
-    semester,
-    campus,
-    level,
-    fetchCampusSemester,
-    indexTimes,
-    setIndexTimes,
-    selectedIndexes,
     subjectData,
   } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [buildIndexes, setBuildIndexes] = useState([]);
   const [currentIndexes, setCurrentIndexes] = useState([]);
+  const [currentName, setCurrentName] = useState(""); 
   const [indexData, setIndexData] = useState([]);
   const [displayList, setDisplayList] = useState(true);
   const [currentBuild, setCurrentBuild] = useState(0);
@@ -40,22 +29,40 @@ const SavedScreen = () => {
     thursday: [],
     friday: [],
   });
+  const [buildIndexes, setBuildIndexes] = useState([]);
 
-  const serializeIndexTimes = (indexTimes) => {
-    const indexTimesObject = {};
-    indexTimes.forEach((value, key) => {
-      // Assuming value is an object with a meetingTimes array of objects
-      const serializedValue = {
-        ...value, // Spread other properties of the value object
-        meetingTimes: value.meetingTimes.map((meetingTime) => ({
-          // Map each meetingTime object to a new object, ensuring all properties are included
-          ...meetingTime,
-        })),
-      };
-      indexTimesObject[key] = serializedValue;
-    });
-    return indexTimesObject;
-  };
+  useEffect(() => {
+    console.log('fetching saved schedules');  
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length > 0) {
+          setBuildIndexes(data.map((schedule) => schedule.schedule));
+          setCurrentIndexes(data[currentBuild].schedule);
+          setCurrentName(data[currentBuild].name);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching saved schedules:", error);
+      });
+  }, []);
+
+  // Setters
+  // useEffect(() => {
+  //   setBuildIndexes(savedSchedules.map((schedule) => schedule.schedule));
+  //   setCurrentIndexes(savedSchedules[currentBuild].schedule);
+  //   setCurrentName(savedSchedules[currentBuild].name);
+  // }, [savedSchedules]);
+
+  //   name
+  // :
+  // "aaa"
+  // schedule
+  // :
+  // (3) ['06715', '06671', '06735']
+  // _id
+  // :
+  // "66a2eb7b75a182fc46c9aab1"
 
   const dataByIndex = (index) => {
     // Assuming subjectData is accessible in this scope
@@ -66,7 +73,6 @@ const SavedScreen = () => {
       } else {
         useTitle = course.title;
       }
-      console.log("useTitle", useTitle);
 
       const matchingSection = course.sections.find(
         (section) => section.index === index
@@ -93,39 +99,15 @@ const SavedScreen = () => {
     }
 
     setIsLoading(false);
-  }, [currentIndexes]);
+  }, [currentIndexes, subjectData]);
 
-  useEffect(() => {
-    setCurrentIndexes(buildIndexes[0]);
-  }, [buildIndexes]);
+  // useEffect(() => {
+  //   setCurrentIndexes(buildIndexes[0]);
+  // }, [buildIndexes]);
 
   useEffect(() => {
     setCurrentIndexes(buildIndexes[currentBuild]);
-  }, [currentBuild]);
-
-  useEffect(() => {
-    if (selectedIndexes.length === 0 || indexTimes.length === 0) {
-      return;
-    }
-    const selectedIndexesArray = Array.from(selectedIndexes);
-
-    // Convert HashMap to Object
-    const indexTimesObject = serializeIndexTimes(indexTimes);
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/buildschedules`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        selectedIndexes: selectedIndexesArray,
-        indexTimes: indexTimesObject,
-      }),
-    }).then((response) => {
-      response.json().then((data) => {
-        setBuildIndexes(data);
-      });
-    });
-  }, [selectedIndexes, indexTimes]);
+  }, [currentBuild, buildIndexes]);
 
   const handleNext = () => {
     if (currentBuild < buildIndexes.length - 1) {
@@ -153,7 +135,6 @@ const SavedScreen = () => {
   };
 
   const getBackgroundColor = (campus) => {
-    console.log("campus", campus);
     const campusColorMap = {
       ONLINE: "#ff8081",
       BUSCH: "#cdeeff",
@@ -169,6 +150,11 @@ const SavedScreen = () => {
   };
 
   const convertTimeTo24HourFormat = (time, amPmCode) => {
+    if (!time) {
+      // Handle the null or undefined case
+      console.error("Invalid time input:", time);
+      return ""; // or any default value you prefer
+    }
     // Parse the time into hours and minutes
     let hours = parseInt(time.slice(0, 2), 10);
     const minutes = time.slice(2);
@@ -239,7 +225,7 @@ const SavedScreen = () => {
   }, [indexData]);
 
   useEffect(() => {
-    console.log("dataawawd", indexTimes);
+    // console.log("dataawawd", indexData);
     // console.log("sub addata", subjectData);
   }, [indexData]);
 
