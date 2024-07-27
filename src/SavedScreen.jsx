@@ -11,6 +11,8 @@ import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import edit from "./assets/edit.svg";
+import xcircle from "./assets/x-circle-white.svg";
 
 const SavedScreen = () => {
   const { subjectData } = useContext(AppContext);
@@ -237,25 +239,32 @@ const SavedScreen = () => {
                 Next
               </Button>
             </div>
-            <div>
+            <div className="flex justify-center">
               <p>{currentName}</p>
             </div>
             <div>
               <ScrollArea className="h-[200px]">
                 <ScrollBar />
-                  <div className="flex flex-col gap-1 pr-2.5">
-                    {savedSchedules.map((schedule, index) => (
+                <div className="flex flex-col gap-1 p-2.5">
+                  {savedSchedules.map((schedule, index) => (
+                    <div key={index} className="flex">
                       <Button
-                        key={index}
-                        className="w-full"
+                        className="w-full rounded-r-none"
                         onClick={() => {
                           setCurrentBuild(index);
                         }}
                       >
                         {schedule.name}
                       </Button>
-                    ))}
-                  </div>
+                      <Button className="rounded-none">
+                        <img src={edit} alt="Edit" className="w-10" />
+                      </Button>
+                      <Button className="rounded-l-none">
+                        <img src={xcircle} alt="Delete" className="w-10" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </ScrollArea>
             </div>
           </Card>
