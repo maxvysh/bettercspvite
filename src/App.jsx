@@ -30,10 +30,6 @@ const App = () => {
   }
 
   useEffect(() => {
-    console.log("selectedIndexes", selectedIndexes);
-  }, [selectedIndexes]);
-
-  useEffect(() => {
     async function fetchCourses() {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/user/courses`
@@ -49,10 +45,6 @@ const App = () => {
     fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    console.log("selected courses", selectedCourses);
-  }, [selectedCourses]);
 
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -76,17 +68,25 @@ const App = () => {
   }, [selectedCourses]);
 
   useEffect(() => {
+    console.log("updating w selectedCourses:", selectedCourses);
+  
+    const abortControllers = [];
+  
     // Check for null campus, semester, and level
     if (!campus || !semester) {
       fetchCampusSemester();
     } else {
       // setIsLoading(true); // Start loading before fetching data
-
-      const fetchPromises = selectedCourses.map((course) =>
-        fetch(
+  
+      const fetchPromises = selectedCourses.map((course) => {
+        const controller = new AbortController();
+        abortControllers.push(controller);
+  
+        return fetch(
           `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
             course.subject
-          }&semester=${semester}&campus=${campus}&level=${level}`
+          }&semester=${semester}&campus=${campus}&level=${level}`,
+          { signal: controller.signal }
         )
           .then((response) => response.json())
           .then((data) => {
@@ -101,29 +101,27 @@ const App = () => {
             }
           })
           .catch((error) => {
-            console.error("Error fetching course data:", error);
+            if (error.name === 'AbortError') {
+              console.log('Fetch aborted');
+            } else {
+              console.error("Error fetching course data:", error);
+            }
             return null; // Return null in case of error
-          })
-      );
-
+          });
+      });
+  
       Promise.all(fetchPromises).then((courses) => {
         // Filter out null values (not found or error cases)
         const validCourses = courses.filter((course) => course !== null);
         setSubjectData(validCourses); // Update state with all found courses
         // setIsLoading(false); // Stop loading after all fetches are complete
-
+  
         // Create a map where the key is the course index and the value is the course code and meeting times
         const indexTimesMap = validCourses.reduce((acc, course) => {
           const courseCode = `${course.offeringUnitCode}${course.subject}${course.courseNumber}`;
           course.sections
             .filter((section) => section.printed === "Y")
             .forEach((section) => {
-              // Add section index to selectedIndexes
-              setSelectedIndexes((prevIndexes) => {
-                const newIndexes = new Set(prevIndexes);
-                newIndexes.add(section.index); // This will be a no-op if the index already exists
-                return newIndexes;
-              });
               // Use the set method to add to the Map
               acc.set(section.index, {
                 courseCode: courseCode,
@@ -136,11 +134,42 @@ const App = () => {
         setIndexTimes(indexTimesMap);
       });
     }
+  
+    // Cleanup function to abort fetch requests
+    return () => {
+      abortControllers.forEach((controller) => controller.abort());
+    };
   }, [selectedCourses, semester, campus, level]); // Add dependencies as needed
 
+  // Update the selectedIndexes when indexTimes is set
   useEffect(() => {
-    console.log(indexTimes);
+    const newIndexes = new Set();
+    indexTimes.forEach((value, key) => {
+      newIndexes.add(key);
+    });
+    setSelectedIndexes(newIndexes);
   }, [indexTimes]);
+
+  useEffect(() => {
+    console.log("selectedIndexes:", selectedIndexes);
+  }, [selectedIndexes]);
+
+  useEffect(() => {
+    console.log("selectedCourses:", selectedCourses);
+  }, [selectedCourses]);
+
+  useEffect(() => {
+    console.log("indexTimes:", indexTimes);
+  }, [indexTimes]);
+
+  // useEffect(() => {
+  //   // Update the selectedIndexes
+  //   const newIndexes = new Set();
+  //   indexTimes.forEach((value, key) => {
+  //     newIndexes.add(key);
+  //   });
+  //   setSelectedIndexes(newIndexes);
+  // }, [selectedCourses, indexTimes]);
 
   // Build schedules if selectedIndexes and indexTimes are set
   // useEffect(() => {

@@ -17,7 +17,6 @@ const DropdownSectionSec = ({
   const [isChecked, setIsChecked] = useState(check);
 
   useEffect(() => {
-    console.log("check", check);
     setIsChecked(check);
   
     setSelectedIndexes((prev) => {
