@@ -17,6 +17,7 @@ const App = () => {
   const [semester, setSemester] = useState(null);
   const [level, setLevel] = useState("U");
   const [selectedIndexes, setSelectedIndexes] = useState([]);
+  const [selectedIndexesMap, setSelectedIndexesMap] = useState(new Map());
   const [indexTimes, setIndexTimes] = useState([]);
   const [subjectData, setSubjectData] = useState([]);
 
@@ -69,19 +70,19 @@ const App = () => {
 
   useEffect(() => {
     console.log("updating w selectedCourses:", selectedCourses);
-  
+
     const abortControllers = [];
-  
+
     // Check for null campus, semester, and level
     if (!campus || !semester) {
       fetchCampusSemester();
     } else {
       // setIsLoading(true); // Start loading before fetching data
-  
+
       const fetchPromises = selectedCourses.map((course) => {
         const controller = new AbortController();
         abortControllers.push(controller);
-  
+
         return fetch(
           `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
             course.subject
@@ -101,27 +102,35 @@ const App = () => {
             }
           })
           .catch((error) => {
-            if (error.name === 'AbortError') {
-              console.log('Fetch aborted');
+            if (error.name === "AbortError") {
+              console.log("Fetch aborted");
             } else {
               console.error("Error fetching course data:", error);
             }
             return null; // Return null in case of error
           });
       });
-  
+
       Promise.all(fetchPromises).then((courses) => {
         // Filter out null values (not found or error cases)
         const validCourses = courses.filter((course) => course !== null);
         setSubjectData(validCourses); // Update state with all found courses
         // setIsLoading(false); // Stop loading after all fetches are complete
-  
+
+        let selectedIndexesMap = new Map();
+
         // Create a map where the key is the course index and the value is the course code and meeting times
         const indexTimesMap = validCourses.reduce((acc, course) => {
           const courseCode = `${course.offeringUnitCode}${course.subject}${course.courseNumber}`;
           course.sections
             .filter((section) => section.printed === "Y")
             .forEach((section) => {
+              // Initialize the array if the subject is not already a key
+              if (!selectedIndexesMap.has(course.subject)) {
+                selectedIndexesMap.set(course.subject, []);
+              }
+              // Push the section index to the array
+              selectedIndexesMap.get(course.subject).push(section.index);
               // Use the set method to add to the Map
               acc.set(section.index, {
                 courseCode: courseCode,
@@ -132,9 +141,10 @@ const App = () => {
         }, new Map());
 
         setIndexTimes(indexTimesMap);
+        setSelectedIndexesMap(selectedIndexesMap);
       });
     }
-  
+
     // Cleanup function to abort fetch requests
     return () => {
       abortControllers.forEach((controller) => controller.abort());
@@ -154,13 +164,17 @@ const App = () => {
     console.log("selectedIndexes:", selectedIndexes);
   }, [selectedIndexes]);
 
-  useEffect(() => {
-    console.log("selectedCourses:", selectedCourses);
-  }, [selectedCourses]);
+  // useEffect(() => {
+  //   console.log("selectedCourses:", selectedCourses);
+  // }, [selectedCourses]);
+
+  // useEffect(() => {
+  //   console.log("indexTimes:", indexTimes);
+  // }, [indexTimes]);
 
   useEffect(() => {
-    console.log("indexTimes:", indexTimes);
-  }, [indexTimes]);
+    console.log("selectedIndexesMap:", selectedIndexesMap);
+  }, [selectedIndexesMap]);
 
   // useEffect(() => {
   //   // Update the selectedIndexes
@@ -207,6 +221,8 @@ const App = () => {
         fetchCampusSemester,
         selectedIndexes,
         setSelectedIndexes,
+        selectedIndexesMap,
+        setSelectedIndexesMap,
         indexTimes,
         setIndexTimes,
         subjectData,

@@ -26,12 +26,6 @@ const ClassRowSec = ({
   openSections,
   totalSections,
   preReqNotes,
-  selectedCourses,
-  setSelectedCourses,
-  totalCredits,
-  setTotalCredits,
-  selectedIndexes,
-  setSelectedIndexes,
 }) => {
   const [useTitle, setUseTitle] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
