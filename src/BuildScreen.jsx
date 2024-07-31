@@ -15,6 +15,8 @@ const BuildScreen = () => {
     indexTimes,
     selectedIndexes,
     subjectData,
+    selectedIndexesMap,
+    setSelectedIndexesMap,
   } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +37,8 @@ const BuildScreen = () => {
 
   useEffect(() => {
     console.log("buildIndexes", buildIndexes);
+    console.log('selectedIndexes', selectedIndexes);
+    console.log('selectedIndexesMap', selectedIndexesMap);
     console.log("currentIndexes", currentIndexes);
     console.log("indexData", indexData);
   }, [buildIndexes, currentIndexes, indexData]);
@@ -256,7 +260,23 @@ const BuildScreen = () => {
     // console.log("sub addata", subjectData);
   }, [indexData]);
 
-  const handleSave = (name, selectedIndexes) => {
+  // const assignCourseNumbers = (currentIndexes) => {
+  //   let courseMap = new Map();
+  //   for (const index of currentIndexes) {
+  //     const courseNumber = selectedIndexesMap.get(index);
+  //     courseMap.set(index, courseNumber);
+  //   }
+  // };
+
+  const handleSave = (name, currentIndexes) => {
+    // Create the schedule object
+    const schedule = {};
+    currentIndexes.forEach(index => {
+      schedule[index] = selectedIndexesMap.get(index);
+    });
+
+    console.log("schedule", schedule);
+
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/saveschedule`, {
       method: "POST",
       headers: {
@@ -264,7 +284,7 @@ const BuildScreen = () => {
       },
       body: JSON.stringify({
         name: name,
-        schedule: selectedIndexes,
+        schedule: schedule,
       }),
     })
       .then(() => {
@@ -302,7 +322,9 @@ const BuildScreen = () => {
                 onChange={(e) => setInputName(e.target.value)}
               />
               {savedButton ? (
-                <Button className="w-12 h-full bg-green-500 hover:bg-green-500 cursor-default">Saved!</Button>
+                <Button className="w-12 h-full bg-green-500 hover:bg-green-500 cursor-default">
+                  Saved!
+                </Button>
               ) : (
                 <Button
                   className="w-12 h-full"

@@ -15,7 +15,7 @@ import edit from "./assets/edit.svg";
 import xcircle from "./assets/x-circle-white.svg";
 
 const SavedScreen = () => {
-  const { subjectData } = useContext(AppContext);
+  const { subjectData, selectedIndexesMap, setSelectedIndexesMap } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndexes, setCurrentIndexes] = useState([]);

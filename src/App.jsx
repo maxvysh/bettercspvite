@@ -126,11 +126,8 @@ const App = () => {
             .filter((section) => section.printed === "Y")
             .forEach((section) => {
               // Initialize the array if the subject is not already a key
-              if (!selectedIndexesMap.has(course.subject)) {
-                selectedIndexesMap.set(course.subject, []);
-              }
-              // Push the section index to the array
-              selectedIndexesMap.get(course.subject).push(section.index);
+              selectedIndexesMap.set(section.index, course.subject);
+
               // Use the set method to add to the Map
               acc.set(section.index, {
                 courseCode: courseCode,
