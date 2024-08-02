@@ -13,16 +13,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import edit from "./assets/edit.svg";
 import xcircle from "./assets/x-circle-white.svg";
+import { data } from "autoprefixer";
 
 const SavedScreen = () => {
-  const { subjectData, selectedIndexesMap, setSelectedIndexesMap } = useContext(AppContext);
+  const {
+    subjectData,
+    selectedIndexesMap,
+    setSelectedIndexesMap,
+    campus,
+    semester,
+    level,
+    fetchCampusSemester,
+  } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndexes, setCurrentIndexes] = useState([]);
   const [currentName, setCurrentName] = useState("");
   const [indexData, setIndexData] = useState([]);
   const [displayList, setDisplayList] = useState(true);
-  const [currentBuild, setCurrentBuild] = useState(0);
+  const [currentBuild, setCurrentBuild] = useState(-1);
   const [eventsByDay, setEventsByDay] = useState({
     monday: [],
     tuesday: [],
@@ -30,8 +39,10 @@ const SavedScreen = () => {
     thursday: [],
     friday: [],
   });
+  const [totalBuilds, setTotalBuilds] = useState(0);
   const [buildIndexes, setBuildIndexes] = useState([]);
   const [savedSchedules, setSavedSchedules] = useState([]);
+  const [currentSchedule, setCurrentSchedule] = useState({});
 
   useEffect(() => {
     console.log("fetching saved schedules");
@@ -39,31 +50,57 @@ const SavedScreen = () => {
       .then((response) => response.json())
       .then((data) => {
         setSavedSchedules(data);
-        if (data.length > 0) {
-          setBuildIndexes(data.map((schedule) => schedule.schedule));
-          setCurrentIndexes(data[currentBuild].schedule);
-          setCurrentName(data[currentBuild].name);
-        }
+        // if (data.length > 0) {
+        //   setBuildIndexes(data.map((schedule) => schedule.schedule));
+        //   setCurrentIndexes(data[currentBuild].schedule);
+        //   setCurrentName(data[currentBuild].name);
+        // }
+        console.log("Saved schedules fetched:", data);
+        setTotalBuilds(data.length);
+        setCurrentBuild(0);
+        setCurrentSchedule(data[0]); // temp set to 2
       })
       .catch((error) => {
         console.error("Error fetching saved schedules:", error);
       });
   }, []);
 
-  const dataByIndex = (index) => {
-    // Assuming subjectData is accessible in this scope
-    let useTitle;
-    for (const course of subjectData) {
-      if (course.expandedTitle && course.expandedTitle.trim() !== "") {
-        useTitle = course.expandedTitle;
-      } else {
-        useTitle = course.title;
-      }
+  // const dataByIndex = (index) => {
+  //   // Assuming subjectData is accessible in this scope
+  //   // let useTitle;
+  //   // for (const course of subjectData) {
+  //   //   if (course.expandedTitle && course.expandedTitle.trim() !== "") {
+  //   //     useTitle = course.expandedTitle;
+  //   //   } else {
+  //   //     useTitle = course.title;
+  //   //   }
 
+  //   //   const matchingSection = course.sections.find(
+  //   //     (section) => section.index === index
+  //   //   );
+  //   //   if (matchingSection) {
+  //   //     matchingSection.useTitle = useTitle; // Add the course name to the matching section data
+  //   //     return matchingSection; // Return the matching section data
+  //   //   }
+  //   // }
+
+  //   return null; // Return null if no matching section is found
+  // };
+
+  const dataByIndex = (index, courseNumberData) => {
+    // console.log("courseNumberData:", courseNumberData);
+    // console.log("subjectData:", subjectData); 
+    for (const course of courseNumberData) {
       const matchingSection = course.sections.find(
         (section) => section.index === index
       );
       if (matchingSection) {
+        let useTitle = "unknown";
+        if (course.expandedTitle && course.expandedTitle.trim() !== "") {
+          useTitle = course.expandedTitle;
+        } else {
+          useTitle = course.title;
+        }
         matchingSection.useTitle = useTitle; // Add the course name to the matching section data
         return matchingSection; // Return the matching section data
       }
@@ -72,20 +109,59 @@ const SavedScreen = () => {
     return null; // Return null if no matching section is found
   };
 
+  const dataByCourseNumber = async (courseNumber) => {
+    if (!campus || !semester) {
+      await fetchCampusSemester();
+    }
+
+    try {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/courses?subject=${courseNumber}&semester=${semester}&campus=${campus}&level=${level}`
+      );
+      const data = await response.text();
+      return JSON.parse(data);
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    setIndexData([]); // Clear the indexData array before fetching new data
-    if (Array.isArray(currentIndexes)) {
-      // Ensure currentIndexes is an array
-      currentIndexes.forEach((index) => {
-        const sectionData = dataByIndex(index);
-        if (sectionData) {
-          setIndexData((prevData) => [...prevData, sectionData]);
+    console.log("currentSchedule:", currentSchedule);
+    if (currentSchedule.name !== undefined) {
+      console.log("bleh");
+      setIndexData([]); // Clear the indexData array before fetching new data
+      currentSchedule.schedule.forEach(async (schedule) => {
+        // Fetch the course number and then fetch the data for each index
+        const courseNumberData = await dataByCourseNumber(
+          schedule.courseNumber
+        );
+        console.log("courseNumberData:", courseNumberData);
+        if (courseNumberData) {
+          schedule.indexes.forEach((index) => {
+            const sectionData = dataByIndex(index, courseNumberData);
+            if (sectionData) {
+              setIndexData((prevData) => [...prevData, sectionData]);
+            }
+          });
         }
       });
     }
-
     setIsLoading(false);
-  }, [currentIndexes, subjectData]);
+  }, [currentSchedule]);
+
+  // setIndexData([]); // Clear the indexData array before fetching new data
+  // if (Array.isArray(currentIndexes)) {
+  //   // Ensure currentIndexes is an array
+  //   currentIndexes.forEach((index) => {
+  //     const sectionData = dataByIndex(index);
+  //     if (sectionData) {
+  //       setIndexData((prevData) => [...prevData, sectionData]);
+  //     }
+  //   });
+  // }
 
   // useEffect(() => {
   //   setCurrentIndexes(buildIndexes[0]);
@@ -232,7 +308,7 @@ const SavedScreen = () => {
               </Button>
               <div className="flex flex-col justify-center">
                 <p className="h-fit">
-                  {currentBuild + 1} of {buildIndexes.length}
+                  {currentBuild + 1} of {totalBuilds}
                 </p>
               </div>
               <Button className="w-24 m-1" onClick={() => handleNext()}>
