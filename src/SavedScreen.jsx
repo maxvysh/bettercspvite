@@ -17,9 +17,6 @@ import { data } from "autoprefixer";
 
 const SavedScreen = () => {
   const {
-    subjectData,
-    selectedIndexesMap,
-    setSelectedIndexesMap,
     campus,
     semester,
     level,
@@ -27,7 +24,6 @@ const SavedScreen = () => {
   } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [currentIndexes, setCurrentIndexes] = useState([]);
   const [currentName, setCurrentName] = useState("");
   const [indexData, setIndexData] = useState([]);
   const [displayList, setDisplayList] = useState(true);
@@ -44,18 +40,12 @@ const SavedScreen = () => {
   const [savedSchedules, setSavedSchedules] = useState([]);
   const [currentSchedule, setCurrentSchedule] = useState({});
 
+  // Retrieve the saved schedules from the backend
   useEffect(() => {
-    console.log("fetching saved schedules");
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`)
       .then((response) => response.json())
       .then((data) => {
         setSavedSchedules(data);
-        // if (data.length > 0) {
-        //   setBuildIndexes(data.map((schedule) => schedule.schedule));
-        //   setCurrentIndexes(data[currentBuild].schedule);
-        //   setCurrentName(data[currentBuild].name);
-        // }
-        console.log("Saved schedules fetched:", data);
         setTotalBuilds(data.length);
         setCurrentBuild(0);
         setCurrentSchedule(data[0]); // temp set to 2
@@ -65,31 +55,8 @@ const SavedScreen = () => {
       });
   }, []);
 
-  // const dataByIndex = (index) => {
-  //   // Assuming subjectData is accessible in this scope
-  //   // let useTitle;
-  //   // for (const course of subjectData) {
-  //   //   if (course.expandedTitle && course.expandedTitle.trim() !== "") {
-  //   //     useTitle = course.expandedTitle;
-  //   //   } else {
-  //   //     useTitle = course.title;
-  //   //   }
-
-  //   //   const matchingSection = course.sections.find(
-  //   //     (section) => section.index === index
-  //   //   );
-  //   //   if (matchingSection) {
-  //   //     matchingSection.useTitle = useTitle; // Add the course name to the matching section data
-  //   //     return matchingSection; // Return the matching section data
-  //   //   }
-  //   // }
-
-  //   return null; // Return null if no matching section is found
-  // };
-
+  // From the data retrived in dataByCourseNumber, find the section data that matches the index
   const dataByIndex = (index, courseNumberData) => {
-    // console.log("courseNumberData:", courseNumberData);
-    // console.log("subjectData:", subjectData); 
     for (const course of courseNumberData) {
       const matchingSection = course.sections.find(
         (section) => section.index === index
@@ -109,6 +76,7 @@ const SavedScreen = () => {
     return null; // Return null if no matching section is found
   };
 
+  // Get all the data of courses, including all the sections within from the courseNumber
   const dataByCourseNumber = async (courseNumber) => {
     if (!campus || !semester) {
       await fetchCampusSemester();
@@ -128,17 +96,15 @@ const SavedScreen = () => {
     }
   };
 
+
   useEffect(() => {
-    console.log("currentSchedule:", currentSchedule);
     if (currentSchedule.name !== undefined) {
-      console.log("bleh");
       setIndexData([]); // Clear the indexData array before fetching new data
       currentSchedule.schedule.forEach(async (schedule) => {
         // Fetch the course number and then fetch the data for each index
         const courseNumberData = await dataByCourseNumber(
           schedule.courseNumber
         );
-        console.log("courseNumberData:", courseNumberData);
         if (courseNumberData) {
           schedule.indexes.forEach((index) => {
             const sectionData = dataByIndex(index, courseNumberData);
@@ -151,21 +117,6 @@ const SavedScreen = () => {
     }
     setIsLoading(false);
   }, [currentSchedule]);
-
-  // setIndexData([]); // Clear the indexData array before fetching new data
-  // if (Array.isArray(currentIndexes)) {
-  //   // Ensure currentIndexes is an array
-  //   currentIndexes.forEach((index) => {
-  //     const sectionData = dataByIndex(index);
-  //     if (sectionData) {
-  //       setIndexData((prevData) => [...prevData, sectionData]);
-  //     }
-  //   });
-  // }
-
-  // useEffect(() => {
-  //   setCurrentIndexes(buildIndexes[0]);
-  // }, [buildIndexes]);
 
   useEffect(() => {
     setCurrentIndexes(buildIndexes[currentBuild]);
