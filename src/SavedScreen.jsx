@@ -27,7 +27,7 @@ const SavedScreen = () => {
   const [currentName, setCurrentName] = useState("");
   const [indexData, setIndexData] = useState([]);
   const [displayList, setDisplayList] = useState(true);
-  const [currentBuild, setCurrentBuild] = useState(-1);
+  const [currentBuild, setCurrentBuild] = useState(0);
   const [eventsByDay, setEventsByDay] = useState({
     monday: [],
     tuesday: [],
@@ -47,7 +47,6 @@ const SavedScreen = () => {
       .then((data) => {
         setSavedSchedules(data);
         setTotalBuilds(data.length);
-        setCurrentBuild(0);
         setCurrentSchedule(data[0]); // temp set to 2
       })
       .catch((error) => {
@@ -96,37 +95,48 @@ const SavedScreen = () => {
     }
   };
 
-
+  // Fetch the data for each index in the current schedule
   useEffect(() => {
-    if (currentSchedule.name !== undefined) {
-      setIndexData([]); // Clear the indexData array before fetching new data
-      currentSchedule.schedule.forEach(async (schedule) => {
-        // Fetch the course number and then fetch the data for each index
-        const courseNumberData = await dataByCourseNumber(
-          schedule.courseNumber
-        );
-        if (courseNumberData) {
-          schedule.indexes.forEach((index) => {
-            const sectionData = dataByIndex(index, courseNumberData);
-            if (sectionData) {
-              setIndexData((prevData) => [...prevData, sectionData]);
-            }
-          });
-        }
-      });
-    }
-    setIsLoading(false);
+    setIsLoading(true);
+    const fetchData = async () => {
+      if (currentSchedule.name !== undefined) {
+        setIndexData([]); // Clear the indexData array before fetching new data
+  
+        const promises = currentSchedule.schedule.map(async (schedule) => {
+          // Fetch the course number and then fetch the data for each index
+          const courseNumberData = await dataByCourseNumber(schedule.courseNumber);
+          if (courseNumberData) {
+            const indexPromises = schedule.indexes.map(async (index) => {
+              const sectionData = dataByIndex(index, courseNumberData);
+              if (sectionData) {
+                setIndexData((prevData) => [...prevData, sectionData]);
+              }
+            });
+            await Promise.all(indexPromises);
+          }
+        });
+  
+        await Promise.all(promises);
+      }
+      setIsLoading(false);
+    };
+  
+    fetchData();
   }, [currentSchedule]);
 
   useEffect(() => {
-    setCurrentIndexes(buildIndexes[currentBuild]);
+    console.log("indexData", indexData);
+  }, [indexData]);
+
+  useEffect(() => {
     if (savedSchedules.length > 0) {
+      setCurrentSchedule(savedSchedules[currentBuild]);
       setCurrentName(savedSchedules[currentBuild].name);
     }
   }, [currentBuild, buildIndexes]);
 
   const handleNext = () => {
-    if (currentBuild < buildIndexes.length - 1) {
+    if (currentBuild < totalBuilds - 1) {
       setCurrentBuild(currentBuild + 1);
     }
   };
