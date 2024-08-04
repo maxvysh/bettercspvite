@@ -32,6 +32,8 @@ const CampusSemesterSelector = () => {
     setCampus,
     semester,
     setSemester,
+    setSelectedCourses,
+    setTotalCredits,
   } = useContext(AppContext);
 
   const handleCampusChange = (value) => {
@@ -50,6 +52,11 @@ const CampusSemesterSelector = () => {
 
   const handleButtonClick = () => {
     if (!isButtonDisabled) {
+      const oldData = fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`);
+      if (oldData.semester !== semester || oldData.campus !== campus) {
+        setSelectedCourses([]);
+        setTotalCredits(0);
+      }
       // Navigate to /classes
       // Save the campus and semester to mongoDB
       fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`, {
