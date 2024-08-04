@@ -43,12 +43,16 @@ const SavedScreen = () => {
       .then((data) => {
         setSavedSchedules(data);
         setTotalBuilds(data.length);
-        setCurrentSchedule(data[0]); // temp set to 2
+        setCurrentSchedule(data[0]);
       })
       .catch((error) => {
         console.error("Error fetching saved schedules:", error);
       });
   }, []);
+
+  useEffect(() => {
+    console.log("indexData", indexData);
+  }, [indexData]);
 
   // From the data retrived in dataByCourseNumber, find the section data that matches the index
   const dataByIndex = (index, courseNumberData) => {
@@ -98,33 +102,33 @@ const SavedScreen = () => {
       if (currentSchedule.name !== undefined) {
         setIndexData([]); // Clear the indexData array before fetching new data
 
+        const newIndexData = []; // Local array to accumulate new data
+
+        // Outer promises array to handle fetching data for each schedule
         const promises = currentSchedule.schedule.map(async (schedule) => {
-          // Fetch the course number and then fetch the data for each index
-          const courseNumberData = await dataByCourseNumber(
-            schedule.courseNumber
-          );
+          // Fetch the course number data
+          const courseNumberData = await dataByCourseNumber(schedule.courseNumber);
           if (courseNumberData) {
+            // Inner promises array to handle fetching data for each index
             const indexPromises = schedule.indexes.map(async (index) => {
-              const sectionData = dataByIndex(index, courseNumberData);
+              const sectionData = await dataByIndex(index, courseNumberData);
               if (sectionData) {
-                setIndexData((prevData) => [...prevData, sectionData]);
+                newIndexData.push(sectionData); // Accumulate data in the local array
               }
             });
-            await Promise.all(indexPromises);
+            await Promise.all(indexPromises); // Wait for all index data to be fetched
           }
         });
 
-        await Promise.all(promises);
+        await Promise.all(promises); // Wait for all schedule data to be fetched
+
+        setIndexData(newIndexData); // Set the state with the accumulated data
       }
       setIsLoading(false);
     };
 
     fetchData();
   }, [currentSchedule]);
-
-  useEffect(() => {
-    console.log("indexData", indexData);
-  }, [indexData]);
 
   useEffect(() => {
     if (savedSchedules.length > 0) {
