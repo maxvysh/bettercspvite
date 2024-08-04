@@ -16,12 +16,8 @@ import xcircle from "./assets/x-circle-white.svg";
 import { data } from "autoprefixer";
 
 const SavedScreen = () => {
-  const {
-    campus,
-    semester,
-    level,
-    fetchCampusSemester,
-  } = useContext(AppContext);
+  const { campus, semester, level, fetchCampusSemester } =
+    useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentName, setCurrentName] = useState("");
@@ -101,10 +97,12 @@ const SavedScreen = () => {
     const fetchData = async () => {
       if (currentSchedule.name !== undefined) {
         setIndexData([]); // Clear the indexData array before fetching new data
-  
+
         const promises = currentSchedule.schedule.map(async (schedule) => {
           // Fetch the course number and then fetch the data for each index
-          const courseNumberData = await dataByCourseNumber(schedule.courseNumber);
+          const courseNumberData = await dataByCourseNumber(
+            schedule.courseNumber
+          );
           if (courseNumberData) {
             const indexPromises = schedule.indexes.map(async (index) => {
               const sectionData = dataByIndex(index, courseNumberData);
@@ -115,12 +113,12 @@ const SavedScreen = () => {
             await Promise.all(indexPromises);
           }
         });
-  
+
         await Promise.all(promises);
       }
       setIsLoading(false);
     };
-  
+
     fetchData();
   }, [currentSchedule]);
 
@@ -145,6 +143,38 @@ const SavedScreen = () => {
     if (currentBuild > 0) {
       setCurrentBuild(currentBuild - 1);
     }
+  };
+
+  const handleEdit = () => {
+    console.log(currentSchedule);
+  };
+
+  // Delete the current schedule from the saved schedules and update the backend
+  const handleDelete = () => {
+    console.log("delete name");
+    const newSavedSchedules = savedSchedules.filter(
+      (schedule) => schedule.name !== currentSchedule.name
+    );
+    setSavedSchedules(newSavedSchedules);
+    setTotalBuilds(newSavedSchedules.length);
+    setCurrentBuild(0);
+    setCurrentSchedule(newSavedSchedules[0]);
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: currentSchedule._id,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Deleted schedule:", data);
+      })
+      .catch((error) => {
+        console.error("Error deleting schedule:", error);
+      });
   };
 
   const getFullDayName = (dayLetter) => {
@@ -294,10 +324,20 @@ const SavedScreen = () => {
                         {schedule.name}
                       </Button>
                       <Button className="rounded-none">
-                        <img src={edit} alt="Edit" className="w-10" />
+                        <img
+                          src={edit}
+                          alt="Edit"
+                          className="w-10"
+                          onClick={handleEdit}
+                        />
                       </Button>
                       <Button className="rounded-l-none">
-                        <img src={xcircle} alt="Delete" className="w-10" />
+                        <img
+                          src={xcircle}
+                          alt="Delete"
+                          className="w-10"
+                          onClick={handleDelete}
+                        />
                       </Button>
                     </div>
                   ))}
