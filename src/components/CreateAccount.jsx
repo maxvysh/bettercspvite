@@ -21,7 +21,8 @@ const CreateAccount = () => {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
-          Enter your email below to create your account
+          {/* Enter your email below to create your account */}
+          Use your Google account to access or create an account
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
@@ -31,7 +32,7 @@ const CreateAccount = () => {
             Google
           </Button>
         </div>
-        <div className="relative">
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
@@ -48,16 +49,16 @@ const CreateAccount = () => {
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
           <Input id="password" type="password" />
-        </div>
+        </div> */}
       </CardContent>
-      <CardFooter>
+      {/* <CardFooter>
         <Button
           className="w-full"
           onClick={() => alert("Please select campus and semester options.")}
         >
           Create account
         </Button>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 };

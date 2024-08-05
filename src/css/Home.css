@@ -1,0 +1,66 @@
+@keyframes showTopText {
+  0% { transform: translate3d(0, 100%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes showBottomText {
+  0% { transform: translate3d(0, -100%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+  
+@keyframes showTopText {
+    0% { transform: translate3d(0, 100%, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+  }
+  
+  @keyframes showBottomText {
+    0% { transform: translate3d(0, -100%, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+  }
+  
+  .animated-title {
+      height: 50vmin;
+      position: relative;
+  }
+  
+  .animated-title > div {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+  }
+  
+  .animated-title > div div {
+      padding: 2vmin 0;
+      position: relative;
+  }
+  
+  .animated-title > div div span {
+      display: block;
+  }
+  
+  .animated-title > div.text-top {
+      border-bottom: 8px solid #64748b;
+      top: 0;
+      width: fit-content; /* Ensure the width is adjusted dynamically */
+    }
+  
+  .animated-title > div.text-top div {
+      animation: showTopText 1s;
+      animation-delay: 0.5s;
+      animation-fill-mode: forwards;
+      bottom: -20px;
+      transform: translate(0, 100%);
+  }
+  
+  .animated-title > div.text-bottom {
+      bottom: 0;
+      width: fit-content; /* Ensure the width is adjusted dynamically */
+  }
+  
+  .animated-title > div.text-bottom div {
+      animation: showBottomText 0.5s;
+      animation-delay: 1.75s;
+      animation-fill-mode: forwards;
+      top: -10px;
+      transform: translate(0, -100%);
+  }
