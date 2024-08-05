@@ -25,7 +25,7 @@ function Home() {
 
   return (
     <div className="h-screen bg-gradient-to-b from-[#0f172a] via-[#305180] via-[#3361a1] to-[#f8fafc]">
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col">
         <div className="animated-title ml-8 h-fit -mt-6">
           <div className="text-top" ref={topTextRef}>
             <div>
@@ -45,9 +45,6 @@ function Home() {
           <div className="flex flex-col max-w-[426px] w-full gap-2">
             <Button className="bg-white text-[#020817] hover:bg-[#cbd5e1]">
               Learn More About RUPlanning
-            </Button>
-            <Button className="bg-white text-[#020817] hover:bg-[#cbd5e1]">
-              Learn More About Its Creator
             </Button>
           </div>
         </div>
