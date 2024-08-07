@@ -138,7 +138,7 @@ const ClassScreen = () => {
         <Header />
       </div>
       <div className="p-3 flex">
-        <div className="w-[330px] min-w-[330px]">
+        <div className="w-[330px] min-w-[330px] flex flex-col gap-2">
           <ScreenSelector />
           <SelectedCourses
             selectedCourses={selectedCourses}
@@ -146,10 +146,7 @@ const ClassScreen = () => {
             totalCredits={totalCredits}
             setTotalCredits={setTotalCredits}
           />
-          <Card>
-            <p>Filter by core codes</p>
-            <CoreCodeSort onValueChange={onValueChange} />
-          </Card>
+          <CoreCodeSort onValueChange={onValueChange} />
         </div>
         <div className="ml-4 w-full">
           <div className="flex justify-between w-[640px]">
