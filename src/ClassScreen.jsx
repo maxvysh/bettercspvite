@@ -22,6 +22,7 @@ const ClassScreen = () => {
   // const [level, setLevel] = useState("U");
   const [subject, setSubject] = useState(null);
   const [subjectData, setSubjectData] = useState(null);
+  const [subjectDataOriginal, setSubjectDataOriginal] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCores, setSelectedCores] = useState([]);
   // const [selectedCourses, setSelectedCourses] = useState([]);
@@ -75,6 +76,7 @@ const ClassScreen = () => {
         .then((response) => response.text())
         .then((data) => {
           setSubjectData(JSON.parse(data));
+          setSubjectDataOriginal(JSON.parse(data));
         })
         .then(() => setIsLoading(false))
         .catch((error) => console.error("Error:", error));
@@ -113,6 +115,22 @@ const ClassScreen = () => {
   const onValueChange = (value) => {
     setSelectedCores(value);
   };
+
+  useEffect(() => {
+    // When the selectedCores change, filter the subjectData
+    console.log("sub data", selectedCores);
+    if (!subjectData) return;
+    if (selectedCores.length === 0) {
+      setSubjectData(subjectDataOriginal);
+      return;
+    }
+    const filteredData = subjectDataOriginal.filter((subject) =>
+      selectedCores.every((selectedCore) =>
+        subject.coreCodes.some((coreCode) => coreCode.code === selectedCore)
+      )
+    );
+    setSubjectData(filteredData);
+  }, [selectedCores, subjectDataOriginal]);
 
   return (
     <div>
