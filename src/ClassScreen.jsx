@@ -13,6 +13,8 @@ import {
 import { useState, useEffect, useContext } from "react";
 import ClassRow from "./components/ClassRow";
 import AppContext from "./AppContext";
+import { Card } from "@/components/ui/card";
+import CoreCodeSort from "./components/CoreCodeSort";
 
 const ClassScreen = () => {
   // const location = useLocation();
@@ -21,6 +23,7 @@ const ClassScreen = () => {
   const [subject, setSubject] = useState(null);
   const [subjectData, setSubjectData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedCores, setSelectedCores] = useState([]);
   // const [selectedCourses, setSelectedCourses] = useState([]);
   // const [totalCredits, setTotalCredits] = useState(0);
   // const [isDataFetched, setIsDataFetched] = useState(false);
@@ -36,7 +39,7 @@ const ClassScreen = () => {
     setSemester,
     level,
     setLevel,
-    fetchCampusSemester
+    fetchCampusSemester,
   } = useContext(AppContext);
 
   const handleLevelSelectorChange = (value) => {
@@ -78,10 +81,6 @@ const ClassScreen = () => {
     }
   }, [campus, semester, level, subject]);
 
-  useEffect(() => {
-    console.log("subjectData", subjectData);
-  }, [subjectData]);
-
   // useEffect(() => {
   //   async function fetchCourses() {
   //     const response = await fetch(
@@ -111,6 +110,10 @@ const ClassScreen = () => {
   //   });
   // }, [selectedCourses]);
 
+  const onValueChange = (value) => {
+    setSelectedCores(value);
+  };
+
   return (
     <div>
       <div className="min-w-[1570px]">
@@ -119,14 +122,16 @@ const ClassScreen = () => {
       <div className="p-3 flex">
         <div className="w-[330px] min-w-[330px]">
           <ScreenSelector />
-          <div className="mt-4">
-            <SelectedCourses
-              selectedCourses={selectedCourses}
-              setSelectedCourses={setSelectedCourses}
-              totalCredits={totalCredits}
-              setTotalCredits={setTotalCredits}
-            />
-          </div>
+          <SelectedCourses
+            selectedCourses={selectedCourses}
+            setSelectedCourses={setSelectedCourses}
+            totalCredits={totalCredits}
+            setTotalCredits={setTotalCredits}
+          />
+          <Card>
+            <p>Filter by core codes</p>
+            <CoreCodeSort onValueChange={onValueChange} />
+          </Card>
         </div>
         <div className="ml-4 w-full">
           <div className="flex justify-between w-[640px]">
@@ -165,9 +170,12 @@ const ClassScreen = () => {
                     title={subjectData.title}
                     credits={subjectData.credits}
                     sections={subjectData.sections}
-                    openSections={subjectData.sections.filter(
-                      (section) => section.printed === "Y" && section.openStatus === true
-                    ).length}
+                    openSections={
+                      subjectData.sections.filter(
+                        (section) =>
+                          section.printed === "Y" && section.openStatus === true
+                      ).length
+                    }
                     totalSections={
                       subjectData.sections.filter(
                         (section) => section.printed === "Y"
