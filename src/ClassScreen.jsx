@@ -13,7 +13,6 @@ import {
 import { useState, useEffect, useContext } from "react";
 import ClassRow from "./components/ClassRow";
 import AppContext from "./AppContext";
-import { Card } from "@/components/ui/card";
 import CoreCodeSort from "./components/CoreCodeSort";
 
 const ClassScreen = () => {
@@ -25,6 +24,7 @@ const ClassScreen = () => {
   const [subjectDataOriginal, setSubjectDataOriginal] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCores, setSelectedCores] = useState([]);
+  const [isOnlineChecked, setIsOnlineChecked] = useState(false);
   // const [selectedCourses, setSelectedCourses] = useState([]);
   // const [totalCredits, setTotalCredits] = useState(0);
   // const [isDataFetched, setIsDataFetched] = useState(false);
@@ -75,8 +75,14 @@ const ClassScreen = () => {
       )
         .then((response) => response.text())
         .then((data) => {
-          setSubjectData(JSON.parse(data));
-          setSubjectDataOriginal(JSON.parse(data));
+          // Filter out the classes which have no printed sections
+          let parsedData = JSON.parse(data);
+          parsedData = parsedData.filter((subject) =>
+            subject.sections.some((section) => section.printed === "Y")
+          );
+
+          setSubjectData(parsedData);
+          setSubjectDataOriginal(parsedData);
         })
         .then(() => setIsLoading(false))
         .catch((error) => console.error("Error:", error));
@@ -116,19 +122,43 @@ const ClassScreen = () => {
     setSelectedCores(value);
   };
 
+  const onCheckBoxChange = (value) => {
+    setIsOnlineChecked(value);
+  };
+
   useEffect(() => {
+    if (!subjectData) return;
+    if (!isOnlineChecked) {
+      setSubjectData(subjectDataOriginal);
+      return;
+    }
+    const filteredData = subjectData.filter((subject) =>
+      subject.sections.some(
+        (section) =>
+          section.printed === "Y" &&
+          section.meetingTimes.some(
+            (meetingTime) => meetingTime.campusLocation === "O"
+          )
+      )
+    );
+
+    setSubjectData(filteredData);
+  }, [isOnlineChecked, subjectDataOriginal]);
+
+  useEffect(() => {
+    console.log("upd");
     // When the selectedCores change, filter the subjectData
-    console.log("sub data", selectedCores);
     if (!subjectData) return;
     if (selectedCores.length === 0) {
       setSubjectData(subjectDataOriginal);
       return;
     }
-    const filteredData = subjectDataOriginal.filter((subject) =>
+    const filteredData = subjectData.filter((subject) =>
       selectedCores.every((selectedCore) =>
         subject.coreCodes.some((coreCode) => coreCode.code === selectedCore)
       )
     );
+
     setSubjectData(filteredData);
   }, [selectedCores, subjectDataOriginal]);
 
@@ -146,7 +176,10 @@ const ClassScreen = () => {
             totalCredits={totalCredits}
             setTotalCredits={setTotalCredits}
           />
-          <CoreCodeSort onValueChange={onValueChange} />
+          <CoreCodeSort
+            onValueChange={onValueChange}
+            onCheckBoxChange={onCheckBoxChange}
+          />
         </div>
         <div className="ml-4 w-full">
           <div className="flex justify-between w-[640px]">
@@ -169,40 +202,38 @@ const ClassScreen = () => {
           <div>
             {isLoading ? (
               <p>Loading...</p>
+            ) : subjectData.length === 0 && subject ? (
+              <p>No entries found matching the filters</p>
             ) : (
-              subjectData
-                .filter((subject) =>
-                  subject.sections.some((section) => section.printed === "Y")
-                )
-                .map((subjectData) => (
-                  <ClassRow
-                    key={subjectData.courseNumber + subjectData.campusCode}
-                    courseFD={subjectData}
-                    offeringUnitCode={subjectData.offeringUnitCode}
-                    subject={subjectData.subject}
-                    courseNumber={subjectData.courseNumber}
-                    expandedTitle={subjectData.expandedTitle}
-                    title={subjectData.title}
-                    credits={subjectData.credits}
-                    sections={subjectData.sections}
-                    openSections={
-                      subjectData.sections.filter(
-                        (section) =>
-                          section.printed === "Y" && section.openStatus === true
-                      ).length
-                    }
-                    totalSections={
-                      subjectData.sections.filter(
-                        (section) => section.printed === "Y"
-                      ).length
-                    }
-                    preReqNotes={subjectData.preReqNotes}
-                    selectedCourses={selectedCourses}
-                    setSelectedCourses={setSelectedCourses}
-                    totalCredits={totalCredits}
-                    setTotalCredits={setTotalCredits}
-                  />
-                ))
+              subjectData.map((subjectData) => (
+                <ClassRow
+                  key={subjectData.courseNumber + subjectData.campusCode}
+                  courseFD={subjectData}
+                  offeringUnitCode={subjectData.offeringUnitCode}
+                  subject={subjectData.subject}
+                  courseNumber={subjectData.courseNumber}
+                  expandedTitle={subjectData.expandedTitle}
+                  title={subjectData.title}
+                  credits={subjectData.credits}
+                  sections={subjectData.sections}
+                  openSections={
+                    subjectData.sections.filter(
+                      (section) =>
+                        section.printed === "Y" && section.openStatus === true
+                    ).length
+                  }
+                  totalSections={
+                    subjectData.sections.filter(
+                      (section) => section.printed === "Y"
+                    ).length
+                  }
+                  preReqNotes={subjectData.preReqNotes}
+                  selectedCourses={selectedCourses}
+                  setSelectedCourses={setSelectedCourses}
+                  totalCredits={totalCredits}
+                  setTotalCredits={setTotalCredits}
+                />
+              ))
             )}
           </div>
         </div>
