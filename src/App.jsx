@@ -157,9 +157,9 @@ const App = () => {
     setSelectedIndexes(newIndexes);
   }, [indexTimes]);
 
-  useEffect(() => {
-    console.log("sub dat:", selectedIndexes);
-  }, [selectedIndexes]);
+  // useEffect(() => {
+  //   console.log("sub dat:", selectedIndexes);
+  // }, [selectedIndexes]);
 
   // // useEffect(() => {
   // //   console.log("selectedCourses:", selectedCourses);

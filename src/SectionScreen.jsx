@@ -20,6 +20,7 @@ const SectionScreen = () => {
     fetchCampusSemester,
     indexTimes,
     setIndexTimes,
+    setSelectedIndexes,
     subjectData,
   } = useContext(AppContext);
 
@@ -43,8 +44,6 @@ const SectionScreen = () => {
   }, [subjectData]);
 
   useEffect(() => {
-    console.log("sectionStatusOpen", sectionStatusOpen);
-    console.log("sectionStatusClosed", sectionStatusClosed);
     if (!subjectDataOriginal) return;
 
     let newFilteredData = subjectDataOriginal.map((subject) => ({
@@ -58,6 +57,20 @@ const SectionScreen = () => {
 
     setSubjectDataFiltered(newFilteredData);
   }, [sectionStatusOpen, sectionStatusClosed, subjectDataOriginal]);
+
+  // Update selectedIndexes when subjectDataFiltered changes
+  useEffect(() => {
+    if (!subjectDataFiltered) return
+    setSelectedIndexes(
+      subjectDataFiltered.reduce((acc, subject) => {
+        subject.sections.forEach((section) => {
+          acc.add(section.index);
+        });
+        return acc;
+      }
+      , new Set())
+    );
+  }, [subjectDataFiltered, setSelectedIndexes]);
 
   return (
     <div>
