@@ -146,7 +146,6 @@ const ClassScreen = () => {
   }, [isOnlineChecked, subjectDataOriginal]);
 
   useEffect(() => {
-    console.log("upd");
     // When the selectedCores change, filter the subjectData
     if (!subjectData) return;
     if (selectedCores.length === 0) {

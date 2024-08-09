@@ -24,12 +24,40 @@ const SectionScreen = () => {
   } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [subjectDataOriginal, setSubjectDataOriginal] = useState(null);
+  const [subjectDataFiltered, setSubjectDataFiltered] = useState(null);
+  const [sectionStatusOpen, setSectionStatusOpen] = useState(true);
+  const [sectionStatusClosed, setSectionStatusClosed] = useState(true);
 
   useEffect(() => {
     if (subjectData) {
       setIsLoading(false);
+      // Filter the subject data to only have sections that have printed === "Y"
+      let filteredData = subjectData.map((subject) => ({
+        ...subject,
+        sections: subject.sections.filter((section) => section.printed === "Y"),
+      }));
+      setSubjectDataOriginal(filteredData);
+      setSubjectDataFiltered(filteredData);
     }
   }, [subjectData]);
+
+  useEffect(() => {
+    console.log("sectionStatusOpen", sectionStatusOpen);
+    console.log("sectionStatusClosed", sectionStatusClosed);
+    if (!subjectDataOriginal) return;
+
+    let newFilteredData = subjectDataOriginal.map((subject) => ({
+      ...subject,
+      sections: subject.sections.filter(
+        (section) =>
+          (section.openStatus === true && sectionStatusOpen) ||
+          (section.openStatus === false && sectionStatusClosed)
+      ),
+    }));
+
+    setSubjectDataFiltered(newFilteredData);
+  }, [sectionStatusOpen, sectionStatusClosed, subjectDataOriginal]);
 
   return (
     <div>
@@ -39,55 +67,56 @@ const SectionScreen = () => {
       <div className="p-3 flex">
         <div className="w-[330px] min-w-[330px] flex flex-col gap-2">
           <ScreenSelector />
-            <SelectedCourses
-              selectedCourses={selectedCourses}
-              setSelectedCourses={setSelectedCourses}
-              totalCredits={totalCredits}
-              setTotalCredits={setTotalCredits}
+          <SelectedCourses
+            selectedCourses={selectedCourses}
+            setSelectedCourses={setSelectedCourses}
+            totalCredits={totalCredits}
+            setTotalCredits={setTotalCredits}
+          />
+          <div id="filters">
+            <SectionStatus
+              sectionStatusOpen={sectionStatusOpen}
+              sectionStatusClosed={sectionStatusClosed}
+              setSectionStatusOpen={setSectionStatusOpen}
+              setSectionStatusClosed={setSectionStatusClosed}
             />
-            <div id="filters">
-              <SectionStatus />
-              <CourseTypes />
-              <DayAndTime />
-            </div>
+            <CourseTypes />
+            <DayAndTime />
+          </div>
         </div>
         <div className="ml-4 w-full">
           <div>
             {isLoading ? (
               <p>Loading...</p>
             ) : (
-              subjectData
-                .filter((subject) =>
-                  subject.sections.some((section) => section.printed === "Y")
-                )
-                .map((subjectData) => (
-                  <ClassRowSec
-                    key={subjectData.courseNumber + subjectData.campusCode}
-                    offeringUnitCode={subjectData.offeringUnitCode}
-                    subject={subjectData.subject}
-                    courseNumber={subjectData.courseNumber}
-                    expandedTitle={subjectData.expandedTitle}
-                    title={subjectData.title}
-                    credits={subjectData.credits}
-                    sections={subjectData.sections}
-                    openSections={
-                      subjectData.sections.filter(
-                        (section) =>
-                          section.printed === "Y" && section.openStatus === true
-                      ).length
-                    }
-                    totalSections={
-                      subjectData.sections.filter(
-                        (section) => section.printed === "Y"
-                      ).length
-                    }
-                    preReqNotes={subjectData.preReqNotes}
-                    selectedCourses={selectedCourses}
-                    setSelectedCourses={setSelectedCourses}
-                    totalCredits={totalCredits}
-                    setTotalCredits={setTotalCredits}
-                  />
-                ))
+              subjectDataFiltered.map((subjectData) => (
+                <ClassRowSec
+                  key={subjectData.courseNumber + subjectData.campusCode}
+                  offeringUnitCode={subjectData.offeringUnitCode}
+                  subject={subjectData.subject}
+                  courseNumber={subjectData.courseNumber}
+                  expandedTitle={subjectData.expandedTitle}
+                  title={subjectData.title}
+                  credits={subjectData.credits}
+                  sections={subjectData.sections}
+                  openSections={
+                    subjectData.sections.filter(
+                      (section) =>
+                        section.printed === "Y" && section.openStatus === true
+                    ).length
+                  }
+                  totalSections={
+                    subjectData.sections.filter(
+                      (section) => section.printed === "Y"
+                    ).length
+                  }
+                  preReqNotes={subjectData.preReqNotes}
+                  selectedCourses={selectedCourses}
+                  setSelectedCourses={setSelectedCourses}
+                  totalCredits={totalCredits}
+                  setTotalCredits={setTotalCredits}
+                />
+              ))
             )}
           </div>
         </div>

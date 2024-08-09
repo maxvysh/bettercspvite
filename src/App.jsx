@@ -158,20 +158,20 @@ const App = () => {
   }, [indexTimes]);
 
   useEffect(() => {
-    console.log("selectedIndexes:", selectedIndexes);
+    console.log("sub dat:", selectedIndexes);
   }, [selectedIndexes]);
 
-  // useEffect(() => {
-  //   console.log("selectedCourses:", selectedCourses);
-  // }, [selectedCourses]);
+  // // useEffect(() => {
+  // //   console.log("selectedCourses:", selectedCourses);
+  // // }, [selectedCourses]);
+
+  // // useEffect(() => {
+  // //   console.log("indexTimes:", indexTimes);
+  // // }, [indexTimes]);
 
   // useEffect(() => {
-  //   console.log("indexTimes:", indexTimes);
-  // }, [indexTimes]);
-
-  useEffect(() => {
-    console.log("selectedIndexesMap:", selectedIndexesMap);
-  }, [selectedIndexesMap]);
+  //   console.log("selectedIndexesMap:", selectedIndexesMap);
+  // }, [selectedIndexesMap]);
 
   // useEffect(() => {
   //   // Update the selectedIndexes
