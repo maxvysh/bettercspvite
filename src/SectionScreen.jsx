@@ -29,6 +29,9 @@ const SectionScreen = () => {
   const [subjectDataFiltered, setSubjectDataFiltered] = useState(null);
   const [sectionStatusOpen, setSectionStatusOpen] = useState(true);
   const [sectionStatusClosed, setSectionStatusClosed] = useState(true);
+  const [traditionalType, setTraditionalType] = useState(true);
+  const [hybridType, setHybridType] = useState(true);
+  const [onlineType, setOnlineType] = useState(true);
 
   useEffect(() => {
     if (subjectData) {
@@ -46,29 +49,53 @@ const SectionScreen = () => {
   useEffect(() => {
     if (!subjectDataOriginal) return;
 
+    console.log("filtering data", subjectDataOriginal);
+
     let newFilteredData = subjectDataOriginal.map((subject) => ({
       ...subject,
       sections: subject.sections.filter(
         (section) =>
-          (section.openStatus === true && sectionStatusOpen) ||
-          (section.openStatus === false && sectionStatusClosed)
+          ((section.openStatus === true && sectionStatusOpen) ||
+            (section.openStatus === false && sectionStatusClosed)) &&
+          ((traditionalType &&
+            section.meetingTimes.every(
+              (meetingTime) => meetingTime.campusLocation !== "O"
+            )) ||
+            (hybridType &&
+              section.meetingTimes.some(
+                (meetingTime) => meetingTime.campusLocation === "O"
+              ) &&
+              section.meetingTimes.some(
+                (meetingTime) => meetingTime.campusLocation !== "O"
+              )) ||
+            (onlineType &&
+              section.meetingTimes.every(
+                (meetingTime) => meetingTime.campusLocation === "O"
+              )))
       ),
     }));
 
+    console.log("newFilteredData", newFilteredData);
     setSubjectDataFiltered(newFilteredData);
-  }, [sectionStatusOpen, sectionStatusClosed, subjectDataOriginal]);
+  }, [
+    sectionStatusOpen,
+    sectionStatusClosed,
+    traditionalType,
+    hybridType,
+    onlineType,
+    subjectDataOriginal,
+  ]);
 
   // Update selectedIndexes when subjectDataFiltered changes
   useEffect(() => {
-    if (!subjectDataFiltered) return
+    if (!subjectDataFiltered) return;
     setSelectedIndexes(
       subjectDataFiltered.reduce((acc, subject) => {
         subject.sections.forEach((section) => {
           acc.add(section.index);
         });
         return acc;
-      }
-      , new Set())
+      }, new Set())
     );
   }, [subjectDataFiltered, setSelectedIndexes]);
 
@@ -89,11 +116,18 @@ const SectionScreen = () => {
           <div id="filters">
             <SectionStatus
               sectionStatusOpen={sectionStatusOpen}
-              sectionStatusClosed={sectionStatusClosed}
               setSectionStatusOpen={setSectionStatusOpen}
+              sectionStatusClosed={sectionStatusClosed}
               setSectionStatusClosed={setSectionStatusClosed}
             />
-            <CourseTypes />
+            <CourseTypes
+              traditionalType={traditionalType}
+              setTraditionalType={setTraditionalType}
+              hybridType={hybridType}
+              setHybridType={setHybridType}
+              onlineType={onlineType}
+              setOnlineType={setOnlineType}
+            />
             <DayAndTime />
           </div>
         </div>
