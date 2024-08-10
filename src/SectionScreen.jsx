@@ -32,6 +32,7 @@ const SectionScreen = () => {
   const [traditionalType, setTraditionalType] = useState(true);
   const [hybridType, setHybridType] = useState(true);
   const [onlineType, setOnlineType] = useState(true);
+  const [addTimeButtonPressed, setAddTimeButtonPressed] = useState(false);
 
   useEffect(() => {
     if (subjectData) {
@@ -128,7 +129,10 @@ const SectionScreen = () => {
               onlineType={onlineType}
               setOnlineType={setOnlineType}
             />
-            <DayAndTime />
+            <DayAndTime 
+              addTimeButtonPressed={addTimeButtonPressed}
+              setAddTimeButtonPressed={setAddTimeButtonPressed}
+            />
           </div>
         </div>
         <div className="ml-4 w-full">
