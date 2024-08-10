@@ -7,21 +7,16 @@ import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import rightarrow from "@/assets/arrow-right.svg";
 
-const DayAndTime = ({ addTimeButtonPressed, setAddTimeButtonPressed }) => {
-  const [selectedFromTime, setSelectedFromTime] = useState(null);
-  const [selectedToTime, setSelectedToTime] = useState(null);
-  const [isValidTimeRange, setIsValidTimeRange] = useState(false);
-
-  useEffect(() => {
-    if (selectedFromTime && selectedToTime) {
-      if (selectedFromTime > selectedToTime) {
-        setIsValidTimeRange(false);
-      } else {
-        setIsValidTimeRange(true);
-      }
-    }
-  }, [selectedFromTime, selectedToTime]);
-
+const DayAndTime = ({
+  addTimeButtonPressed,
+  setAddTimeButtonPressed,
+  selectedFromTime,
+  setSelectedFromTime,
+  selectedToTime,
+  setSelectedToTime,
+  isValidTimeRange,
+  setIsValidTimeRange,
+}) => {
   return (
     <div>
       <div className="flex justify-between px-3">

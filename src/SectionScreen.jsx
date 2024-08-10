@@ -33,6 +33,9 @@ const SectionScreen = () => {
   const [hybridType, setHybridType] = useState(true);
   const [onlineType, setOnlineType] = useState(true);
   const [addTimeButtonPressed, setAddTimeButtonPressed] = useState(false);
+  const [selectedFromTime, setSelectedFromTime] = useState(null);
+  const [selectedToTime, setSelectedToTime] = useState(null);
+  const [isValidTimeRange, setIsValidTimeRange] = useState(false);
 
   useEffect(() => {
     if (subjectData) {
@@ -100,6 +103,20 @@ const SectionScreen = () => {
     );
   }, [subjectDataFiltered, setSelectedIndexes]);
 
+  useEffect(() => {
+    console.log("selectedFromTime", selectedFromTime);  
+    console.log("selectedToTime", selectedToTime);
+    if (selectedFromTime && selectedToTime) {
+      if (selectedFromTime > selectedToTime) {
+        setIsValidTimeRange(false);
+      } else {
+        setIsValidTimeRange(true);
+      }
+    }
+
+    console.log("isValidTimeRange", isValidTimeRange);
+  }, [selectedFromTime, selectedToTime]);
+
   return (
     <div>
       <div className="min-w-[1570px]">
@@ -129,9 +146,15 @@ const SectionScreen = () => {
               onlineType={onlineType}
               setOnlineType={setOnlineType}
             />
-            <DayAndTime 
+            <DayAndTime
               addTimeButtonPressed={addTimeButtonPressed}
               setAddTimeButtonPressed={setAddTimeButtonPressed}
+              selectedFromTime={selectedFromTime}
+              setSelectedFromTime={setSelectedFromTime}
+              selectedToTime={selectedToTime}
+              setSelectedToTime={setSelectedToTime}
+              isValidTimeRange={isValidTimeRange}
+              setIsValidTimeRange={setIsValidTimeRange}
             />
           </div>
         </div>
