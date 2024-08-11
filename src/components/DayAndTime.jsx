@@ -8,6 +8,8 @@ import TextField from "@mui/material/TextField";
 import rightarrow from "@/assets/arrow-right.svg";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import SVG from "react-inlinesvg";
+import xcircle from "@/assets/x-circle.svg";
 
 dayjs.extend(localizedFormat);
 
@@ -25,6 +27,7 @@ const DayAndTime = ({
   isValidTimeRange,
   handleAddTimeFilter,
   timeFilters,
+  setTimeFilters,
 }) => {
   const fromValueSetter = (newValue) => {
     setSelectedFromTime(setValue(newValue));
@@ -34,6 +37,22 @@ const DayAndTime = ({
     setSelectedToTime(setValue(newValue));
   };
 
+  const convertMinFromMidnightToTime = (minFromMidnight) => {
+    // Convert to 12 hour time with AM/PM
+    const hours = Math.floor(minFromMidnight / 60);
+    const minutes = minFromMidnight % 60;
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const hour12 = hours % 12 || 12;
+    return `${hour12}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+  };
+
+  const handleRemoveTimeFilter = (index) => {
+    const newTimeFilters = [...timeFilters];
+    newTimeFilters.splice(index, 1);
+
+    setTimeFilters(newTimeFilters);
+  };
+
   return (
     <div>
       <div className="flex justify-between px-3">
@@ -41,12 +60,19 @@ const DayAndTime = ({
       </div>
       <Card>
         {!addTimeButtonPressed ? (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col">
             {timeFilters.map((timeFilter, index) => (
-              <div key={index} className="flex justify-between">
-                <p>{timeFilter.from}</p>
-                <p>{timeFilter.to}</p>
-              </div>
+              <Card key={index} className="flex justify-between mt-1 mx-1 px-1">
+                <p>From: {convertMinFromMidnightToTime(timeFilter.from)}</p>
+                <p>To: {convertMinFromMidnightToTime(timeFilter.to)}</p>
+                <button onClick={() => handleRemoveTimeFilter(index)}>
+                  <SVG
+                    src={xcircle}
+                    alt="X"
+                    className="w-5 h-5 black hover:text-red-500"
+                  />
+                </button>
+              </Card>
             ))}
             <Button
               className="m-1.5 h-fit"
