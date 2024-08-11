@@ -6,6 +6,14 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import rightarrow from "@/assets/arrow-right.svg";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+dayjs.extend(localizedFormat);
+
+const setValue = (value) => {
+  return dayjs(value).format("LT");
+}
 
 const DayAndTime = ({
   addTimeButtonPressed,
@@ -15,8 +23,17 @@ const DayAndTime = ({
   selectedToTime,
   setSelectedToTime,
   isValidTimeRange,
-  setIsValidTimeRange,
+  handleAddTimeFilter,
 }) => {
+
+  const fromValueSetter = (newValue) => {
+    setSelectedFromTime(setValue(newValue));
+  }
+
+  const toValueSetter = (newValue) => {
+    setSelectedToTime(setValue(newValue));
+  }
+
   return (
     <div>
       <div className="flex justify-between px-3">
@@ -40,18 +57,14 @@ const DayAndTime = ({
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <TimePicker
                   label="Select Time"
-                  value={selectedFromTime}
-                  onChange={(newValue) => setSelectedFromTime(newValue)}
-                  renderInput={(params) => <TextField {...params} />}
+                  onChange={(value) => fromValueSetter(value)}
                 />
               </LocalizationProvider>
               <img src={rightarrow} alt="rightarrow" />
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <TimePicker
                   label="Select Time"
-                  value={selectedToTime}
-                  onChange={(newValue) => setSelectedToTime(newValue)}
-                  renderInput={(params) => <TextField {...params} />}
+                  onChange={(value) => toValueSetter(value)}
                 />
               </LocalizationProvider>
             </div>
@@ -67,7 +80,12 @@ const DayAndTime = ({
                   Add
                 </Button>
               ) : isValidTimeRange ? (
-                <Button className="h-fit w-20">Add</Button>
+                <Button
+                  className="h-fit w-20"
+                  onClick={() => handleAddTimeFilter()}
+                >
+                  Add
+                </Button>
               ) : (
                 <Button className="h-fit w-44 bg-[red]" disabled>
                   Not a valid time range

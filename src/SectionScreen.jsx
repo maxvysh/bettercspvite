@@ -7,6 +7,10 @@ import ClassRowSec from "./components/ClassRowSec";
 import SectionStatus from "./components/SectionStatus";
 import CourseTypes from "./components/CourseTypes";
 import DayAndTime from "./components/DayAndTime";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+dayjs.extend(localizedFormat);
 
 const SectionScreen = () => {
   const {
@@ -36,6 +40,7 @@ const SectionScreen = () => {
   const [selectedFromTime, setSelectedFromTime] = useState(null);
   const [selectedToTime, setSelectedToTime] = useState(null);
   const [isValidTimeRange, setIsValidTimeRange] = useState(false);
+  const [timeFilters, setTimeFilters] = useState([]);
 
   useEffect(() => {
     if (subjectData) {
@@ -103,19 +108,111 @@ const SectionScreen = () => {
     );
   }, [subjectDataFiltered, setSelectedIndexes]);
 
+  // Filter the subject data based on the time filters, if any
   useEffect(() => {
-    console.log("selectedFromTime", selectedFromTime);  
-    console.log("selectedToTime", selectedToTime);
+    if (!subjectDataFiltered) return;
+    if (timeFilters.length === 0) return;
+
+    let newFilteredData = subjectDataFiltered.map((subject) => ({
+      ...subject,
+      sections: subject.sections.filter((section) =>
+        timeFilters.every((timeFilter) =>
+          section.meetingTimes.some(
+            (meetingTime) =>
+              convertSectionTimeTo24HourFormat(
+                meetingTime.startTime,
+                meetingTime.pmCode
+              ) >= timeFilter.from &&
+              convertSectionTimeTo24HourFormat(
+                meetingTime.endTime,
+                meetingTime.pmCode
+              ) <= timeFilter.to
+          )
+        )
+      ),
+    }));
+
+    setSubjectDataFiltered(newFilteredData);
+  }, [timeFilters]);
+
+  useEffect(() => {
     if (selectedFromTime && selectedToTime) {
+      console.log("selectedFromTime", selectedFromTime);
+      console.log("selectedToTime", selectedToTime);
       if (selectedFromTime > selectedToTime) {
         setIsValidTimeRange(false);
       } else {
         setIsValidTimeRange(true);
       }
     }
-
-    console.log("isValidTimeRange", isValidTimeRange);
   }, [selectedFromTime, selectedToTime]);
+
+  const convertSectionTimeTo24HourFormat = (time, amPmCode) => {
+    if (!time) {
+      // Handle the null or undefined case
+      return "";
+    }
+    // Parse the time into hours and minutes
+    let hours = parseInt(time.slice(0, 2), 10);
+    const minutes = time.slice(2);
+
+    // Convert hours based on the AM/PM code
+    if (amPmCode === "P" && hours < 12) {
+      hours += 12; // Convert PM hours to 24-hour format
+    } else if (amPmCode === "A" && hours === 12) {
+      hours = 0; // Convert 12AM to 00 hours
+    }
+
+    // Calculate minutes since midnight
+    const minutesSinceMidnight = hours * 60 + parseInt(minutes, 10);
+    return minutesSinceMidnight;
+  };
+
+  const convertFilterTimeTo24HourFormat = (time) => {
+    if (!time || typeof time !== "string") {
+      // Handle the null, undefined, or non-string case
+      console.error("Invalid time input:", time);
+      return ""; // or any default value you prefer
+    }
+
+    // Parse the time into hours and minutes
+    let hours = parseInt(time.slice(0, 2), 10);
+    const minutes = parseInt(time.slice(3, 5), 10);
+    const amPmCode = time.slice(5).trim();
+
+    console.log("hours", hours);
+    console.log("minutes", minutes);
+    console.log("amPmCode", amPmCode);
+
+    // Convert hours based on the AM/PM code
+    if (amPmCode === "PM" && hours < 12) {
+      hours += 12; // Convert PM hours to 24-hour format
+    } else if (amPmCode === "AM" && hours === 12) {
+      hours = 0; // Convert 12AM to 00 hours
+    }
+
+    // Calculate minutes since midnight
+    const minutesSinceMidnight = hours * 60 + minutes;
+    return minutesSinceMidnight;
+  };
+
+  const handleAddTimeFilter = () => {
+    // console.log("Adding time filter");
+    // console.log("selectedFromTime", selectedFromTime);
+    // console.log("selectedToTime", selectedToTime);
+    setTimeFilters([
+      ...timeFilters,
+      {
+        from: convertFilterTimeTo24HourFormat(selectedFromTime),
+        to: convertFilterTimeTo24HourFormat(selectedToTime),
+      },
+    ]);
+    setAddTimeButtonPressed(false);
+  };
+
+  useEffect(() => {
+    console.log("timeFilters", timeFilters);
+  }, [timeFilters]);
 
   return (
     <div>
@@ -154,7 +251,7 @@ const SectionScreen = () => {
               selectedToTime={selectedToTime}
               setSelectedToTime={setSelectedToTime}
               isValidTimeRange={isValidTimeRange}
-              setIsValidTimeRange={setIsValidTimeRange}
+              handleAddTimeFilter={handleAddTimeFilter}
             />
           </div>
         </div>
