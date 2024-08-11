@@ -13,7 +13,7 @@ dayjs.extend(localizedFormat);
 
 const setValue = (value) => {
   return dayjs(value).format("LT");
-}
+};
 
 const DayAndTime = ({
   addTimeButtonPressed,
@@ -24,15 +24,15 @@ const DayAndTime = ({
   setSelectedToTime,
   isValidTimeRange,
   handleAddTimeFilter,
+  timeFilters,
 }) => {
-
   const fromValueSetter = (newValue) => {
     setSelectedFromTime(setValue(newValue));
-  }
+  };
 
   const toValueSetter = (newValue) => {
     setSelectedToTime(setValue(newValue));
-  }
+  };
 
   return (
     <div>
@@ -41,12 +41,20 @@ const DayAndTime = ({
       </div>
       <Card>
         {!addTimeButtonPressed ? (
-          <Button
-            className="m-1.5 h-fit"
-            onClick={() => setAddTimeButtonPressed(true)}
-          >
-            Add Time Filter
-          </Button>
+          <div className="flex flex-col gap-1">
+            {timeFilters.map((timeFilter, index) => (
+              <div key={index} className="flex justify-between">
+                <p>{timeFilter.from}</p>
+                <p>{timeFilter.to}</p>
+              </div>
+            ))}
+            <Button
+              className="m-1.5 h-fit"
+              onClick={() => setAddTimeButtonPressed(true)}
+            >
+              Add Time Filter
+            </Button>
+          </div>
         ) : (
           <div className="m-1.5 flex flex-col gap-1">
             <div className="flex justify-between mb-1 mx-1">

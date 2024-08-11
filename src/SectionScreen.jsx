@@ -252,6 +252,7 @@ const SectionScreen = () => {
               setSelectedToTime={setSelectedToTime}
               isValidTimeRange={isValidTimeRange}
               handleAddTimeFilter={handleAddTimeFilter}
+              timeFilters={timeFilters}
             />
           </div>
         </div>
