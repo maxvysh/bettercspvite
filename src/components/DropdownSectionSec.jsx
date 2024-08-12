@@ -79,6 +79,7 @@ const DropdownSectionSec = ({
                         ? time.campusName
                             .replace("DOUGLAS/COOK", "COOK/DOUG")
                             .replace("COLLEGE AVENUE", "COLLEGE AVE")
+                            .replace("** INVALID **", "ONLINE")
                         : ""
                     }
                   />
