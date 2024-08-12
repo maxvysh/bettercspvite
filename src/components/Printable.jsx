@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 
 const Printable = forwardRef(({ indexData, eventsByDay }, ref) => {
   return (
-    <div ref={ref}>
+    <div ref={ref} className="p-2 flex flex-col gap-2">
       <Card className="border-2 min-w-[1200px] w-full">
         <div className="grid grid-cols-8 w-full mx-2">
           <p className="col-span-1 text-center">title</p>
