@@ -13,7 +13,7 @@ const SelectedCourses = ({
         <p>Selected Courses</p>
         <p>Credits: {totalCredits}</p>
       </div>
-      <Card className="p-2 border-2">
+      <Card className="p-2 border-2 flex flex-col gap-1">
         {/* <SelectedCoursesRow /> */}
         {selectedCourses.length === 0 ? (
           <p>Select some courses for them to display here</p>
