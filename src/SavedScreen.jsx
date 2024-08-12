@@ -6,14 +6,12 @@ import ListViewRow from "./components/ListViewRow";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import BuildSelector from "./components/BuildSelector";
-import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import edit from "./assets/edit.svg";
 import xcircle from "./assets/x-circle-white.svg";
-import { data } from "autoprefixer";
+import PrintRegister from "./components/PrintRegister";
 
 const SavedScreen = () => {
   const { campus, semester, level, fetchCampusSemester } =
@@ -44,6 +42,7 @@ const SavedScreen = () => {
         setSavedSchedules(data);
         setTotalBuilds(data.length);
         setCurrentSchedule(data[0]);
+        setCurrentName(data[0].name);
       })
       .catch((error) => {
         console.error("Error fetching saved schedules:", error);
@@ -107,7 +106,9 @@ const SavedScreen = () => {
         // Outer promises array to handle fetching data for each schedule
         const promises = currentSchedule.schedule.map(async (schedule) => {
           // Fetch the course number data
-          const courseNumberData = await dataByCourseNumber(schedule.courseNumber);
+          const courseNumberData = await dataByCourseNumber(
+            schedule.courseNumber
+          );
           if (courseNumberData) {
             // Inner promises array to handle fetching data for each index
             const indexPromises = schedule.indexes.map(async (index) => {
@@ -298,7 +299,10 @@ const SavedScreen = () => {
           />
           <Card className="border-2 flex flex-col gap-1">
             <div className="flex justify-between">
-              <Button className="w-24 m-1" onClick={() => handlePrev()}>
+              <Button
+                className="w-24 m-1 border-2"
+                onClick={() => handlePrev()}
+              >
                 Prev
               </Button>
               <div className="flex flex-col justify-center">
@@ -306,19 +310,22 @@ const SavedScreen = () => {
                   {currentBuild + 1} of {totalBuilds}
                 </p>
               </div>
-              <Button className="w-24 m-1" onClick={() => handleNext()}>
+              <Button
+                className="w-24 m-1 border-2"
+                onClick={() => handleNext()}
+              >
                 Next
               </Button>
             </div>
-            <div className="flex justify-center">
+            <Card className="flex justify-center items-center mx-2.5 h-8">
               <p>{currentName}</p>
-            </div>
+            </Card>
             <div>
-              <ScrollArea className="h-[200px]">
+              <ScrollArea className="max-h-[200px]">
                 <ScrollBar />
                 <div className="flex flex-col gap-1 p-2.5">
                   {savedSchedules.map((schedule, index) => (
-                    <div key={index} className="flex">
+                    <div key={index} className="flex rounded-lg border-2">
                       <Button
                         className="w-full rounded-r-none"
                         onClick={() => {
@@ -349,6 +356,7 @@ const SavedScreen = () => {
               </ScrollArea>
             </div>
           </Card>
+          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} />
         </div>
         {displayList ? (
           <div className="ml-4 w-full">
