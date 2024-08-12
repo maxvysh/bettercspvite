@@ -49,14 +49,6 @@ const SavedScreen = () => {
       });
   }, []);
 
-  useEffect(() => {
-    console.log("indexData", indexData);
-  }, [indexData]);
-
-  useEffect(() => {
-    console.log("currentIndexes", currentIndexes);
-  }, [currentIndexes]);
-
   // useEffect(() => {
   //   // Update currentIndexes
   //   if (!currentSchedule) return;
@@ -173,7 +165,6 @@ const SavedScreen = () => {
 
   // Delete the current schedule from the saved schedules and update the backend
   const handleDelete = () => {
-    console.log("delete name");
     const newSavedSchedules = savedSchedules.filter(
       (schedule) => schedule.name !== currentSchedule.name
     );

@@ -58,8 +58,6 @@ const SectionScreen = () => {
   useEffect(() => {
     if (!subjectDataOriginal) return;
 
-    console.log("filtering data", subjectDataOriginal);
-
     let newFilteredData = subjectDataOriginal.map((subject) => ({
       ...subject,
       sections: subject.sections.filter(
@@ -84,7 +82,6 @@ const SectionScreen = () => {
       ),
     }));
 
-    console.log("newFilteredData", newFilteredData);
     setSubjectDataFiltered(newFilteredData);
   }, [
     sectionStatusOpen,
@@ -137,8 +134,6 @@ const SectionScreen = () => {
 
   useEffect(() => {
     if (selectedFromTime && selectedToTime) {
-      console.log("selectedFromTime", selectedFromTime);
-      console.log("selectedToTime", selectedToTime);
       if (selectedFromTime > selectedToTime) {
         setIsValidTimeRange(false);
       } else {
@@ -180,10 +175,6 @@ const SectionScreen = () => {
     const minutes = parseInt(time.slice(3, 5), 10);
     const amPmCode = time.slice(5).trim();
 
-    console.log("hours", hours);
-    console.log("minutes", minutes);
-    console.log("amPmCode", amPmCode);
-
     // Convert hours based on the AM/PM code
     if (amPmCode === "PM" && hours < 12) {
       hours += 12; // Convert PM hours to 24-hour format
@@ -209,10 +200,6 @@ const SectionScreen = () => {
     ]);
     setAddTimeButtonPressed(false);
   };
-
-  useEffect(() => {
-    console.log("timeFilters", timeFilters);
-  }, [timeFilters]);
 
   return (
     <div>

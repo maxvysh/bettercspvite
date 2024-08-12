@@ -54,7 +54,6 @@ const App = () => {
         setIsFirstFetch(false);
         return;
       }
-      console.log("posting selected courses", selectedCourses);
 
       fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
         method: "POST",
@@ -69,8 +68,6 @@ const App = () => {
   }, [selectedCourses]);
 
   useEffect(() => {
-    console.log("updating w selectedCourses:", selectedCourses);
-
     const abortControllers = [];
 
     // Check for null campus, semester, and level

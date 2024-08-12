@@ -115,9 +115,6 @@ const BuildScreen = () => {
     // Convert HashMap to Object
     const indexTimesObject = serializeIndexTimes(indexTimes);
 
-    console.log("selectedIndexesArray", selectedIndexesArray);
-    console.log("indexTimesObject", indexTimesObject);
-
     // Ensure the arrays are finalized before making the fetch call
     if (selectedIndexesArray && indexTimesObject) {
       fetch(`${import.meta.env.VITE_BACKEND_URL}/user/buildschedules`, {
@@ -275,8 +272,6 @@ const BuildScreen = () => {
     currentIndexes.forEach(index => {
       schedule[index] = selectedIndexesMap.get(index);
     });
-
-    console.log("schedule", schedule);
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/saveschedule`, {
       method: "POST",
