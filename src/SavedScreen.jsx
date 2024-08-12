@@ -30,9 +30,9 @@ const SavedScreen = () => {
     friday: [],
   });
   const [totalBuilds, setTotalBuilds] = useState(0);
-  const [buildIndexes, setBuildIndexes] = useState([]);
   const [savedSchedules, setSavedSchedules] = useState([]);
   const [currentSchedule, setCurrentSchedule] = useState({});
+  const [currentIndexes, setCurrentIndexes] = useState([]);
 
   // Retrieve the saved schedules from the backend
   useEffect(() => {
@@ -52,6 +52,20 @@ const SavedScreen = () => {
   useEffect(() => {
     console.log("indexData", indexData);
   }, [indexData]);
+
+  useEffect(() => {
+    console.log("currentIndexes", currentIndexes);
+  }, [currentIndexes]);
+
+  // useEffect(() => {
+  //   // Update currentIndexes
+  //   if (!currentSchedule) return;
+  //   const newIndexes = [];
+  //   for (const schedule of currentSchedule.schedule) {
+  //     newIndexes.push(...schedule.indexes);
+  //   }
+  //   setCurrentIndexes(newIndexes);
+  // }, [currentSchedule]);
 
   // From the data retrived in dataByCourseNumber, find the section data that matches the index
   const dataByIndex = (index, courseNumberData) => {
@@ -100,7 +114,7 @@ const SavedScreen = () => {
     const fetchData = async () => {
       if (currentSchedule.name !== undefined) {
         setIndexData([]); // Clear the indexData array before fetching new data
-
+        const indexes = []; // Local array to accumulate indexes
         const newIndexData = []; // Local array to accumulate new data
 
         // Outer promises array to handle fetching data for each schedule
@@ -112,6 +126,7 @@ const SavedScreen = () => {
           if (courseNumberData) {
             // Inner promises array to handle fetching data for each index
             const indexPromises = schedule.indexes.map(async (index) => {
+              indexes.push(index);
               const sectionData = await dataByIndex(index, courseNumberData);
               if (sectionData) {
                 newIndexData.push(sectionData); // Accumulate data in the local array
@@ -124,7 +139,9 @@ const SavedScreen = () => {
         await Promise.all(promises); // Wait for all schedule data to be fetched
 
         setIndexData(newIndexData); // Set the state with the accumulated data
+        setCurrentIndexes(indexes); // Set the state with the accumulated indexes
       }
+
       setIsLoading(false);
     };
 
@@ -136,7 +153,7 @@ const SavedScreen = () => {
       setCurrentSchedule(savedSchedules[currentBuild]);
       setCurrentName(savedSchedules[currentBuild].name);
     }
-  }, [currentBuild, buildIndexes]);
+  }, [currentBuild]);
 
   const handleNext = () => {
     if (currentBuild < totalBuilds - 1) {
@@ -356,7 +373,7 @@ const SavedScreen = () => {
               </ScrollArea>
             </div>
           </Card>
-          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} />
+          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} currentIndexes={currentIndexes} />
         </div>
         {displayList ? (
           <div className="ml-4 w-full">

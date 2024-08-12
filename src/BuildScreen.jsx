@@ -36,13 +36,13 @@ const BuildScreen = () => {
   const [inputName, setInputName] = useState("");
   const [savedButton, setSavedButton] = useState(false);
 
-  useEffect(() => {
-    console.log("buildIndexes", buildIndexes);
-    console.log('selectedIndexes', selectedIndexes);
-    console.log('selectedIndexesMap', selectedIndexesMap);
-    console.log("currentIndexes", currentIndexes);
-    console.log("indexData", indexData);
-  }, [buildIndexes, currentIndexes, indexData]);
+  // useEffect(() => {
+  //   console.log("buildIndexes", buildIndexes);
+  //   console.log('selectedIndexes', selectedIndexes);
+  //   console.log('selectedIndexesMap', selectedIndexesMap);
+  //   console.log("currentIndexes", currentIndexes);
+  //   console.log("indexData", indexData);
+  // }, [buildIndexes, currentIndexes, indexData]);
 
   const serializeIndexTimes = (indexTimes) => {
     const indexTimesObject = {};
@@ -137,9 +137,9 @@ const BuildScreen = () => {
     }
   }, [selectedIndexes, indexTimes]);
 
-  useEffect(() => {
-    console.log("buildIndexes", buildIndexes);
-  }, [buildIndexes]);
+  // useEffect(() => {
+  //   console.log("buildIndexes", buildIndexes);
+  // }, [buildIndexes]);
 
   const handleNext = () => {
     if (currentBuild < buildIndexes.length - 1) {
@@ -349,7 +349,7 @@ const BuildScreen = () => {
               </Button>
             </div>
           </Card>
-          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} />
+          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} currentIndexes={currentIndexes} />
         </div>
         {displayList ? (
           <div className="ml-4 w-full">
