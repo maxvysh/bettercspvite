@@ -9,6 +9,7 @@ import BuildSelector from "./components/BuildSelector";
 import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
+import PrintRegister from "./components/PrintRegister";
 
 const BuildScreen = () => {
   const {
@@ -348,6 +349,7 @@ const BuildScreen = () => {
               </Button>
             </div>
           </Card>
+          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} />
         </div>
         {displayList ? (
           <div className="ml-4 w-full">
