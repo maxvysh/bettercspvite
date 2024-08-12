@@ -19,12 +19,6 @@ const PrintRegister = ({ indexData, eventsByDay, currentIndexes }) => {
     }
   }, [semester]);
 
-  useEffect(() => {
-    console.log('adhabbdhjabwfjhbawjhfbajwbfjhawbfhjabwjhfb', currentIndexes);
-    // Flatten currentIndexes to a string where every index is separated by a comma
-    const indexList = currentIndexes.join(",");
-  }, [currentIndexes]);
-
   // https://sims.rutgers.edu/webreg/editSchedule.htm?login=cas&semesterSelection=92024&indexList=07633,24314,08239
   return (
     <Card className="flex flex-col justify-evenly p-2 border-2 gap-1">
