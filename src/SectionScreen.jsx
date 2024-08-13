@@ -166,7 +166,7 @@ const SectionScreen = () => {
   const convertFilterTimeTo24HourFormat = (time) => {
     if (!time || typeof time !== "string") {
       // Handle the null, undefined, or non-string case
-      console.error("Invalid time input:", time);
+      // console.error("Invalid time input:", time);
       return ""; // or any default value you prefer
     }
 

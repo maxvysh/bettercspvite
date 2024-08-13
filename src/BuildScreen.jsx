@@ -181,7 +181,7 @@ const BuildScreen = () => {
   const convertTimeTo24HourFormat = (time, amPmCode) => {
     if (!time) {
       // Handle the null or undefined case
-      console.error("Invalid time input:", time);
+      // console.error("Invalid time input:", time);
       return ""; // or any default value you prefer
     }
     // Parse the time into hours and minutes
