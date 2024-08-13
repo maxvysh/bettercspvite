@@ -160,8 +160,8 @@ const SavedScreen = () => {
     }
   };
 
-    const handleEdit = (name) => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules/${currentSchedule._id}`, {
+  const handleEdit = (name) => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -172,15 +172,17 @@ const SavedScreen = () => {
       }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log("Updated schedule:", data);
+      .then(() => {
         // Update the state with the new name
         setSavedSchedules((prevSchedules) =>
           prevSchedules.map((schedule) =>
-            schedule._id === currentSchedule._id ? { ...schedule, name: name } : schedule
+            schedule._id === currentSchedule._id
+              ? { ...schedule, name: name }
+              : schedule
           )
         );
         setCurrentName(name);
+        setIsEditing(false);
       })
       .catch((error) => {
         console.error("Error updating schedule:", error);
