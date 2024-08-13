@@ -82,11 +82,16 @@ const SavedScreen = () => {
   };
 
   // Get all the data of courses, including all the sections within from the courseNumber
-  const dataByCourseNumber = async (courseNumber) => {
+    const dataByCourseNumber = async (courseNumber) => {
     if (!campus || !semester) {
       await fetchCampusSemester();
     }
-
+  
+    // Ensure campus and semester are fetched
+    while (!campus || !semester) {
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 100ms before checking again
+    }
+  
     try {
       const response = await fetch(
         `${
@@ -194,7 +199,6 @@ const SavedScreen = () => {
     const newSavedSchedules = savedSchedules.filter(
       (schedule) => schedule.name !== currentSchedule.name
     );
-    console.log("nv", newSavedSchedules);
     setSavedSchedules(newSavedSchedules);
     setTotalBuilds(newSavedSchedules.length);
     setCurrentBuild(0);
