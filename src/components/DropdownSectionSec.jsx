@@ -12,13 +12,15 @@ const DropdownSectionSec = ({
   examCode,
   instructors,
   check,
+  sectionEligibility,
+  sectionNotes,
 }) => {
   const { setSelectedIndexes } = useContext(AppContext);
   const [isChecked, setIsChecked] = useState(check);
 
   useEffect(() => {
     setIsChecked(check);
-  
+
     setSelectedIndexes((prev) => {
       const newIndexes = new Set(prev);
       if (check) {
@@ -29,7 +31,7 @@ const DropdownSectionSec = ({
       return newIndexes;
     });
   }, [check]);
-  
+
   const handleCheckboxChange = () => {
     setSelectedIndexes((prev) => {
       const newIndexes = new Set(prev);
@@ -40,7 +42,7 @@ const DropdownSectionSec = ({
       }
       return newIndexes;
     });
-  
+
     setIsChecked(!isChecked);
   };
 
@@ -95,6 +97,14 @@ const DropdownSectionSec = ({
               <p key={index}>{instructor.name}</p>
             ))}
           </div>
+        </div>
+      </div>
+      <div>
+        <div className="mx-1">
+          {sectionNotes && <p>Section notes: {sectionNotes}</p>}
+          {sectionEligibility && (
+            <p>Section eligibility: {sectionEligibility}</p>
+          )}
         </div>
       </div>
     </div>
