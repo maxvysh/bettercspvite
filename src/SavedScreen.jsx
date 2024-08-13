@@ -10,7 +10,7 @@ import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import edit from "./assets/edit.svg";
-import xcircle from "./assets/x-circle-white.svg";
+import xcircle from "./assets/x-circle.svg";
 import PrintRegister from "./components/PrintRegister";
 
 const SavedScreen = () => {
@@ -33,6 +33,7 @@ const SavedScreen = () => {
   const [savedSchedules, setSavedSchedules] = useState([]);
   const [currentSchedule, setCurrentSchedule] = useState({});
   const [currentIndexes, setCurrentIndexes] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   // Retrieve the saved schedules from the backend
   useEffect(() => {
@@ -159,8 +160,31 @@ const SavedScreen = () => {
     }
   };
 
-  const handleEdit = () => {
-    console.log(currentSchedule);
+    const handleEdit = (name) => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules/${currentSchedule._id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: currentSchedule._id,
+        newName: name,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Updated schedule:", data);
+        // Update the state with the new name
+        setSavedSchedules((prevSchedules) =>
+          prevSchedules.map((schedule) =>
+            schedule._id === currentSchedule._id ? { ...schedule, name: name } : schedule
+          )
+        );
+        setCurrentName(name);
+      })
+      .catch((error) => {
+        console.error("Error updating schedule:", error);
+      });
   };
 
   // Delete the current schedule from the saved schedules and update the backend
@@ -168,10 +192,12 @@ const SavedScreen = () => {
     const newSavedSchedules = savedSchedules.filter(
       (schedule) => schedule.name !== currentSchedule.name
     );
+    console.log("nv", newSavedSchedules);
     setSavedSchedules(newSavedSchedules);
     setTotalBuilds(newSavedSchedules.length);
     setCurrentBuild(0);
     setCurrentSchedule(newSavedSchedules[0]);
+    setCurrentName(newSavedSchedules[0].name);
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`, {
       method: "DELETE",
       headers: {
@@ -325,9 +351,41 @@ const SavedScreen = () => {
                 Next
               </Button>
             </div>
-            <Card className="flex justify-center items-center mx-2.5 h-8">
-              <p>{currentName}</p>
-            </Card>
+            <div className="flex mx-2">
+              <Card className="flex justify-center items-center h-8 w-full">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={currentName}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleEdit(currentName);
+                      }
+                    }}
+                    onChange={(e) => setCurrentName(e.target.value)}
+                    className="w-full h-full rounded-lg px-2"
+                  />
+                ) : (
+                  <p>{currentName}</p>
+                )}
+              </Card>
+              <button className="ml-2">
+                <img
+                  src={edit}
+                  alt="Edit"
+                  className="w-10"
+                  onClick={setIsEditing}
+                />
+              </button>
+              <button className="ml-1">
+                <img
+                  src={xcircle}
+                  alt="Delete"
+                  className="w-10"
+                  onClick={handleDelete}
+                />
+              </button>
+            </div>
             <div>
               <ScrollArea className="max-h-[200px]">
                 <ScrollBar />
@@ -335,28 +393,12 @@ const SavedScreen = () => {
                   {savedSchedules.map((schedule, index) => (
                     <div key={index} className="flex rounded-lg border-2">
                       <Button
-                        className="w-full rounded-r-none"
+                        className="w-full"
                         onClick={() => {
                           setCurrentBuild(index);
                         }}
                       >
                         {schedule.name}
-                      </Button>
-                      <Button className="rounded-none">
-                        <img
-                          src={edit}
-                          alt="Edit"
-                          className="w-10"
-                          onClick={handleEdit}
-                        />
-                      </Button>
-                      <Button className="rounded-l-none">
-                        <img
-                          src={xcircle}
-                          alt="Delete"
-                          className="w-10"
-                          onClick={handleDelete}
-                        />
                       </Button>
                     </div>
                   ))}
@@ -364,7 +406,11 @@ const SavedScreen = () => {
               </ScrollArea>
             </div>
           </Card>
-          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} currentIndexes={currentIndexes} />
+          <PrintRegister
+            indexData={indexData}
+            eventsByDay={eventsByDay}
+            currentIndexes={currentIndexes}
+          />
         </div>
         {displayList ? (
           <div className="ml-4 w-full">
