@@ -99,13 +99,9 @@ const DropdownSectionSec = ({
           </div>
         </div>
       </div>
-      <div>
-        <div className="mx-1">
-          {sectionNotes && <p>Section notes: {sectionNotes}</p>}
-          {sectionEligibility && (
-            <p>Section eligibility: {sectionEligibility}</p>
-          )}
-        </div>
+      <div className="mx-1">
+        {sectionNotes && <p>Section notes: {sectionNotes}</p>}
+        {sectionEligibility && <p>Section eligibility: {sectionEligibility}</p>}
       </div>
     </div>
   );

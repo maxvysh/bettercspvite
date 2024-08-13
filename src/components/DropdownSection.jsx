@@ -7,6 +7,8 @@ const DropdownSection = ({
   meetingTimes,
   examCode,
   instructors,
+  sectionEligibility,
+  sectionNotes,
 }) => {
   return (
     <div className="border-t-2">
@@ -49,6 +51,10 @@ const DropdownSection = ({
             <p key={index}>{instructor.name}</p>
           ))}
         </div>
+      </div>
+      <div className="mx-1">
+        {sectionNotes && <p>Section notes: {sectionNotes}</p>}
+        {sectionEligibility && <p>Section eligibility: {sectionEligibility}</p>}
       </div>
     </div>
   );

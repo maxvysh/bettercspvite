@@ -212,6 +212,8 @@ const ClassRow = ({
                   meetingTimes={section.meetingTimes}
                   examCode={section.examCode}
                   instructors={section.instructors}
+                  sectionEligibility={section.sectionEligibility}
+                  sectionNotes={section.sectionNotes}
                 />
               ))}
           </div>

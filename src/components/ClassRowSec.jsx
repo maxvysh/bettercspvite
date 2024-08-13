@@ -31,10 +31,6 @@ const ClassRowSec = ({
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
 
-  useEffect(() => {
-    console.log('sections', sections);
-  }, [sections]);
-
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
