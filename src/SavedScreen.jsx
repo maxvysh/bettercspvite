@@ -396,6 +396,8 @@ const SavedScreen = () => {
                         meetingTimes={sectionData.meetingTimes}
                         examCode={sectionData.examCode}
                         instructors={sectionData.instructors}
+                        sectionEligibility={sectionData.sectionEligibility}
+                        sectionNotes={sectionData.sectionNotes}
                       />
                     </div>
                   );

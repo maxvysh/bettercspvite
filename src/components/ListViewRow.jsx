@@ -10,6 +10,8 @@ const ListViewRow = ({
   status,
   meetingTimes,
   instructors,
+  sectionNotes,
+  sectionEligibility,
 }) => {
   // const [useTitle, setUseTitle] = useState("");
   // const [section, setSection] = useState("");
@@ -55,12 +57,18 @@ const ListViewRow = ({
             ))}
           </div>
         </div>
-        <p className="flex items-center justify-center col-span-1">{examCode}</p>
+        <p className="flex items-center justify-center col-span-1">
+          {examCode}
+        </p>
         <div className="flex items-center justify-center col-span-1">
           {instructors.map((instructor, index) => (
             <p key={index}>{instructor.name}</p>
           ))}
         </div>
+      </div>
+      <div className="mx-1">
+        {sectionNotes && <p>Section notes: {sectionNotes}</p>}
+        {sectionEligibility && <p>Section eligibility: {sectionEligibility}</p>}
       </div>
     </div>
   );
