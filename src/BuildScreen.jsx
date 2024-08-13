@@ -10,7 +10,7 @@ import Timetable from "@maxvysh/react-timetable-events";
 import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
 import PrintRegister from "./components/PrintRegister";
-
+import LoadingSkeleton from "./components/LoadingSkeleton";
 const BuildScreen = () => {
   const {
     indexTimes,
@@ -349,7 +349,7 @@ const BuildScreen = () => {
         {displayList ? (
           <div className="ml-4 w-full">
             {isLoading ? (
-              <p>Loading...</p>
+              <LoadingSkeleton />
             ) : (
               // For each index in buildIndexes, run the dataByIndex function to get the section data
               // Then pass the section data to the ListViewRow component
@@ -388,7 +388,7 @@ const BuildScreen = () => {
         ) : (
           <div className="ml-4 w-full">
             {isLoading ? (
-              <p>Loading...</p>
+              <LoadingSkeleton />
             ) : (
               <Calendar eventsByDay={eventsByDay} />
             )}

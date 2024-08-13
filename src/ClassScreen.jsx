@@ -14,6 +14,7 @@ import { useState, useEffect, useContext } from "react";
 import ClassRow from "./components/ClassRow";
 import AppContext from "./AppContext";
 import CoreCodeSort from "./components/CoreCodeSort";
+import LoadingSkeleton from "./components/LoadingSkeleton";
 
 const ClassScreen = () => {
   // const location = useLocation();
@@ -200,7 +201,9 @@ const ClassScreen = () => {
           </div>
           <div>
             {isLoading ? (
-              <p>Loading...</p>
+              <div className="mt-2">
+                <LoadingSkeleton />
+              </div>
             ) : subjectData.length === 0 && subject ? (
               <p>No entries found matching the filters</p>
             ) : (

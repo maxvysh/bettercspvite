@@ -9,6 +9,7 @@ import CourseTypes from "./components/CourseTypes";
 import DayAndTime from "./components/DayAndTime";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import LoadingSkeleton from "./components/LoadingSkeleton";
 
 dayjs.extend(localizedFormat);
 
@@ -247,7 +248,7 @@ const SectionScreen = () => {
         <div className="ml-4 w-full">
           <div>
             {isLoading ? (
-              <p>Loading...</p>
+              <LoadingSkeleton />
             ) : (
               subjectDataFiltered.map((subjectData) => (
                 <ClassRowSec

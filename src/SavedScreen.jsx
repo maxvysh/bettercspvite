@@ -12,7 +12,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import edit from "./assets/edit.svg";
 import xcircle from "./assets/x-circle.svg";
 import PrintRegister from "./components/PrintRegister";
-
+import LoadingSkeleton from "./components/LoadingSkeleton";
 const SavedScreen = () => {
   const { campus, semester, level, fetchCampusSemester } =
     useContext(AppContext);
@@ -82,16 +82,16 @@ const SavedScreen = () => {
   };
 
   // Get all the data of courses, including all the sections within from the courseNumber
-    const dataByCourseNumber = async (courseNumber) => {
+  const dataByCourseNumber = async (courseNumber) => {
     if (!campus || !semester) {
       await fetchCampusSemester();
     }
-  
+
     // Ensure campus and semester are fetched
     while (!campus || !semester) {
       await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 100ms before checking again
     }
-  
+
     try {
       const response = await fetch(
         `${
@@ -421,7 +421,7 @@ const SavedScreen = () => {
         {displayList ? (
           <div className="ml-4 w-full">
             {isLoading ? (
-              <p>Loading...</p>
+              <LoadingSkeleton />
             ) : (
               // For each index in buildIndexes, run the dataByIndex function to get the section data
               // Then pass the section data to the ListViewRow component
@@ -460,7 +460,7 @@ const SavedScreen = () => {
         ) : (
           <div className="ml-4 w-full">
             {isLoading ? (
-              <p>Loading...</p>
+              <LoadingSkeleton />
             ) : (
               <Calendar eventsByDay={eventsByDay} />
             )}
