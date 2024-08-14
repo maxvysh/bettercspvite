@@ -45,7 +45,6 @@ const SectionScreen = () => {
 
   useEffect(() => {
     if (subjectData) {
-      setIsLoading(false);
       // Filter the subject data to only have sections that have printed === "Y"
       let filteredData = subjectData.map((subject) => ({
         ...subject,
@@ -57,33 +56,43 @@ const SectionScreen = () => {
   }, [subjectData]);
 
   useEffect(() => {
-    if (!subjectDataOriginal) return;
-
-    let newFilteredData = subjectDataOriginal.map((subject) => ({
-      ...subject,
-      sections: subject.sections.filter(
-        (section) =>
-          ((section.openStatus === true && sectionStatusOpen) ||
-            (section.openStatus === false && sectionStatusClosed)) &&
-          ((traditionalType &&
-            section.meetingTimes.every(
-              (meetingTime) => meetingTime.campusLocation !== "O"
-            )) ||
-            (hybridType &&
-              section.meetingTimes.some(
-                (meetingTime) => meetingTime.campusLocation === "O"
-              ) &&
-              section.meetingTimes.some(
+    if (subjectDataOriginal && subjectDataOriginal.length > 0) {
+      // console.log('start');
+      let newFilteredData = subjectDataOriginal.map((subject) => ({
+        ...subject,
+        sections: subject.sections.filter(
+          (section) =>
+            ((section.openStatus === true && sectionStatusOpen) ||
+              (section.openStatus === false && sectionStatusClosed)) &&
+            ((traditionalType &&
+              section.meetingTimes.every(
                 (meetingTime) => meetingTime.campusLocation !== "O"
               )) ||
-            (onlineType &&
-              section.meetingTimes.every(
-                (meetingTime) => meetingTime.campusLocation === "O"
-              )))
-      ),
-    }));
+              (hybridType &&
+                section.meetingTimes.some(
+                  (meetingTime) => meetingTime.campusLocation === "O"
+                ) &&
+                section.meetingTimes.some(
+                  (meetingTime) => meetingTime.campusLocation !== "O"
+                )) ||
+              (onlineType &&
+                section.meetingTimes.every(
+                  (meetingTime) => meetingTime.campusLocation === "O"
+                )))
+        ),
+      }));
 
-    setSubjectDataFiltered(newFilteredData);
+      setSubjectDataFiltered(newFilteredData);
+
+      setSelectedIndexes(newFilteredData.reduce((acc, subject) => {
+        subject.sections.forEach((section) => {
+          acc.add(section.index);
+        });
+        setIsLoading(false);
+        return acc;
+      }, new Set()));
+      // console.log('end');
+    }
   }, [
     sectionStatusOpen,
     sectionStatusClosed,
@@ -91,20 +100,21 @@ const SectionScreen = () => {
     hybridType,
     onlineType,
     subjectDataOriginal,
+    setSelectedIndexes,
   ]);
 
-  // Update selectedIndexes when subjectDataFiltered changes
-  useEffect(() => {
-    if (!subjectDataFiltered) return;
-    setSelectedIndexes(
-      subjectDataFiltered.reduce((acc, subject) => {
-        subject.sections.forEach((section) => {
-          acc.add(section.index);
-        });
-        return acc;
-      }, new Set())
-    );
-  }, [subjectDataFiltered, setSelectedIndexes]);
+  // // Update selectedIndexes when subjectDataFiltered changes
+  // useEffect(() => {
+  //   if (!subjectDataFiltered) return;
+  //   setSelectedIndexes(
+  //     subjectDataFiltered.reduce((acc, subject) => {
+  //       subject.sections.forEach((section) => {
+  //         acc.add(section.index);
+  //       });
+  //       return acc;
+  //     }, new Set())
+  //   );
+  // }, [subjectDataFiltered, setSelectedIndexes]);
 
   // Filter the subject data based on the time filters, if any
   useEffect(() => {
