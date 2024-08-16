@@ -17,14 +17,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import AppContext from "../AppContext";
 
 const CampusSemesterSelector = () => {
   const navigate = useNavigate();
 
-  // const [selectedCampus, setSelectedCampus] = useState(null);
-  // const [selectedSemester, setSelectedSemester] = useState(null);
+  const [selectedCampus, setSelectedCampus] = useState(null);
+  const [selectedSemester, setSelectedSemester] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const {
@@ -37,22 +37,24 @@ const CampusSemesterSelector = () => {
   } = useContext(AppContext);
 
   const handleCampusChange = (value) => {
-    setCampus(value);
-    checkButtonDisabled(value, semester);
+    setSelectedCampus(value);
   };
 
   const handleSemesterChange = (value) => {
-    setSemester(value);
-    checkButtonDisabled(campus, value);
+    setSelectedSemester(value);
   };
 
-  const checkButtonDisabled = (campus, semester) => {
-    setIsButtonDisabled(!campus || !semester);
-  };
+  useEffect(() => {
+    if (selectedCampus && selectedSemester) {
+      setIsButtonDisabled(false);
+    }
+  }, [selectedCampus, selectedSemester]);
 
   const handleButtonClick = () => {
     if (!isButtonDisabled) {
-      const oldData = fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`);
+      const oldData = fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/user/campussemester`
+      );
       if (oldData.semester !== semester || oldData.campus !== campus) {
         setSelectedCourses([]);
         setTotalCredits(0);
@@ -66,6 +68,8 @@ const CampusSemesterSelector = () => {
         },
         body: JSON.stringify({ campus, semester }),
       });
+      setCampus(campus);
+      setSemester(semester);
       navigate("/classes");
     } else {
       // Prompt that options are required
@@ -75,8 +79,8 @@ const CampusSemesterSelector = () => {
 
   return (
     <div>
-      <Card className="p-8 mt-72 flex items-center justify-center flex-col">
-        <CardContent className="p-0 pb-6">
+      <Card className="p-6 flex items-center justify-center flex-col gap-4">
+        <CardContent className="p-0 flex flex-col gap-2">
           <Select required onValueChange={handleCampusChange}>
             <SelectTrigger className="w-80">
               <SelectValue placeholder="Select your campus" />
@@ -88,7 +92,7 @@ const CampusSemesterSelector = () => {
             </SelectContent>
           </Select>
           <Select required onValueChange={handleSemesterChange}>
-            <SelectTrigger className="w-80 mt-2">
+            <SelectTrigger className="w-80">
               <SelectValue placeholder="Select semester" />
             </SelectTrigger>
             <SelectContent>
@@ -97,12 +101,12 @@ const CampusSemesterSelector = () => {
             </SelectContent>
           </Select>
         </CardContent>
-        <CardFooter className="p-0">
+        <CardFooter className="p-0 m-0">
           <Button
-            className={`w-80 my-4 mx-auto block px-4 py-2 rounded ${
+            className={`w-80 mx-auto block px-4 py-2 rounded-md ${
               isButtonDisabled
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500"
+                : "bg-[#090e1b]"
             }`}
             // disabled={isButtonDisabled}
             onClick={handleButtonClick}
