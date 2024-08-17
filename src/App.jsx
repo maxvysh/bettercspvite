@@ -19,7 +19,7 @@ const App = () => {
   const [selectedIndexes, setSelectedIndexes] = useState([]);
   const [selectedIndexesMap, setSelectedIndexesMap] = useState(new Map());
   const [indexTimes, setIndexTimes] = useState([]);
-  const [subjectData, setSubjectData] = useState([]);
+  const [subjectData, setSubjectData] = useState();
 
   function fetchCampusSemester() {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
@@ -68,81 +68,71 @@ const App = () => {
   }, [selectedCourses]);
 
   useEffect(() => {
-    const abortControllers = [];
-
-    // Check for null campus, semester, and level
+    if (!selectedCourses || !level) {
+      return;
+    }
     if (!campus || !semester) {
       fetchCampusSemester();
-    } else {
-      // setIsLoading(true); // Start loading before fetching data
-
-      const fetchPromises = selectedCourses.map((course) => {
-        const controller = new AbortController();
-        abortControllers.push(controller);
-
-        return fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
-            course.subject
-          }&semester=${semester}&campus=${campus}&level=${level}`,
-          { signal: controller.signal }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            // Assuming data is an array of courses
-            const foundCourse = data.find(
-              (c) => c.courseNumber === course.courseNumber
-            );
-            if (foundCourse) {
-              return foundCourse; // Return found course for further processing
-            } else {
-              return null; // Return null if no course found
-            }
-          })
-          .catch((error) => {
-            if (error.name === "AbortError") {
-              console.log("Fetch aborted");
-            } else {
-              console.error("Error fetching course data:", error);
-            }
-            return null; // Return null in case of error
-          });
-      });
-
-      Promise.all(fetchPromises).then((courses) => {
-        // Filter out null values (not found or error cases)
-        const validCourses = courses.filter((course) => course !== null);
-        setSubjectData(validCourses); // Update state with all found courses
-        // setIsLoading(false); // Stop loading after all fetches are complete
-
-        let selectedIndexesMap = new Map();
-
-        // Create a map where the key is the course index and the value is the course code and meeting times
-        const indexTimesMap = validCourses.reduce((acc, course) => {
-          const courseCode = `${course.offeringUnitCode}${course.subject}${course.courseNumber}`;
-          course.sections
-            .filter((section) => section.printed === "Y")
-            .forEach((section) => {
-              // Initialize the array if the subject is not already a key
-              selectedIndexesMap.set(section.index, course.subject);
-
-              // Use the set method to add to the Map
-              acc.set(section.index, {
-                courseCode: courseCode,
-                meetingTimes: section.meetingTimes,
-              });
-            });
-          return acc;
-        }, new Map());
-
-        setIndexTimes(indexTimesMap);
-        setSelectedIndexesMap(selectedIndexesMap);
-      });
+      return;
     }
+    if (selectedCourses.length === 0) {
+      setSubjectData([]);
+      return;
+    }
+    const fetchData = async () => {
+      const fetchPromises = selectedCourses.map(async (course) => {
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
+              course.subject
+            }&semester=${semester}&campus=${campus}&level=${level}`
+          );
+          const data = await response.json();
+          // Assuming data is an array of courses
+          const foundCourse = data.find(
+            (c) => c.courseNumber === course.courseNumber
+          );
+          return foundCourse || null; // Return found course or null if not found
+        } catch (error) {
+          if (error.name === "AbortError") {
+            console.log("Fetch aborted");
+          } else {
+            console.error("Error fetching course data:", error);
+          }
+          return null; // Return null in case of error
+        }
+      });
 
-    // Cleanup function to abort fetch requests
-    return () => {
-      abortControllers.forEach((controller) => controller.abort());
+      const courses = await Promise.all(fetchPromises);
+      // Filter out null values (not found or error cases)
+      const validCourses = courses.filter((course) => course !== null);
+      setSubjectData(validCourses); // Update state with all found courses or empty array
+
+      let selectedIndexesMap = new Map();
+
+      // Create a map where the key is the course index and the value is the course code and meeting times
+      const indexTimesMap = validCourses.reduce((acc, course) => {
+        const courseCode = `${course.offeringUnitCode}${course.subject}${course.courseNumber}`;
+        course.sections
+          .filter((section) => section.printed === "Y")
+          .forEach((section) => {
+            // Initialize the array if the subject is not already a key
+            selectedIndexesMap.set(section.index, course.subject);
+
+            // Use the set method to add to the Map
+            acc.set(section.index, {
+              courseCode: courseCode,
+              meetingTimes: section.meetingTimes,
+            });
+          });
+        return acc;
+      }, new Map());
+
+      setIndexTimes(indexTimesMap);
+      setSelectedIndexesMap(selectedIndexesMap);
     };
+
+    fetchData();
   }, [selectedCourses, semester, campus, level]); // Add dependencies as needed
 
   // Update the selectedIndexes when indexTimes is set

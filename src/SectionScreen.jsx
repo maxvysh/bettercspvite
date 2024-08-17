@@ -30,6 +30,7 @@ const SectionScreen = () => {
   } = useContext(AppContext);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isDataPresent, setIsDataPresent] = useState(true);
   const [subjectDataOriginal, setSubjectDataOriginal] = useState(null);
   const [subjectDataFiltered, setSubjectDataFiltered] = useState(null);
   const [sectionStatusOpen, setSectionStatusOpen] = useState(true);
@@ -44,12 +45,18 @@ const SectionScreen = () => {
   const [timeFilters, setTimeFilters] = useState([]);
 
   useEffect(() => {
+    console.log('subjectData:', subjectData); 
     if (subjectData) {
       // Filter the subject data to only have sections that have printed === "Y"
       let filteredData = subjectData.map((subject) => ({
         ...subject,
         sections: subject.sections.filter((section) => section.printed === "Y"),
       }));
+
+      if (filteredData.length === 0) {
+        setIsDataPresent(false);
+      }
+
       setSubjectDataOriginal(filteredData);
       setSubjectDataFiltered(filteredData);
     }
@@ -84,13 +91,15 @@ const SectionScreen = () => {
 
       setSubjectDataFiltered(newFilteredData);
 
-      setSelectedIndexes(newFilteredData.reduce((acc, subject) => {
-        subject.sections.forEach((section) => {
-          acc.add(section.index);
-        });
-        setIsLoading(false);
-        return acc;
-      }, new Set()));
+      setSelectedIndexes(
+        newFilteredData.reduce((acc, subject) => {
+          subject.sections.forEach((section) => {
+            acc.add(section.index);
+          });
+          setIsLoading(false);
+          return acc;
+        }, new Set())
+      );
       // console.log('end');
     }
   }, [
@@ -259,6 +268,8 @@ const SectionScreen = () => {
           <div>
             {isLoading ? (
               <LoadingSkeleton />
+            ) : !isDataPresent ? (
+              <p>You have no sections picked</p>
             ) : (
               subjectDataFiltered.map((subjectData) => (
                 <ClassRowSec
