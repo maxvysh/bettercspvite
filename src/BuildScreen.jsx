@@ -11,6 +11,8 @@ import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
 import PrintRegister from "./components/PrintRegister";
 import LoadingSkeleton from "./components/LoadingSkeleton";
+import { buildSchedules } from "./scripts/builder";
+
 const BuildScreen = () => {
   const {
     indexTimes,
@@ -117,20 +119,7 @@ const BuildScreen = () => {
 
     // Ensure the arrays are finalized before making the fetch call
     if (selectedIndexesArray && indexTimesObject) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/buildschedules`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          selectedIndexes: selectedIndexesArray,
-          indexTimes: indexTimesObject,
-        }),
-      }).then((response) => {
-        response.json().then((data) => {
-          setBuildIndexes(data);
-        });
-      });
+      setBuildIndexes(buildSchedules(selectedIndexesArray, indexTimesObject));
     }
   }, [selectedIndexes, indexTimes]);
 
@@ -141,6 +130,33 @@ const BuildScreen = () => {
   const handleNext = () => {
     if (currentBuild < buildIndexes.length - 1) {
       setCurrentBuild(currentBuild + 1);
+    } else if (currentBuild === buildIndexes.length - 1) {
+      const oldNumberOfSchedules = buildIndexes.length;
+      const newSchedules = buildSchedules(
+        Array.from(selectedIndexes),
+        serializeIndexTimes(indexTimes)
+      );
+
+      let uniqueSchedules = new Set(
+        buildIndexes.map((schedule) => JSON.stringify(schedule))
+      );
+      // Make sure that none of the new schedules are duplicates
+      for (const schedule of newSchedules) {
+        const scheduleStr = JSON.stringify(schedule);
+        if (!uniqueSchedules.has(scheduleStr)) {
+          uniqueSchedules.add(scheduleStr);
+        }
+      }
+      const uniqueSchedulesArray = Array.from(uniqueSchedules).map((schedule) =>
+        JSON.parse(schedule)
+      );
+      const newNumberOfSchedules = uniqueSchedulesArray.length;
+      setBuildIndexes(uniqueSchedulesArray);
+
+      // If new schedules are generated, increment the currentBuild
+      if (newNumberOfSchedules > oldNumberOfSchedules) {
+        setCurrentBuild(currentBuild + 1);
+      }
     }
   };
 
@@ -269,7 +285,7 @@ const BuildScreen = () => {
   const handleSave = (name, currentIndexes) => {
     // Create the schedule object
     const schedule = {};
-    currentIndexes.forEach(index => {
+    currentIndexes.forEach((index) => {
       schedule[index] = selectedIndexesMap.get(index);
     });
 
@@ -344,7 +360,11 @@ const BuildScreen = () => {
               </Button>
             </div>
           </Card>
-          <PrintRegister indexData={indexData} eventsByDay={eventsByDay} currentIndexes={currentIndexes} />
+          <PrintRegister
+            indexData={indexData}
+            eventsByDay={eventsByDay}
+            currentIndexes={currentIndexes}
+          />
         </div>
         {displayList ? (
           <div className="ml-4 w-full">
