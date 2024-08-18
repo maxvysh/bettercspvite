@@ -11,7 +11,13 @@ import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
 import PrintRegister from "./components/PrintRegister";
 import LoadingSkeleton from "./components/LoadingSkeleton";
-import { buildSchedules } from "./scripts/builder";
+import {
+  buildSchedules,
+  splitByCourse,
+  generateCombinations,
+  isWorkingSchedule,
+  buildValidSchedules,
+} from "./scripts/builder";
 
 const BuildScreen = () => {
   const {
@@ -37,6 +43,8 @@ const BuildScreen = () => {
   });
   const [inputName, setInputName] = useState("");
   const [savedButton, setSavedButton] = useState(false);
+  const [splitByCourseArray, setSplitByCourseArray] = useState([]);
+  const [allCombinations, setAllCombinations] = useState([]);
 
   // useEffect(() => {
   //   console.log("buildIndexes", buildIndexes);
@@ -108,6 +116,8 @@ const BuildScreen = () => {
   }, [currentBuild, buildIndexes]);
 
   useEffect(() => {
+    console.log("selectedIndexes", selectedIndexes);
+    console.log("indexTimes", indexTimes);
     if (selectedIndexes.length === 0 || indexTimes.length === 0) {
       return;
     }
@@ -119,9 +129,18 @@ const BuildScreen = () => {
 
     // Ensure the arrays are finalized before making the fetch call
     if (selectedIndexesArray && indexTimesObject) {
-      setBuildIndexes(buildSchedules(selectedIndexesArray, indexTimesObject));
+      const buildSchedulesReturn = buildSchedules(selectedIndexesArray, indexTimesObject);
+      setAllCombinations(buildSchedulesReturn);
+
+      const buildValidSchedulesReturn = buildValidSchedules(buildSchedulesReturn, indexTimesObject);
+      setBuildIndexes(buildValidSchedulesReturn);
     }
   }, [selectedIndexes, indexTimes]);
+
+  // useEffect(() => {
+  //   console.log('allCombinations', allCombinations);
+  //   console.log('buildIndexes', buildIndexes);
+  // }, [allCombinations, buildIndexes]);
 
   // useEffect(() => {
   //   console.log("buildIndexes", buildIndexes);
@@ -132,10 +151,7 @@ const BuildScreen = () => {
       setCurrentBuild(currentBuild + 1);
     } else if (currentBuild === buildIndexes.length - 1) {
       const oldNumberOfSchedules = buildIndexes.length;
-      const newSchedules = buildSchedules(
-        Array.from(selectedIndexes),
-        serializeIndexTimes(indexTimes)
-      );
+      const newSchedules = buildValidSchedules(allCombinations, serializeIndexTimes(indexTimes));
 
       let uniqueSchedules = new Set(
         buildIndexes.map((schedule) => JSON.stringify(schedule))

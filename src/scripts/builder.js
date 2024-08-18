@@ -1,26 +1,45 @@
 function buildSchedules(selectedIndexes, indexTimes) {
-  // Shuffle the selectedIndexes
-  selectedIndexes = selectedIndexes.sort(() => Math.random() - 0.5);
+  // Shuffle the selectedIndexes and split them by course
+  shuffle(selectedIndexes);
 
   let courseIndexes = splitByCourse(selectedIndexes, indexTimes);
-  let validSchedules = [];
-  let combinationGenerator = generateCombinations(courseIndexes);
+  let allCombinations = generateCombinations(courseIndexes);
 
-  for (let combination of combinationGenerator) {
-    if (isWorkingSchedule(combination, indexTimes)) {
-      validSchedules.push(combination);
-      if (validSchedules.length === 10) {
-        break;
-      }
-    }
+  return allCombinations;
+}
+
+function shuffle(array) {
+  let currentIndex = array.length;
+  let temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
   }
 
-  return validSchedules;
+  return array;
+}
+
+function buildValidSchedules(allCombinations, indexTimes) {
+  // Shuffles the allCombinations array and returns the first 10 valid schedules
+  allCombinations = shuffle(allCombinations);
+  return workingSchedules(allCombinations, indexTimes);
 }
 
 function splitByCourse(selectedIndexes, indexTimes) {
+  // Split the selectedIndexes into arrays of indexes that belong to the same course
   let courseIndexes = {};
+  // console.log('indexTimes', indexTimes);
+  // console.log('selectedIndexes', selectedIndexes);
   for (let index of selectedIndexes) {
+    // console.log('index', index);
     let course = indexTimes[index].courseCode;
     if (!courseIndexes[course]) {
       courseIndexes[course] = [];
@@ -30,35 +49,49 @@ function splitByCourse(selectedIndexes, indexTimes) {
   return courseIndexes;
 }
 
-function* generateCombinations(courseIndexes) {
+function generateCombinations(courseIndexes) {
+  console.log('calling generateCombinations');
+  // Using the courseIndexes object, generate all possible combinations of indexes
+  // that can be taken together
+  let allCombinations = [];
   let courses = Object.keys(courseIndexes);
   let numClasses = courses.length;
   let currentCombination = [];
   let currentIndex = 0;
-  yield* generateCombinationsHelper(
+  generateCombinationsHelper(
     courseIndexes,
+    allCombinations,
     currentCombination,
     currentIndex,
     numClasses
   );
+  return allCombinations;
 }
 
-function* generateCombinationsHelper(
+function generateCombinationsHelper(
   courseIndexes,
+  allCombinations,
   currentCombination,
   currentIndex,
   numClasses
 ) {
+  if (allCombinations.length >= 1000) {
+    return;
+  }
   if (currentIndex === numClasses) {
-    yield currentCombination.slice();
+    allCombinations.push(currentCombination.slice());
     return;
   }
   let course = Object.keys(courseIndexes)[currentIndex];
   let indexes = courseIndexes[course];
   for (let index of indexes) {
+    if (allCombinations.length >= 1000) {
+      return;
+    }
     currentCombination.push(index);
-    yield* generateCombinationsHelper(
+    generateCombinationsHelper(
       courseIndexes,
+      allCombinations,
       currentCombination,
       currentIndex + 1,
       numClasses
@@ -67,16 +100,29 @@ function* generateCombinationsHelper(
   }
 }
 
+function workingSchedules(allCombinations, indexTimes) {
+  let validSchedules = [];
+  for (let combination of allCombinations) {
+    if (isWorkingSchedule(combination, indexTimes)) {
+      validSchedules.push(combination);
+      if (validSchedules.length === 10) {
+        break;
+      }
+    }
+  }
+  return validSchedules;
+}
+
 function isWorkingSchedule(combination, indexTimes) {
   let intervals = [];
 
-  const convertToMinutes = (day, time) => {
+  const convertToMinutes = (time) => {
     if (!time) {
       return;
     }
     let hours = parseInt(time.substring(0, 2), 10);
     let minutes = parseInt(time.substring(2), 10);
-    return day * 24 * 60 + hours * 60 + minutes;
+    return hours * 60 + minutes;
   };
 
   for (let index of combination) {
@@ -110,25 +156,28 @@ function isWorkingSchedule(combination, indexTimes) {
         }
       }
       let interval = {
-        start: convertToMinutes(dayToNumber[day], start),
-        end: convertToMinutes(dayToNumber[day], end),
+        day: dayToNumber[day],
+        start: convertToMinutes(start),
+        end: convertToMinutes(end),
         campus: campus,
       };
-
-      // Check if the end is smaller than the start, if so add 12 hours to the end
-      if (interval.end < interval.start) {
-        interval.end += 12 * 60;
-      }
-
       intervals.push(interval);
     }
   }
 
-  intervals.sort((a, b) => a.start - b.start);
+  intervals.sort((a, b) => {
+    if (a.day !== b.day) {
+      return a.day - b.day;
+    }
+    return a.start - b.start;
+  });
 
   for (let i = 1; i < intervals.length; i++) {
     let previous = intervals[i - 1];
     let current = intervals[i];
+    if (previous.day !== current.day) {
+      continue;
+    }
     if (previous.end > current.start) {
       if (previous.campus === "BUSCH" && current.campus === "LIVINGSTON") {
         if (current.start - previous.end < 30) {
@@ -141,8 +190,13 @@ function isWorkingSchedule(combination, indexTimes) {
       }
     }
   }
-
   return true;
 }
 
-export { buildSchedules };
+export {
+  buildSchedules,
+  splitByCourse,
+  generateCombinations,
+  isWorkingSchedule,
+  buildValidSchedules,
+};

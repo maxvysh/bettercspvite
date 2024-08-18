@@ -139,6 +139,9 @@ const App = () => {
 
   // Update the selectedIndexes when indexTimes is set
   useEffect(() => {
+    if (indexTimes.length === 0) {
+      return;
+    }
     const newIndexes = new Set();
     indexTimes.forEach((value, key) => {
       newIndexes.add(key);
