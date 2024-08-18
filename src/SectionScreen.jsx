@@ -54,6 +54,7 @@ const SectionScreen = () => {
 
       if (filteredData.length === 0) {
         setIsDataPresent(false);
+        setIsLoading(false);
       }
 
       setSubjectDataOriginal(filteredData);
@@ -63,7 +64,6 @@ const SectionScreen = () => {
 
   useEffect(() => {
     if (subjectDataOriginal && subjectDataOriginal.length > 0) {
-      // console.log('start');
       let newFilteredData = subjectDataOriginal.map((subject) => ({
         ...subject,
         sections: subject.sections.filter(
@@ -99,7 +99,6 @@ const SectionScreen = () => {
           return acc;
         }, new Set())
       );
-      // console.log('end');
     }
   }, [
     sectionStatusOpen,
