@@ -34,7 +34,7 @@ const SavedScreen = () => {
   const [currentSchedule, setCurrentSchedule] = useState();
   const [currentIndexes, setCurrentIndexes] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [displayEverything, setDisplayEverything] = useState(false);
+  const [displayEverything, setDisplayEverything] = useState(true);
 
   // Retrieve the saved schedules from the backend
   useEffect(() => {
@@ -193,6 +193,10 @@ const SavedScreen = () => {
               : schedule
           )
         );
+        setCurrentSchedule((prevSchedule) => ({
+          ...prevSchedule,
+          name: name,
+        }));
         setCurrentName(name);
         setIsEditing(false);
       })
@@ -204,7 +208,6 @@ const SavedScreen = () => {
   // Delete the current schedule from the saved schedules and update the backend
   const handleDelete = () => {
     const newSavedSchedules = savedSchedules.filter((schedule) => {
-      console.log(schedule.name, currentSchedule.name);
       return schedule.name !== currentSchedule.name;
     });
     setSavedSchedules(newSavedSchedules);
@@ -215,6 +218,7 @@ const SavedScreen = () => {
       setCurrentName(newSavedSchedules[0].name);
     } else {
       setCurrentName("");
+      setDisplayEverything(false);
     }
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`, {
       method: "DELETE",
