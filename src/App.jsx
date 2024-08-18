@@ -68,7 +68,7 @@ const App = () => {
   }, [selectedCourses]);
 
   useEffect(() => {
-    if (!selectedCourses || !level) {
+    if (!selectedCourses || !level || !isDataFetched) {
       return;
     }
     if (!campus || !semester) {
@@ -94,7 +94,6 @@ const App = () => {
               c.courseNumber === course.courseNumber &&
               c.sections.some((section) => section.printed === "Y")
           );
-          console.log("Found course:", foundCourse);
           return foundCourse || null; // Return found course or null if not found
         } catch (error) {
           if (error.name === "AbortError") {
@@ -109,7 +108,6 @@ const App = () => {
       const courses = await Promise.all(fetchPromises);
       // Filter out null values (not found or error cases)
       const validCourses = courses.filter((course) => course !== null);
-      console.log("Valid courses:", validCourses);
       setSubjectData(validCourses); // Update state with all found courses or empty array
 
       let selectedIndexesMap = new Map();
