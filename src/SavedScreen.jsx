@@ -31,19 +31,25 @@ const SavedScreen = () => {
   });
   const [totalBuilds, setTotalBuilds] = useState(0);
   const [savedSchedules, setSavedSchedules] = useState([]);
-  const [currentSchedule, setCurrentSchedule] = useState({});
+  const [currentSchedule, setCurrentSchedule] = useState();
   const [currentIndexes, setCurrentIndexes] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [displayEverything, setDisplayEverything] = useState(false);
 
   // Retrieve the saved schedules from the backend
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`)
       .then((response) => response.json())
       .then((data) => {
-        setSavedSchedules(data);
-        setTotalBuilds(data.length);
-        setCurrentSchedule(data[0]);
-        setCurrentName(data[0].name);
+        if (data.length > 0) {
+          setCurrentName(data[0].name);
+          setSavedSchedules(data);
+          setTotalBuilds(data.length);
+          setCurrentSchedule(data[0]);
+          setDisplayEverything(true);
+        } else {
+          setDisplayEverything(false);
+        }
       })
       .catch((error) => {
         console.error("Error fetching saved schedules:", error);
@@ -110,7 +116,8 @@ const SavedScreen = () => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      if (currentSchedule.name !== undefined) {
+      console.log("Current schedule:", currentSchedule);
+      if (currentSchedule !== undefined) {
         setIndexData([]); // Clear the indexData array before fetching new data
         const indexes = []; // Local array to accumulate indexes
         const newIndexData = []; // Local array to accumulate new data
@@ -196,14 +203,19 @@ const SavedScreen = () => {
 
   // Delete the current schedule from the saved schedules and update the backend
   const handleDelete = () => {
-    const newSavedSchedules = savedSchedules.filter(
-      (schedule) => schedule.name !== currentSchedule.name
-    );
+    const newSavedSchedules = savedSchedules.filter((schedule) => {
+      console.log(schedule.name, currentSchedule.name);
+      return schedule.name !== currentSchedule.name;
+    });
     setSavedSchedules(newSavedSchedules);
     setTotalBuilds(newSavedSchedules.length);
     setCurrentBuild(0);
     setCurrentSchedule(newSavedSchedules[0]);
-    setCurrentName(newSavedSchedules[0].name);
+    if (newSavedSchedules.length > 0) {
+      setCurrentName(newSavedSchedules[0].name);
+    } else {
+      setCurrentName("");
+    }
     fetch(`${import.meta.env.VITE_BACKEND_URL}/user/savedschedules`, {
       method: "DELETE",
       headers: {
@@ -333,138 +345,148 @@ const SavedScreen = () => {
       <div className="p-3 flex">
         <div className="w-[330px] min-w-[330px] flex flex-col gap-4">
           <ScreenSelector />
-          <BuildSelector
-            displayList={displayList}
-            setDisplayList={setDisplayList}
-          />
-          <Card className="border-2 flex flex-col gap-1">
-            <div className="flex justify-between">
-              <Button
-                className="w-24 m-1 border-2"
-                onClick={() => handlePrev()}
-              >
-                Prev
-              </Button>
-              <div className="flex flex-col justify-center">
-                <p className="h-fit">
-                  {currentBuild + 1} of {totalBuilds}
-                </p>
-              </div>
-              <Button
-                className="w-24 m-1 border-2"
-                onClick={() => handleNext()}
-              >
-                Next
-              </Button>
-            </div>
-            <div className="flex mx-2">
-              <Card className="flex justify-center items-center h-8 w-full">
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={currentName}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleEdit(currentName);
-                      }
-                    }}
-                    onChange={(e) => setCurrentName(e.target.value)}
-                    className="w-full h-full rounded-lg px-2"
-                  />
-                ) : (
-                  <p>{currentName}</p>
-                )}
-              </Card>
-              <button className="ml-2">
-                <img
-                  src={edit}
-                  alt="Edit"
-                  className="w-10"
-                  onClick={setIsEditing}
-                />
-              </button>
-              <button className="ml-1">
-                <img
-                  src={xcircle}
-                  alt="Delete"
-                  className="w-10"
-                  onClick={handleDelete}
-                />
-              </button>
-            </div>
+          {displayEverything ? (
             <div>
-              <ScrollArea className="max-h-[200px]">
-                <ScrollBar />
-                <div className="flex flex-col gap-1 p-2.5">
-                  {savedSchedules.map((schedule, index) => (
-                    <div key={index} className="flex rounded-lg border-2">
-                      <Button
-                        className="w-full"
-                        onClick={() => {
-                          setCurrentBuild(index);
+              <BuildSelector
+                displayList={displayList}
+                setDisplayList={setDisplayList}
+              />
+              <Card className="border-2 flex flex-col gap-1">
+                <div className="flex justify-between">
+                  <Button
+                    className="w-24 m-1 border-2"
+                    onClick={() => handlePrev()}
+                  >
+                    Prev
+                  </Button>
+                  <div className="flex flex-col justify-center">
+                    <p className="h-fit">
+                      {currentBuild + 1} of {totalBuilds}
+                    </p>
+                  </div>
+                  <Button
+                    className="w-24 m-1 border-2"
+                    onClick={() => handleNext()}
+                  >
+                    Next
+                  </Button>
+                </div>
+                <div className="flex mx-2">
+                  <Card className="flex justify-center items-center h-8 w-full">
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={currentName}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleEdit(currentName);
+                          }
                         }}
-                      >
-                        {schedule.name}
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          </Card>
-          <PrintRegister
-            indexData={indexData}
-            eventsByDay={eventsByDay}
-            currentIndexes={currentIndexes}
-          />
-        </div>
-        {displayList ? (
-          <div className="ml-4 w-full">
-            {isLoading ? (
-              <LoadingSkeleton />
-            ) : (
-              // For each index in buildIndexes, run the dataByIndex function to get the section data
-              // Then pass the section data to the ListViewRow component
-              <Card className="border-2 min-w-[1200px] w-full">
-                <div className="grid grid-cols-8 w-full mx-2">
-                  <p className="col-span-1 text-center">title</p>
-                  <p className="col-span-1 text-center">section</p>
-                  <p className="col-span-1 text-center">status</p>
-                  <p className="col-span-1 text-center">index</p>
-                  <p className="col-span-2 text-center">
-                    meeting times/locations
-                  </p>
-                  <p className="col-span-1 text-center">exam code</p>
-                  <p className="col-span-1 text-center">instructors</p>
-                </div>
-                {indexData.map((sectionData) => {
-                  return (
-                    <div key={sectionData.index}>
-                      <ListViewRow
-                        index={sectionData.index}
-                        status={sectionData.openStatus}
-                        useTitle={sectionData.useTitle}
-                        section={sectionData.number}
-                        meetingTimes={sectionData.meetingTimes}
-                        examCode={sectionData.examCode}
-                        instructors={sectionData.instructors}
-                        sectionEligibility={sectionData.sectionEligibility}
-                        sectionNotes={sectionData.sectionNotes}
+                        onChange={(e) => setCurrentName(e.target.value)}
+                        className="w-full h-full rounded-lg px-2"
                       />
+                    ) : (
+                      <p>{currentName}</p>
+                    )}
+                  </Card>
+                  <button className="ml-2">
+                    <img
+                      src={edit}
+                      alt="Edit"
+                      className="w-10"
+                      onClick={setIsEditing}
+                    />
+                  </button>
+                  <button className="ml-1">
+                    <img
+                      src={xcircle}
+                      alt="Delete"
+                      className="w-10"
+                      onClick={handleDelete}
+                    />
+                  </button>
+                </div>
+                <div>
+                  <ScrollArea className="max-h-[200px]">
+                    <ScrollBar />
+                    <div className="flex flex-col gap-1 p-2.5">
+                      {savedSchedules.map((schedule, index) => (
+                        <div key={index} className="flex rounded-lg border-2">
+                          <Button
+                            className="w-full"
+                            onClick={() => {
+                              setCurrentBuild(index);
+                            }}
+                          >
+                            {schedule.name}
+                          </Button>
+                        </div>
+                      ))}
                     </div>
-                  );
-                })}
+                  </ScrollArea>
+                </div>
               </Card>
-            )}
-          </div>
+              <PrintRegister
+                indexData={indexData}
+                eventsByDay={eventsByDay}
+                currentIndexes={currentIndexes}
+              />
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        {displayEverything ? (
+          displayList ? (
+            <div className="ml-4 w-full">
+              {isLoading ? (
+                <LoadingSkeleton />
+              ) : (
+                // For each index in buildIndexes, run the dataByIndex function to get the section data
+                // Then pass the section data to the ListViewRow component
+                <Card className="border-2 min-w-[1200px] w-full">
+                  <div className="grid grid-cols-8 w-full mx-2">
+                    <p className="col-span-1 text-center">title</p>
+                    <p className="col-span-1 text-center">section</p>
+                    <p className="col-span-1 text-center">status</p>
+                    <p className="col-span-1 text-center">index</p>
+                    <p className="col-span-2 text-center">
+                      meeting times/locations
+                    </p>
+                    <p className="col-span-1 text-center">exam code</p>
+                    <p className="col-span-1 text-center">instructors</p>
+                  </div>
+                  {indexData.map((sectionData) => {
+                    return (
+                      <div key={sectionData.index}>
+                        <ListViewRow
+                          index={sectionData.index}
+                          status={sectionData.openStatus}
+                          useTitle={sectionData.useTitle}
+                          section={sectionData.number}
+                          meetingTimes={sectionData.meetingTimes}
+                          examCode={sectionData.examCode}
+                          instructors={sectionData.instructors}
+                          sectionEligibility={sectionData.sectionEligibility}
+                          sectionNotes={sectionData.sectionNotes}
+                        />
+                      </div>
+                    );
+                  })}
+                </Card>
+              )}
+            </div>
+          ) : (
+            <div className="ml-4 w-full">
+              {isLoading ? (
+                <LoadingSkeleton />
+              ) : (
+                <Calendar eventsByDay={eventsByDay} />
+              )}
+            </div>
+          )
         ) : (
-          <div className="ml-4 w-full">
-            {isLoading ? (
-              <LoadingSkeleton />
-            ) : (
-              <Calendar eventsByDay={eventsByDay} />
-            )}
-          </div>
+          <p className="ml-2">No saved schedules!</p>
         )}
       </div>
     </div>
