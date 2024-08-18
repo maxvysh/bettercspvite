@@ -1,12 +1,11 @@
 import CampusSemesterSelector from "./components/CampusSemesterSelector";
-import cloudframe from "./assets/cloud_frame.svg";
 
 const SelectCS = () => {
   return (
     <div
       className="h-screen min-w-[340px] fixed inset-0 flex items-center justify-center"
       style={{
-        backgroundImage: `url(${cloudframe})`,
+        backgroundImage: `url(/cloud_frame.svg)`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

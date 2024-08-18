@@ -45,7 +45,6 @@ const SectionScreen = () => {
   const [timeFilters, setTimeFilters] = useState([]);
 
   useEffect(() => {
-    console.log('subjectData:', subjectData); 
     if (subjectData) {
       // Filter the subject data to only have sections that have printed === "Y"
       let filteredData = subjectData.map((subject) => ({

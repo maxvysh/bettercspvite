@@ -2,14 +2,13 @@ import { useEffect, useRef } from "react";
 import CreateAccount from "@/components/CreateAccount";
 import { Button } from "@/components/ui/button";
 import "./css/Home.css";
-import cloudframe from "./assets/cloud_frame.svg";
 
 function Home() {
   return (
     <div
       className="h-screen flex flex-col min-w-[340px]"
       style={{
-        backgroundImage: `url(${cloudframe})`,
+        backgroundImage: `url(/cloud_frame.svg)`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
