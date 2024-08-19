@@ -48,12 +48,28 @@ const About = () => {
             </p>
           </div>
           <div className="flex gap-4">
-            <button>
-              <img src={linkedin} alt="LinkedIn" className="w-10 h-10 lg:w-14 lg:h-14" />
-            </button>
-            <button>
-              <img src={github} alt="GitHub" className="w-10 h-10 lg:w-14 lg:h-14" />
-            </button>
+            <a
+              href="https://www.linkedin.com/in/maxvysh/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src={linkedin}
+                alt="LinkedIn"
+                className="w-10 h-10 lg:w-14 lg:h-14"
+              />
+            </a>
+            <a
+              href="https://github.com/maxvysh"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src={github}
+                alt="GitHub"
+                className="w-10 h-10 lg:w-14 lg:h-14"
+              />
+            </a>
           </div>
         </div>
       </div>
