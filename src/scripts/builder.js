@@ -1,5 +1,5 @@
 function buildSchedules(selectedIndexes, indexTimes) {
-  // Shuffle the selectedIndexes and split them by course
+  // Shuffle the selectedIndexes
   shuffle(selectedIndexes);
 
   let courseIndexes = splitByCourse(selectedIndexes, indexTimes);
@@ -50,7 +50,6 @@ function splitByCourse(selectedIndexes, indexTimes) {
 }
 
 function generateCombinations(courseIndexes) {
-  console.log('calling generateCombinations');
   // Using the courseIndexes object, generate all possible combinations of indexes
   // that can be taken together
   let allCombinations = [];
@@ -113,9 +112,22 @@ function workingSchedules(allCombinations, indexTimes) {
   return validSchedules;
 }
 
+// Determines if a single schedule is valid
 function isWorkingSchedule(combination, indexTimes) {
+  /*
+   * The intervals array stores interval objects
+   * interval is an object with the following properties:
+   * - day: number (0-6, representing Monday to Sunday)
+   * - start: number (minutes since midnight)
+   * - end: number (minutes since midnight)
+   * - campus: string (e.g., "LIVINGSTON", "BUSCH", etc.)
+   */
   let intervals = [];
 
+  /*
+   * convertToMinutes takes a time string in the format "HHMM" and converts it to
+   * the number of minutes since midnight of that day.
+   */
   const convertToMinutes = (time) => {
     if (!time) {
       return;

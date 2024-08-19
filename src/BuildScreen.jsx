@@ -129,9 +129,11 @@ const BuildScreen = () => {
 
     // Ensure the arrays are finalized before making the fetch call
     if (selectedIndexesArray && indexTimesObject) {
+      // Get 1000 possible combinations of indexes
       const buildSchedulesReturn = buildSchedules(selectedIndexesArray, indexTimesObject);
       setAllCombinations(buildSchedulesReturn);
 
+      // Get 10 valid schedules from the 1000 possible combinations
       const buildValidSchedulesReturn = buildValidSchedules(buildSchedulesReturn, indexTimesObject);
       setBuildIndexes(buildValidSchedulesReturn);
     }
