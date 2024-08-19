@@ -2,8 +2,11 @@ import { useEffect, useRef } from "react";
 import CreateAccount from "@/components/CreateAccount";
 import { Button } from "@/components/ui/button";
 import "./css/Home.css";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <div
       className="h-screen flex flex-col min-w-[340px]"
@@ -34,7 +37,7 @@ function Home() {
       <div className="flex-grow flex flex-col items-center justify-center gap-6 mx-2 mb-60">
         <CreateAccount />
         <div className="flex flex-col max-w-[426px] w-full gap-2">
-          <Button className="bg-white text-[#020817] hover:bg-[#cbd5e1]">
+          <Button className="bg-white text-[#020817] hover:bg-[#cbd5e1]" onClick={() => navigate("/about")}>
             Learn More About RUPlanning
           </Button>
         </div>

@@ -6,6 +6,7 @@ import BuildScreen from "./BuildScreen";
 import SectionScreen from "./SectionScreen";
 import SavedScreen from "./SavedScreen";
 import AppContext from "./AppContext";
+import About from "./About";
 import { useState, useEffect } from "react";
 
 const App = () => {
@@ -225,6 +226,7 @@ const App = () => {
           <Route path="/sections" element={<SectionScreen />} />
           <Route path="/build" element={<BuildScreen />} />
           <Route path="/saved" element={<SavedScreen />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </Router>
     </AppContext.Provider>
