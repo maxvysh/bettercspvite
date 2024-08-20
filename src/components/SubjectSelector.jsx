@@ -19,7 +19,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useEffect, useState } from "react";
 
-const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
+const SubjectSelector = ({
+  campus,
+  semester,
+  level,
+  onValueChange,
+  setSubjectArray,
+}) => {
   const [data, setData] = useState(null);
   const [frameworks, setFrameworks] = useState([]);
 
@@ -40,6 +46,16 @@ const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
 
   useEffect(() => {
     if (data) {
+      const subjectArray = data.map((item) => {
+        return item.code;
+      });
+
+      setSubjectArray(subjectArray);
+    }
+  }, [data, setSubjectArray]);
+
+  useEffect(() => {
+    if (data) {
       const mappedSubjects = data.map((item) => ({
         value: `${item.description} ${item.code}`
           .toLowerCase()
@@ -50,6 +66,16 @@ const SubjectSelector = ({ campus, semester, level, onValueChange }) => {
 
       setFrameworks([...mappedSubjects]);
     }
+
+    // Add an 'all subjects' option
+    setFrameworks((frameworks) => [
+      {
+        value: "all",
+        label: "DISPLAY ALL CLASSES",
+        code: "all",
+      },
+      ...frameworks,
+    ]);
   }, [data]);
 
   const [open, setOpen] = React.useState(false);

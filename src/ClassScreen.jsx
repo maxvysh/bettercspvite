@@ -26,6 +26,7 @@ const ClassScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCores, setSelectedCores] = useState([]);
   const [isOnlineChecked, setIsOnlineChecked] = useState(false);
+  const [subjectArray, setSubjectArray] = useState([]);
   // const [selectedCourses, setSelectedCourses] = useState([]);
   // const [totalCredits, setTotalCredits] = useState(0);
   // const [isDataFetched, setIsDataFetched] = useState(false);
@@ -52,72 +53,59 @@ const ClassScreen = () => {
     setSubject(newValue);
   };
 
-  // Make a useEffect that runs before the component renders
-  // Fetch the campussemester from the backend if it is not already in the context
-  // function fetchCampusSemester() {
-  //   console.log("fetching campus semester");
-  //   fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setCampus(data.campus);
-  //       setSemester(data.semester);
-  //     });
-  // }
-
   useEffect(() => {
     if (!campus || !semester) {
       fetchCampusSemester();
     } else {
       setIsLoading(true);
-      fetch(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
-      )
-        .then((response) => response.text())
-        .then((data) => {
-          // Filter out the classes which have no printed sections
-          let parsedData = JSON.parse(data);
-          parsedData = parsedData.filter((subject) =>
-            subject.sections.some((section) => section.printed === "Y")
-          );
 
-          setSubjectData(parsedData);
-          setSubjectDataOriginal(parsedData);
+      if (subject == "all") { // If user wants to display all classes
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/allcourses`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            campus: campus,
+            semester: semester,
+            level: level,
+            subjectArray: subjectArray,
+          }),
         })
-        .then(() => setIsLoading(false))
-        .catch((error) => console.error("Error:", error));
+          .then((response) => response.text())
+          .then((data) => {
+            let parsedData = JSON.parse(data);
+            parsedData = parsedData.filter((subject) =>
+              subject.sections.some((section) => section.printed === "Y")
+            );
+
+            setSubjectData(parsedData);
+            setSubjectDataOriginal(parsedData);
+          })
+          .then(() => setIsLoading(false))
+          .catch((error) => console.error("Error:", error));
+      } else { // If user wants to display classes for a specific subject
+        fetch(
+          `${
+            import.meta.env.VITE_BACKEND_URL
+          }/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
+        )
+          .then((response) => response.text())
+          .then((data) => {
+            // Filter out the classes which have no printed sections
+            let parsedData = JSON.parse(data);
+            parsedData = parsedData.filter((subject) =>
+              subject.sections.some((section) => section.printed === "Y")
+            );
+
+            setSubjectData(parsedData);
+            setSubjectDataOriginal(parsedData);
+          })
+          .then(() => setIsLoading(false))
+          .catch((error) => console.error("Error:", error));
+      }
     }
   }, [campus, semester, level, subject]);
-
-  // useEffect(() => {
-  //   async function fetchCourses() {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_BACKEND_URL}/user/courses`
-  //     );
-  //     const data = await response.json();
-  //     if (data) {
-  //       setSelectedCourses(data.coursesArray);
-  //       setTotalCredits(data.totalCredits);
-  //       setIsDataFetched(true);
-  //     }
-  //   }
-  //   fetchCourses();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!isDataFetched) return;
-  //   console.log("selected courses", selectedCourses);
-
-  //   fetch(`${import.meta.env.VITE_BACKEND_URL}/user/courses`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(selectedCourses),
-  //   });
-  // }, [selectedCourses]);
 
   const onValueChange = (value) => {
     setSelectedCores(value);
@@ -188,6 +176,7 @@ const ClassScreen = () => {
               semester={semester}
               level={level}
               onValueChange={handleSubjectChange}
+              setSubjectArray={setSubjectArray}
             />
             <Select onValueChange={handleLevelSelectorChange}>
               <SelectTrigger className="w-[180px] border-2">
@@ -207,9 +196,9 @@ const ClassScreen = () => {
             ) : subjectData.length === 0 && subject ? (
               <p>No entries found matching the filters</p>
             ) : (
-              subjectData.map((subjectData) => (
+              subjectData.map((subjectData, key) => (
                 <ClassRow
-                  key={subjectData.courseNumber + subjectData.campusCode}
+                  key={key}
                   courseFD={subjectData}
                   offeringUnitCode={subjectData.offeringUnitCode}
                   subject={subjectData.subject}
