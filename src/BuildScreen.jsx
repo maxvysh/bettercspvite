@@ -11,13 +11,7 @@ import { parseISO } from "date-fns";
 import Calendar from "./components/Calendar";
 import PrintRegister from "./components/PrintRegister";
 import LoadingSkeleton from "./components/LoadingSkeleton";
-import {
-  buildSchedules,
-  splitByCourse,
-  generateCombinations,
-  isWorkingSchedule,
-  buildValidSchedules,
-} from "./scripts/builder";
+import { buildSchedules } from "./scripts/builder";
 
 const BuildScreen = () => {
   const {
@@ -43,7 +37,7 @@ const BuildScreen = () => {
   });
   const [inputName, setInputName] = useState("");
   const [savedButton, setSavedButton] = useState(false);
-  const [allCombinations, setAllCombinations] = useState([]);
+  const [generatedSchedulesSet] = useState(new Set());
 
   // useEffect(() => {
   //   console.log("buildIndexes", buildIndexes);
@@ -115,26 +109,24 @@ const BuildScreen = () => {
   }, [currentBuild, buildIndexes]);
 
   useEffect(() => {
-    console.log("selectedIndexes", selectedIndexes);
-    console.log("indexTimes", indexTimes);
+    console.log('runn');
+    console.log(selectedIndexes);
+    console.log(indexTimes);
     if (selectedIndexes.length === 0 || indexTimes.length === 0) {
       return;
     }
 
     const selectedIndexesArray = Array.from(selectedIndexes);
-
-    // Convert HashMap to Object
     const indexTimesObject = serializeIndexTimes(indexTimes);
 
-    // Ensure the arrays are finalized before making the fetch call
     if (selectedIndexesArray && indexTimesObject) {
-      // Get 1000 possible combinations of indexes
-      const buildSchedulesReturn = buildSchedules(selectedIndexesArray, indexTimesObject);
-      setAllCombinations(buildSchedulesReturn);
+      const newSchedules = buildSchedules(
+        selectedIndexesArray,
+        indexTimesObject,
+        generatedSchedulesSet
+      );
 
-      // Get 10 valid schedules from the 1000 possible combinations
-      const buildValidSchedulesReturn = buildValidSchedules(buildSchedulesReturn, indexTimesObject);
-      setBuildIndexes(buildValidSchedulesReturn);
+      setBuildIndexes(newSchedules);
     }
   }, [selectedIndexes, indexTimes]);
 
@@ -143,35 +135,23 @@ const BuildScreen = () => {
   //   console.log('buildIndexes', buildIndexes);
   // }, [allCombinations, buildIndexes]);
 
-  // useEffect(() => {
-  //   console.log("buildIndexes", buildIndexes);
-  // }, [buildIndexes]);
+  useEffect(() => {
+    console.log("buildIndexes", buildIndexes);
+  }, [buildIndexes]);
 
   const handleNext = () => {
     if (currentBuild < buildIndexes.length - 1) {
       setCurrentBuild(currentBuild + 1);
-    } else if (currentBuild === buildIndexes.length - 1) {
-      const oldNumberOfSchedules = buildIndexes.length;
-      const newSchedules = buildValidSchedules(allCombinations, serializeIndexTimes(indexTimes));
-
-      let uniqueSchedules = new Set(
-        buildIndexes.map((schedule) => JSON.stringify(schedule))
+    } else {
+      const selectedIndexesArray = Array.from(selectedIndexes);
+      const indexTimesObject = serializeIndexTimes(indexTimes);
+      const newSchedules = buildSchedules(
+        selectedIndexesArray,
+        indexTimesObject,
+        generatedSchedulesSet
       );
-      // Make sure that none of the new schedules are duplicates
-      for (const schedule of newSchedules) {
-        const scheduleStr = JSON.stringify(schedule);
-        if (!uniqueSchedules.has(scheduleStr)) {
-          uniqueSchedules.add(scheduleStr);
-        }
-      }
-      const uniqueSchedulesArray = Array.from(uniqueSchedules).map((schedule) =>
-        JSON.parse(schedule)
-      );
-      const newNumberOfSchedules = uniqueSchedulesArray.length;
-      setBuildIndexes(uniqueSchedulesArray);
-
-      // If new schedules are generated, increment the currentBuild
-      if (newNumberOfSchedules > oldNumberOfSchedules) {
+      if (newSchedules.length > 0) {
+        setBuildIndexes([...buildIndexes, ...newSchedules]);
         setCurrentBuild(currentBuild + 1);
       }
     }

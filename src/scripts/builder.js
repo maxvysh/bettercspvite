@@ -1,44 +1,24 @@
-function buildSchedules(selectedIndexes, indexTimes) {
-  // Shuffle the selectedIndexes
-  shuffle(selectedIndexes);
-
+function buildSchedules(selectedIndexes, indexTimes, generatedSchedulesSet) {
+  console.log("generatedSchedulesSet", generatedSchedulesSet);  
   let courseIndexes = splitByCourse(selectedIndexes, indexTimes);
-  let validSchedules = generateValidSchedules(courseIndexes, indexTimes);
+  let validSchedules = generateValidSchedules(courseIndexes, indexTimes, generatedSchedulesSet);
 
   return validSchedules;
 }
 
-function shuffle(array) {
-  let currentIndex = array.length;
-  let temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
-
-function generateValidSchedules(courseIndexes, indexTimes) {
+function generateValidSchedules(courseIndexes, indexTimes, generatedSchedulesSet) {
   let validSchedules = [];
   let courses = Object.keys(courseIndexes);
   let numClasses = courses.length;
 
   function backtrack(currentCombination, currentIndex) {
-    if (validSchedules.length >= 10) {
-      return;
-    }
     if (currentIndex === numClasses) {
       if (isWorkingSchedule(currentCombination, indexTimes)) {
-        validSchedules.push(currentCombination.slice());
+        const scheduleStr = JSON.stringify(currentCombination.slice());
+        if (!generatedSchedulesSet.has(scheduleStr)) {
+          generatedSchedulesSet.add(scheduleStr);
+          validSchedules.push(currentCombination.slice());
+        }
       }
       return;
     }
@@ -48,6 +28,9 @@ function generateValidSchedules(courseIndexes, indexTimes) {
       currentCombination.push(index);
       backtrack(currentCombination, currentIndex + 1);
       currentCombination.pop();
+      if (validSchedules.length >= 10) {
+        return;
+      }
     }
   }
 
@@ -56,7 +39,6 @@ function generateValidSchedules(courseIndexes, indexTimes) {
 }
 
 function splitByCourse(selectedIndexes, indexTimes) {
-  // Split the selectedIndexes into arrays of indexes that belong to the same course
   let courseIndexes = {};
   for (let index of selectedIndexes) {
     let course = indexTimes[index].courseCode;
@@ -69,20 +51,8 @@ function splitByCourse(selectedIndexes, indexTimes) {
 }
 
 function isWorkingSchedule(combination, indexTimes) {
-  /*
-   * The intervals array stores interval objects
-   * interval is an object with the following properties:
-   * - day: number (0-6, representing Monday to Sunday)
-   * - start: number (minutes since midnight)
-   * - end: number (minutes since midnight)
-   * - campus: string (e.g., "LIVINGSTON", "BUSCH", etc.)
-   */
   let intervals = [];
 
-  /*
-   * convertToMinutes takes a time string in the format "HHMM" and converts it to
-   * the number of minutes since midnight of that day.
-   */
   const convertToMinutes = (time) => {
     if (!time) {
       return;
@@ -146,7 +116,7 @@ function isWorkingSchedule(combination, indexTimes) {
       continue;
     }
     if (previous.end > current.start) {
-      if (previous.campus === "BUSCH" && current.campus === "LIVINGSTON") {
+      if (previous.campus === "BUSCH" && current.campus === "LIVINGSTON" || previous.campus === "LIVINGSTON" && current.campus === "BUSCH") {
         if (current.start - previous.end < 30) {
           return false;
         }
