@@ -3,9 +3,9 @@ function buildSchedules(selectedIndexes, indexTimes) {
   shuffle(selectedIndexes);
 
   let courseIndexes = splitByCourse(selectedIndexes, indexTimes);
-  let allCombinations = generateCombinations(courseIndexes);
+  let validSchedules = generateValidSchedules(courseIndexes, indexTimes);
 
-  return allCombinations;
+  return validSchedules;
 }
 
 function shuffle(array) {
@@ -27,19 +27,38 @@ function shuffle(array) {
   return array;
 }
 
-function buildValidSchedules(allCombinations, indexTimes) {
-  // Shuffles the allCombinations array and returns the first 10 valid schedules
-  allCombinations = shuffle(allCombinations);
-  return workingSchedules(allCombinations, indexTimes);
+function generateValidSchedules(courseIndexes, indexTimes) {
+  let validSchedules = [];
+  let courses = Object.keys(courseIndexes);
+  let numClasses = courses.length;
+
+  function backtrack(currentCombination, currentIndex) {
+    if (validSchedules.length >= 10) {
+      return;
+    }
+    if (currentIndex === numClasses) {
+      if (isWorkingSchedule(currentCombination, indexTimes)) {
+        validSchedules.push(currentCombination.slice());
+      }
+      return;
+    }
+    let course = courses[currentIndex];
+    let indexes = courseIndexes[course];
+    for (let index of indexes) {
+      currentCombination.push(index);
+      backtrack(currentCombination, currentIndex + 1);
+      currentCombination.pop();
+    }
+  }
+
+  backtrack([], 0);
+  return validSchedules;
 }
 
 function splitByCourse(selectedIndexes, indexTimes) {
   // Split the selectedIndexes into arrays of indexes that belong to the same course
   let courseIndexes = {};
-  // console.log('indexTimes', indexTimes);
-  // console.log('selectedIndexes', selectedIndexes);
   for (let index of selectedIndexes) {
-    // console.log('index', index);
     let course = indexTimes[index].courseCode;
     if (!courseIndexes[course]) {
       courseIndexes[course] = [];
@@ -49,70 +68,6 @@ function splitByCourse(selectedIndexes, indexTimes) {
   return courseIndexes;
 }
 
-function generateCombinations(courseIndexes) {
-  // Using the courseIndexes object, generate all possible combinations of indexes
-  // that can be taken together
-  let allCombinations = [];
-  let courses = Object.keys(courseIndexes);
-  let numClasses = courses.length;
-  let currentCombination = [];
-  let currentIndex = 0;
-  generateCombinationsHelper(
-    courseIndexes,
-    allCombinations,
-    currentCombination,
-    currentIndex,
-    numClasses
-  );
-  return allCombinations;
-}
-
-function generateCombinationsHelper(
-  courseIndexes,
-  allCombinations,
-  currentCombination,
-  currentIndex,
-  numClasses
-) {
-  if (allCombinations.length >= 1000) {
-    return;
-  }
-  if (currentIndex === numClasses) {
-    allCombinations.push(currentCombination.slice());
-    return;
-  }
-  let course = Object.keys(courseIndexes)[currentIndex];
-  let indexes = courseIndexes[course];
-  for (let index of indexes) {
-    if (allCombinations.length >= 1000) {
-      return;
-    }
-    currentCombination.push(index);
-    generateCombinationsHelper(
-      courseIndexes,
-      allCombinations,
-      currentCombination,
-      currentIndex + 1,
-      numClasses
-    );
-    currentCombination.pop();
-  }
-}
-
-function workingSchedules(allCombinations, indexTimes) {
-  let validSchedules = [];
-  for (let combination of allCombinations) {
-    if (isWorkingSchedule(combination, indexTimes)) {
-      validSchedules.push(combination);
-      if (validSchedules.length === 10) {
-        break;
-      }
-    }
-  }
-  return validSchedules;
-}
-
-// Determines if a single schedule is valid
 function isWorkingSchedule(combination, indexTimes) {
   /*
    * The intervals array stores interval objects
@@ -208,7 +163,6 @@ function isWorkingSchedule(combination, indexTimes) {
 export {
   buildSchedules,
   splitByCourse,
-  generateCombinations,
+  generateValidSchedules,
   isWorkingSchedule,
-  buildValidSchedules,
 };

@@ -43,7 +43,6 @@ const BuildScreen = () => {
   });
   const [inputName, setInputName] = useState("");
   const [savedButton, setSavedButton] = useState(false);
-  const [splitByCourseArray, setSplitByCourseArray] = useState([]);
   const [allCombinations, setAllCombinations] = useState([]);
 
   // useEffect(() => {
