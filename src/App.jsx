@@ -7,6 +7,7 @@ import SectionScreen from "./SectionScreen";
 import SavedScreen from "./SavedScreen";
 import AppContext from "./AppContext";
 import About from "./About";
+import NotLoggedInScreen from "./NotLoggedInScreen";
 import { useState, useEffect } from "react";
 
 const App = () => {
@@ -227,6 +228,7 @@ const App = () => {
           <Route path="/build" element={<BuildScreen />} />
           <Route path="/saved" element={<SavedScreen />} />
           <Route path="/about" element={<About />} />
+          <Route path="/notloggedin" element={<NotLoggedInScreen />} />
         </Routes>
       </Router>
     </AppContext.Provider>
