@@ -8,6 +8,7 @@ import SavedScreen from "./SavedScreen";
 import AppContext from "./AppContext";
 import About from "./About";
 import NotLoggedInScreen from "./NotLoggedInScreen";
+import Error404Screen from "./Error404Screen";
 import { useState, useEffect } from "react";
 
 const App = () => {
@@ -229,6 +230,7 @@ const App = () => {
           <Route path="/saved" element={<SavedScreen />} />
           <Route path="/about" element={<About />} />
           <Route path="/notloggedin" element={<NotLoggedInScreen />} />
+          <Route path="*" element={<Error404Screen />} />
         </Routes>
       </Router>
     </AppContext.Provider>
