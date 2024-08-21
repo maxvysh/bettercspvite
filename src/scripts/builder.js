@@ -1,5 +1,4 @@
 function buildSchedules(selectedIndexes, indexTimes, generatedSchedulesSet) {
-  console.log("generatedSchedulesSet", generatedSchedulesSet);  
   let courseIndexes = splitByCourse(selectedIndexes, indexTimes);
   let validSchedules = generateValidSchedules(courseIndexes, indexTimes, generatedSchedulesSet);
 

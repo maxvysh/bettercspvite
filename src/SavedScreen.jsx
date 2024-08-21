@@ -116,7 +116,6 @@ const SavedScreen = () => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      console.log("Current schedule:", currentSchedule);
       if (currentSchedule !== undefined) {
         setIndexData([]); // Clear the indexData array before fetching new data
         const indexes = []; // Local array to accumulate indexes
@@ -230,9 +229,6 @@ const SavedScreen = () => {
       }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log("Deleted schedule:", data);
-      })
       .catch((error) => {
         console.error("Error deleting schedule:", error);
       });

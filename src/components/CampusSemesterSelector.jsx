@@ -50,26 +50,41 @@ const CampusSemesterSelector = () => {
     }
   }, [selectedCampus, selectedSemester]);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (!isButtonDisabled) {
-      const oldData = fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/user/campussemester`
-      );
-      if (oldData.semester !== semester || oldData.campus !== campus) {
+      let oldData = {};
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/user/campussemester`
+        );
+        oldData = await response.json();
+        // Process oldData as needed
+      } catch (error) {
+        console.error("Error fetching old campus and semester data:", error);
+      }
+      if (
+        oldData.semester !== selectedSemester ||
+        oldData.campus !== selectedCampus
+      ) {
         setSelectedCourses([]);
         setTotalCredits(0);
       }
+
+      setCampus(selectedCampus);
+      setSemester(selectedSemester);
       // Navigate to /classes
       // Save the campus and semester to mongoDB
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ campus, semester }),
-      });
-      setCampus(campus);
-      setSemester(semester);
+      try {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ campus: selectedCampus, semester: selectedSemester }),
+        });
+      } catch (error) {
+        console.error("Error saving campus and semester:", error);
+      }
       navigate("/classes");
     } else {
       // Prompt that options are required

@@ -109,9 +109,6 @@ const BuildScreen = () => {
   }, [currentBuild, buildIndexes]);
 
   useEffect(() => {
-    console.log('runn');
-    console.log(selectedIndexes);
-    console.log(indexTimes);
     if (selectedIndexes.length === 0 || indexTimes.length === 0) {
       return;
     }
@@ -134,10 +131,6 @@ const BuildScreen = () => {
   //   console.log('allCombinations', allCombinations);
   //   console.log('buildIndexes', buildIndexes);
   // }, [allCombinations, buildIndexes]);
-
-  useEffect(() => {
-    console.log("buildIndexes", buildIndexes);
-  }, [buildIndexes]);
 
   const handleNext = () => {
     if (currentBuild < buildIndexes.length - 1) {
@@ -297,7 +290,7 @@ const BuildScreen = () => {
       }),
     })
       .then(() => {
-        console.log("Saved!");
+        console.log("Saved Current Courses!");
         setSavedButton(true);
         setTimeout(() => {
           setSavedButton(false);
