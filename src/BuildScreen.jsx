@@ -279,7 +279,7 @@ const BuildScreen = () => {
       schedule[index] = selectedIndexesMap.get(index);
     });
 
-    fetch(`${import.meta.env.PORT}/user/saveschedule`, {
+    fetch(`${import.meta.env.BACKEND_URL}/user/saveschedule`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

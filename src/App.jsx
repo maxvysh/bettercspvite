@@ -25,7 +25,7 @@ const App = () => {
   const [subjectData, setSubjectData] = useState();
 
   function fetchCampusSemester() {
-    fetch(`${import.meta.env.PORT}/user/campussemester`)
+    fetch(`${import.meta.env.BACKEND_URL}/user/campussemester`)
       .then((response) => response.json())
       .then((data) => {
         setCampus(data.campus);
@@ -35,7 +35,9 @@ const App = () => {
 
   useEffect(() => {
     async function fetchCourses() {
-      const response = await fetch(`${import.meta.env.PORT}/user/courses`);
+      const response = await fetch(
+        `${import.meta.env.BACKEND_URL}/user/courses`
+      );
       const data = await response.json();
       if (data) {
         setSelectedCourses(data.coursesArray);
@@ -56,7 +58,7 @@ const App = () => {
         return;
       }
 
-      fetch(`${import.meta.env.PORT}/user/courses`, {
+      fetch(`${import.meta.env.BACKEND_URL}/user/courses`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +86,7 @@ const App = () => {
       const fetchPromises = selectedCourses.map(async (course) => {
         try {
           const response = await fetch(
-            `${import.meta.env.PORT}/courses?subject=${
+            `${import.meta.env.BACKEND_URL}/courses?subject=${
               course.subject
             }&semester=${semester}&campus=${campus}&level=${level}`
           );
@@ -178,7 +180,7 @@ const App = () => {
   // Build schedules if selectedIndexes and indexTimes are set
   // useEffect(() => {
   //   if (selectedIndexes.length > 0 && indexTimes) {
-  //     fetch(`${import.meta.env.PORT}/user/buildschedules`, {
+  //     fetch(`${import.meta.env.BACKEND_URL}/user/buildschedules`, {
   //       method: "GET",
   //       headers: {
   //         "Content-Type": "application/json",

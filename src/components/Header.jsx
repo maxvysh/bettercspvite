@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
   const navigate = useNavigate();
   const handleLogout = async () => {
-    const response = await fetch(`${import.meta.env.PORT}/logout`, {
+    const response = await fetch(`${import.meta.env.BACKEND_URL}/logout`, {
       method: "GET",
       credentials: "include", // Ensure cookies are sent with the request
     });

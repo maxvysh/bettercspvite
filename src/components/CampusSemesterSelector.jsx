@@ -55,7 +55,7 @@ const CampusSemesterSelector = () => {
       let oldData = {};
       try {
         const response = await fetch(
-          `${import.meta.env.PORT}/user/campussemester`
+          `${import.meta.env.BACKEND_URL}/user/campussemester`
         );
         oldData = await response.json();
         // Process oldData as needed
@@ -75,7 +75,7 @@ const CampusSemesterSelector = () => {
       // Navigate to /classes
       // Save the campus and semester to mongoDB
       try {
-        await fetch(`${import.meta.env.PORT}/user/campussemester`, {
+        await fetch(`${import.meta.env.BACKEND_URL}/user/campussemester`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
