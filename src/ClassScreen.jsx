@@ -59,8 +59,9 @@ const ClassScreen = () => {
     } else {
       setIsLoading(true);
 
-      if (subject == "all") { // If user wants to display all classes
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/allcourses`, {
+      if (subject == "all") {
+        // If user wants to display all classes
+        fetch(`${import.meta.env.PORT}/allcourses`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -84,10 +85,11 @@ const ClassScreen = () => {
           })
           .then(() => setIsLoading(false))
           .catch((error) => console.error("Error:", error));
-      } else { // If user wants to display classes for a specific subject
+      } else {
+        // If user wants to display classes for a specific subject
         fetch(
           `${
-            import.meta.env.VITE_BACKEND_URL
+            import.meta.env.PORT
           }/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
         )
           .then((response) => response.text())

@@ -34,7 +34,7 @@ const SubjectSelector = ({
 
     fetch(
       `${
-        import.meta.env.VITE_BACKEND_URL
+        import.meta.env.PORT
       }/subjects?semester=${semester}&campus=${campus}&level=${level}`
     )
       .then((response) => response.text())

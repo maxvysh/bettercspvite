@@ -55,7 +55,7 @@ const CampusSemesterSelector = () => {
       let oldData = {};
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/user/campussemester`
+          `${import.meta.env.PORT}/user/campussemester`
         );
         oldData = await response.json();
         // Process oldData as needed
@@ -75,12 +75,15 @@ const CampusSemesterSelector = () => {
       // Navigate to /classes
       // Save the campus and semester to mongoDB
       try {
-        await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/campussemester`, {
+        await fetch(`${import.meta.env.PORT}/user/campussemester`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ campus: selectedCampus, semester: selectedSemester }),
+          body: JSON.stringify({
+            campus: selectedCampus,
+            semester: selectedSemester,
+          }),
         });
       } catch (error) {
         console.error("Error saving campus and semester:", error);

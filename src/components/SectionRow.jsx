@@ -46,7 +46,7 @@
 //   //   selectedCourses.forEach((course) => {
 //   //     // Find the full data for each course by fetching the offeringUnitCode
 //   //     fetch(
-//   //       `${import.meta.env.VITE_BACKEND_URL}/courses?subject=${
+//   //       `${import.meta.env.PORT}/courses?subject=${
 //   //         course.subject
 //   //       }&semester=${semester}&campus=${campus}&level=${level}`
 //   //     )
