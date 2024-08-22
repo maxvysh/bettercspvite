@@ -13,7 +13,8 @@ import { Label } from "@/components/ui/label";
 
 const CreateAccount = () => {
   const handleLogin = async () => {
-    window.location.href = "http://localhost:3000/auth/google";
+    window.location.href =
+      "https://ruplanning-81ab2a427f14.herokuapp.com/auth/google";
   };
 
   return (
