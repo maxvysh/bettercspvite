@@ -54,9 +54,7 @@ const CampusSemesterSelector = () => {
     if (!isButtonDisabled) {
       let oldData = {};
       try {
-        const response = await fetch(
-          `${import.meta.env.BACKEND_URL}/user/campussemester`
-        );
+        const response = await fetch(`/user/campussemester`);
         oldData = await response.json();
         // Process oldData as needed
       } catch (error) {
@@ -75,7 +73,7 @@ const CampusSemesterSelector = () => {
       // Navigate to /classes
       // Save the campus and semester to mongoDB
       try {
-        await fetch(`${import.meta.env.BACKEND_URL}/user/campussemester`, {
+        await fetch(`/user/campussemester`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -115,7 +113,7 @@ const CampusSemesterSelector = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="92024">Fall</SelectItem>
-              <SelectItem value="72024">Summer</SelectItem>
+              <SelectItem value="12025">Spring</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>

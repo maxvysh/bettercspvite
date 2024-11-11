@@ -38,7 +38,7 @@ const SavedScreen = () => {
 
   // Retrieve the saved schedules from the backend
   useEffect(() => {
-    fetch(`${import.meta.env.BACKEND_URL}/user/savedschedules`)
+    fetch(`/user/savedschedules`)
       .then((response) => response.json())
       .then((data) => {
         if (data.length > 0) {
@@ -100,9 +100,7 @@ const SavedScreen = () => {
 
     try {
       const response = await fetch(
-        `${
-          import.meta.env.BACKEND_URL
-        }/courses?subject=${courseNumber}&semester=${semester}&campus=${campus}&level=${level}`
+        `/courses?subject=${courseNumber}&semester=${semester}&campus=${campus}&level=${level}`
       );
       const data = await response.text();
       return JSON.parse(data);
@@ -172,7 +170,7 @@ const SavedScreen = () => {
   };
 
   const handleEdit = (name) => {
-    fetch(`${import.meta.env.BACKEND_URL}/user/savedschedules`, {
+    fetch(`/user/savedschedules`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -219,7 +217,7 @@ const SavedScreen = () => {
       setCurrentName("");
       setDisplayEverything(false);
     }
-    fetch(`${import.meta.env.BACKEND_URL}/user/savedschedules`, {
+    fetch(`/user/savedschedules`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

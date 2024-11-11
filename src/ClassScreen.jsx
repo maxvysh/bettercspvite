@@ -61,7 +61,7 @@ const ClassScreen = () => {
 
       if (subject == "all") {
         // If user wants to display all classes
-        fetch(`${import.meta.env.BACKEND_URL}/allcourses`, {
+        fetch(`/allcourses`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -88,9 +88,7 @@ const ClassScreen = () => {
       } else {
         // If user wants to display classes for a specific subject
         fetch(
-          `${
-            import.meta.env.BACKEND_URL
-          }/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
+          `/courses?subject=${subject}&semester=${semester}&campus=${campus}&level=${level}`
         )
           .then((response) => response.text())
           .then((data) => {

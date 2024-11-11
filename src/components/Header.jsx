@@ -1,11 +1,11 @@
 import "../css/Header.css";
-import RutgersLogo from "../assets/Rutgers_Scarlet_Knights_logo.svg";
+import RutgersLogo from "../assets/ruplanning_logo-cropped.svg";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
   const handleLogout = async () => {
-    const response = await fetch(`${import.meta.env.BACKEND_URL}/logout`, {
+    const response = await fetch(`/logout`, {
       method: "GET",
       credentials: "include", // Ensure cookies are sent with the request
     });
@@ -29,7 +29,7 @@ const Header = () => {
           <img
             src={RutgersLogo}
             alt="Rutgers Logo"
-            className="w-[64px] h-[64px]"
+            className="w-20 h-20"
           />
         </div>
         <div className="flex-1 flex justify-end text-xl gap-8">

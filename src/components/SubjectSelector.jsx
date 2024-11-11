@@ -33,9 +33,7 @@ const SubjectSelector = ({
     if (!campus || !semester || !level) return;
 
     fetch(
-      `${
-        import.meta.env.BACKEND_URL
-      }/subjects?semester=${semester}&campus=${campus}&level=${level}`
+      `/subjects?semester=${semester}&campus=${campus}&level=${level}`
     )
       .then((response) => response.text())
       .then((data) => {
